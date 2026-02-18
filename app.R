@@ -46,23 +46,27 @@ counties <- outlets %>%
   pull() %>%
   sort()
 
+aes <- outlets %>%
+  reframe(unique(CURRENT_LIBNAME_AE)) %>%
+  pull() %>%
+  sort()
+
 current_year <- max(as.numeric(outlets$FISCAL_YEAR))
 
+source("RScripts/theme.R", local = TRUE)$value
 
 #### UI ####
 
 ui <- fluidPage(
-  class = "container-fluid align-self-center mx-1 px-0",
-  style = "width: 95vw; height: 95vh; padding: 0; margin: 1;",
-  #theme = usl_theme,
+  theme = usl_theme,
 
   page_navbar(
-    title = "Library Map",
+    title = "Utah Public Libraries - Central Library and Branch Map",
     navbar_options = navbar_options(
       bg = NULL,
       underline = TRUE
     ),
-    #shiny::includeCSS("www/styles.css"),
+    shiny::includeCSS("www/styles.css"),
 
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     nav_spacer(),

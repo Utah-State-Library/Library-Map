@@ -4,14 +4,12 @@
 #   style = "width: 95vw; padding: 0; margin: 1;",
 
 layout_sidebar(
+  class = "bg-body-secondary container-fluid align-self-center",
   fill = TRUE,
   sidebar = sidebar(
     title = "Filters",
-    width = "25%",
+    width = "30%",
 
-    # div(
-    #   class = "mb-2",
-    #   tags$h5(class = "mb-1 mt-0", "Select Libraries by County"),
     pickerInput(
       "st_county",
       label = NULL,
@@ -27,7 +25,51 @@ layout_sidebar(
         ),
         `count-selected-text` = "All Counties"
       )
-      # )
+    ),
+    pickerInput(
+      "ae",
+      label = NULL,
+      choices = aes,
+      selected = aes,
+      multiple = TRUE,
+      options = list(
+        `actions-box` = TRUE,
+        `selected-text-format` = paste0(
+          "count > ",
+          length(aes) - 1
+        ),
+        `count-selected-text` = "All Library Systems"
+      )
+    ),
+    pickerInput(
+      "system_type",
+      label = NULL,
+      choices = c("City Library" = "city", "County Library" = "county"),
+      selected = c("city", "county"),
+      multiple = TRUE,
+      options = list(
+        `actions-box` = TRUE,
+        `selected-text-format` = paste0(
+          "count > ",
+          1
+        ),
+        `count-selected-text` = "All Library Types"
+      )
+    ),
+    pickerInput(
+      "outlet_type",
+      label = NULL,
+      choices = c("Central Library" = "CE", "Branch Library" = "BR"),
+      selected = c("CE", "BR"),
+      multiple = TRUE,
+      options = list(
+        `actions-box` = TRUE,
+        `selected-text-format` = paste0(
+          "count > ",
+          1
+        ),
+        `count-selected-text` = "All Location Types"
+      )
     ),
     actionButton(
       "submitButton",
@@ -35,15 +77,42 @@ layout_sidebar(
       width = "100%"
     )
   ),
-  #nav_panel(
-  card(
-    title = NULL,
-    min_height = "85vh",
-    max_height = "85vh",
-    leafletOutput("state_map", height = '92vh') |>
-      withSpinner() |>
-      as_fill_carrier()
+  layout_columns(
+    col_widths = c(8, 4),
+    card(
+      title = NULL,
+      min_height = "85vh",
+      max_height = "85vh",
+      leafletOutput("state_map", height = '92vh') |>
+        withSpinner() |>
+        as_fill_carrier()
+    ),
+    layout_columns(
+      col_widths = c(12, 12),
+      value_box(
+        title = "Number of Library Systems",
+        value = uiOutput("n_aes"),
+        showcase = bsicons::bs_icon("people-fill"),
+        theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+      ),
+      value_box(
+        title = "Number of Library Locations",
+        value = uiOutput("n_locations"),
+        showcase = bsicons::bs_icon("people-fill"),
+        theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+      ),
+      value_box(
+        title = "Number of City Library Systems",
+        value = uiOutput("n_citylibs"),
+        showcase = bsicons::bs_icon("people-fill"),
+        theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+      ),
+      value_box(
+        title = "Number of County Library Systems",
+        value = uiOutput("n_countylibs"),
+        showcase = bsicons::bs_icon("people-fill"),
+        theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+      )
+    )
   )
-  #)
 )
-# )

@@ -1,0 +1,56 @@
+/* Set Icon Color */
+.icon-color {
+    color: #002f6C !important;
+}
+
+/* Set Reactable Hover Color */
+.ReactTable .rt-tr:hover {
+    background-color: #4EC3E0 !important;
+    /* color: #ffffff; */
+}
+
+/* Set Dropdown Background Color */
+.bootstrap-select .dropdown-toggle {
+    /* Default styles for the pickerInput */
+    background-color: #e9ecef !important;
+    color: #000000;
+}
+
+/* Set Dropdown Hover Color */
+.bootstrap-select .dropdown-toggle:hover {
+    /* Styles to apply when hovering over the pickerInput */
+    background-color: #0086BF !important;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* Set Hover Color of Dropdown Items */
+.dropdown-item:hover {
+    background-color: #4EC3E0 !important;
+    /* color: #ffffff; */
+}
+
+/* Set Button Color */
+.btn-default {
+    background-color: #002F6C !important;
+    color: #ffffff;
+}
+
+/* Set Hover Color for Button */
+.btn-default:hover {
+    background-color: #0086BF !important;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* Make sidebar toggle more visible */
+.bslib-sidebar-layout>.collapse-toggle {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    background-color: #002F6C;
+}
+
+/* Change color of sidebar toggle caret to white for visibility */
+.bslib-sidebar-layout>.collapse-toggle>.collapse-icon {
+    fill: #ffffff !important;
+}

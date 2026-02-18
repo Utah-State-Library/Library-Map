@@ -40,6 +40,30 @@ map_all <- outlets %>%
     )
   )
 
+##### Sync Inputa #####
+observe({
+  aes <- outlets %>%
+    filter(CNTY %in% input$st_county, SERVICE_AREA %in% input$system_type) %>%
+    reframe(unique(CURRENT_LIBNAME_AE)) %>%
+    pull() %>%
+    sort()
+
+  updatePickerInput(
+    session,
+    "ae",
+    label = "Library System",
+    choices = aes,
+    selected = aes,
+    options = list(
+      `actions-box` = TRUE,
+      `selected-text-format` = paste0(
+        "count > ",
+        length(aes) - 1
+      ),
+      `count-selected-text` = "All Library Systems"
+    )
+  )
+})
 
 ##### Filter Data #####
 map_libs_filtered <- eventReactive(
@@ -47,7 +71,10 @@ map_libs_filtered <- eventReactive(
   {
     map_all %>%
       filter(
-        CNTY %in% input$st_county
+        CNTY %in% input$st_county,
+        CURRENT_LIBNAME_AE %in% input$ae,
+        C_OUT_TY %in% input$outlet_type,
+        SERVICE_AREA %in% input$system_type
       )
   },
   ignoreNULL = FALSE
@@ -58,6 +85,10 @@ output$state_map <- renderLeaflet({
   input$submitButton
 
   map_df <- isolate(map_libs_filtered())
+
+  shiny::validate(
+    need((nrow(map_df) != 0), "No data available based on your selection.")
+  )
 
   map <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
     addTiles() %>%
@@ -73,13 +104,43 @@ output$state_map <- renderLeaflet({
 
   ## Show Library Locations
   map <- map %>%
-    addMarkers(
+    addCircleMarkers(
       data = map_df,
       lng = ~LONG,
       lat = ~LAT,
+      radius = 4,
+      fillOpacity = .75,
+      color = "#002f6c",
       label = ~ lapply(library_info, HTML),
       popupOptions = popupOptions(keepInView = TRUE),
     )
 
   map
+})
+
+
+output$n_aes <- renderUI({
+  map_libs_filtered() %>%
+    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    pull(n)
+})
+
+output$n_locations <- renderUI({
+  map_libs_filtered() %>%
+    reframe(n = n_distinct(CURRENT_LIBNAME_OUTLET)) %>%
+    pull(n)
+})
+
+output$n_citylibs <- renderUI({
+  map_libs_filtered() %>%
+    filter(SERVICE_AREA == "city") %>%
+    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    pull(n)
+})
+
+output$n_countylibs <- renderUI({
+  map_libs_filtered() %>%
+    filter(SERVICE_AREA == "county") %>%
+    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    pull(n)
 })
