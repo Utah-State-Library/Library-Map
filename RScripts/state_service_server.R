@@ -43,7 +43,11 @@ map_all <- outlets %>%
 ##### Sync Inputa #####
 observe({
   aes <- outlets %>%
-    filter(CNTY %in% input$st_county, SERVICE_AREA %in% input$system_type) %>%
+    filter(
+      CNTY %in% input$st_county,
+      SERVICE_AREA %in% input$system_type,
+      C_OUT_TY %in% input$outlet_type
+    ) %>%
     reframe(unique(CURRENT_LIBNAME_AE)) %>%
     pull() %>%
     sort()
@@ -64,6 +68,60 @@ observe({
     )
   )
 })
+
+# observe({
+#   system_type <- outlets %>%
+#     filter(
+#       CNTY %in% input$st_county,
+#       CURRENT_LIBNAME_AE %in% input$ae,
+#       C_OUT_TY %in% input$outlet_type
+#     ) %>%
+#     reframe(unique(SERVICE_AREA)) %>%
+#     pull() %>%
+#     sort()
+
+#   updatePickerInput(
+#     session,
+#     "system_type",
+#     choices = c("City Library" = "city", "County Library" = "county"),
+#     selected = system_type,
+#     options = list(
+#       `actions-box` = TRUE,
+#       `selected-text-format` = paste0(
+#         "count > ",
+#         1
+#       ),
+#       `count-selected-text` = "All Library Types"
+#     )
+#   )
+# })
+
+# observe({
+#   outlet_type <- outlets %>%
+#     filter(
+#       CNTY %in% input$st_county,
+#       CURRENT_LIBNAME_AE %in% input$ae,
+#       SERVICE_AREA %in% input$system_type
+#     ) %>%
+#     reframe(unique(C_OUT_TY)) %>%
+#     pull() %>%
+#     sort()
+
+#   updatePickerInput(
+#     session,
+#     "outlet_type",
+#     choices = c("Central Library" = "CE", "Branch Library" = "BR"),
+#     selected = outlet_type,
+#     options = list(
+#       `actions-box` = TRUE,
+#       `selected-text-format` = paste0(
+#         "count > ",
+#         1
+#       ),
+#       `count-selected-text` = "All Location Types"
+#     )
+#   )
+# })
 
 ##### Filter Data #####
 map_libs_filtered <- eventReactive(

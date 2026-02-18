@@ -92,25 +92,25 @@ layout_sidebar(
       value_box(
         title = "Number of Library Systems",
         value = uiOutput("n_aes"),
-        showcase = bsicons::bs_icon("people-fill"),
+        showcase = bsicons::bs_icon("bank2"),
         theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
       ),
       value_box(
         title = "Number of Library Locations",
         value = uiOutput("n_locations"),
-        showcase = bsicons::bs_icon("people-fill"),
+        showcase = bsicons::bs_icon("geo-alt-fill"), #bsicons::bs_icon("people-fill"),
         theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
       ),
       value_box(
         title = "Number of City Library Systems",
         value = uiOutput("n_citylibs"),
-        showcase = bsicons::bs_icon("people-fill"),
+        showcase = bsicons::bs_icon("house-fill"),
         theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
       ),
       value_box(
         title = "Number of County Library Systems",
         value = uiOutput("n_countylibs"),
-        showcase = bsicons::bs_icon("people-fill"),
+        showcase = bsicons::bs_icon("houses-fill"),
         theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
       )
     )

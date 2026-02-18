@@ -18,6 +18,7 @@ library(sjmisc)
 library(htmlwidgets)
 # library(sf)
 library(thematic)
+library(fontawesome)
 
 #### Color Palette ####
 # head_color <- "#002F6C"
@@ -61,7 +62,7 @@ ui <- fluidPage(
   theme = usl_theme,
 
   page_navbar(
-    title = "Utah Public Libraries - Central Library and Branch Map",
+    title = strong("Utah Public Libraries - Central Library and Branch Map"),
     navbar_options = navbar_options(
       bg = NULL,
       underline = TRUE
