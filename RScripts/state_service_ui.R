@@ -75,7 +75,8 @@ layout_sidebar(
       "submitButton",
       "Submit",
       width = "100%"
-    )
+    ),
+    uiOutput("ce_text")
   ),
   layout_columns(
     col_widths = c(8, 4),

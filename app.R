@@ -16,9 +16,9 @@ library(bsicons)
 library(shinyalert)
 library(sjmisc)
 library(htmlwidgets)
-# library(sf)
 library(thematic)
 library(fontawesome)
+library(scales)
 
 #### Color Palette ####
 # head_color <- "#002F6C"
@@ -29,6 +29,7 @@ library(fontawesome)
 # hcoptslang <- getOption("highcharter.lang")
 # hcoptslang$thousandsSep <- ","
 # options(highcharter.lang = hcoptslang)
+options(scipen = 999)
 
 #### Load Data ####
 
@@ -40,7 +41,37 @@ outlets <- readRDS("data/pls_outlet_national.rds") %>%
       CITY == "Mt. Pleasant" ~ "Mount Pleasant",
       .default = CITY
     ),
+    LAT = case_when(
+      CURRENT_LIBNAME_OUTLET == "Teen Center" ~ 38.57367327593949,
+      .default = LAT
+    ),
+    LONG = case_when(
+      CURRENT_LIBNAME_OUTLET == "Teen Center" ~ -109.54459779999999,
+      .default = LONG
+    )
   )
+
+pls <- readRDS("data/pls_national.rds") %>%
+  filter(
+    STABR == "UT",
+    hide_lib == 0,
+    FISCAL_YEAR == max(FISCAL_YEAR)
+  ) %>%
+  mutate(CNTY = str_to_title(CNTY), CITY = str_to_title(CITY)) %>%
+  select(
+    CURRENT_LIBNAME,
+    POPU_LSA,
+    VISITS,
+    TOTSTAFF,
+    TOT_LIB_STAFF,
+    LOCGVT,
+    STGVT,
+    FEDGVT,
+    OTHINCM,
+    TOTINCM
+  ) %>%
+  mutate(across(c(POPU_LSA:TOT_LIB_STAFF), ~ format(., big.mark = ","))) %>%
+  mutate(across(c(LOCGVT:TOTINCM), ~ dollar(.)))
 
 counties <- outlets %>%
   reframe(unique(CNTY)) %>%

@@ -1,44 +1,157 @@
 ## Create the library locations df
+
 map_all <- outlets %>%
+  left_join(pls, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>%
+  group_by(CURRENT_LIBNAME_AE) %>%
+  mutate(
+    n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"),
+    OUTLET_NAME = gsub(
+      paste0(CURRENT_LIBNAME_AE, " "),
+      "",
+      CURRENT_LIBNAME_OUTLET
+    ),
+    OUTLET_NAME = gsub(
+      "Salt Lake City Public Library |Washington County Library |Weber County Library",
+      "",
+      OUTLET_NAME
+    ),
+    OUTLET_NAME = trimws(OUTLET_NAME)
+  ) %>%
+  ungroup()
+
+map_all %<>%
   mutate(
     LAT = as.numeric(LAT),
     LONG = as.numeric(LONG),
-    library_info = case_when(
+    library_data_header = case_when(
+      n_locs == 1 ~ paste0(
+        "
+      <table style='width: 100%'>
+        <div style='font-size: 14px;'><b>",
+        CURRENT_LIBNAME_AE,
+        "</b><br>",
+        FISCAL_YEAR,
+        " Public Library Survey",
+        "<br></div><br>"
+      ),
+      n_locs > 1 ~ paste0(
+        "
+      <table style='width: 100%'>
+        <div style='font-size: 14px;'><b>",
+        CURRENT_LIBNAME_AE,
+        "</b><br>",
+        FISCAL_YEAR,
+        " Public Library Survey",
+        "<br>",
+        "</div> <div style='font-size: 12px;'><em>",
+        "This table shows data for the entire library system, and is not branch specific.</em>",
+        "<br></div>"
+      )
+    ),
+    library_data_table = paste0(
+      "<tr>
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Number of Library Locations: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      n_locs,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #ffffff;\">",
+      "Population of Legal Service Area: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #ffffff;\">",
+      POPU_LSA,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Visits: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      VISITS,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #ffffff;\">",
+      "Number of Library Staff: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #ffffff;\">",
+      TOT_LIB_STAFF,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Total FTE of Library Staff: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      TOTSTAFF,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #ffffff;\">",
+      "Local Government Revenue: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #ffffff;\">",
+      LOCGVT,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "State Government Revenue: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      STGVT,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #ffffff;\">",
+      "Federal Government Revenue: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #ffffff;\">",
+      FEDGVT,
+      "</td>
+        </tr> <tr>
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Other Revenue: ",
+      "</td>
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      OTHINCM,
+      "</td>
+        </tr> </table>"
+    ),
+    library_header = case_when(
       CURRENT_LIBNAME_OUTLET != CURRENT_LIBNAME_AE ~
         paste0(
-          "<table>
-                        <div style='font-size: 18px;'><b>",
-          CURRENT_LIBNAME_OUTLET,
-          "</div>
-                        <div style='font-size: 12px;'>",
+          "<table style='width: 100%'>
+           <div style='font-size: 16px;'><b>",
           CURRENT_LIBNAME_AE,
-          "</div>
-                        <div style='font-size: 12px;'>",
-          str_to_title(ADDRESS),
-          ", ",
-          str_to_title(CITY),
-          ", ",
-          ZIP,
-          "</div>
-        </table>"
+          "</b> </div> <hr>
+           <div style='font-size: 14px;'><b>",
+          OUTLET_NAME,
+          "</b> </div>"
         ),
       CURRENT_LIBNAME_OUTLET == CURRENT_LIBNAME_AE ~
         paste0(
           "<table>
-                        <div style='font-size: 18px;'><b>",
+           <div style='font-size: 16px;'><b>",
           CURRENT_LIBNAME_OUTLET,
-          "</div>
-                        <div style='font-size: 12px;'>",
-          str_to_title(ADDRESS),
-          ", ",
-          str_to_title(CITY),
-          ", ",
-          ZIP,
-          "</div>
-        </table>"
+          "</b>",
+          "</div>"
         )
+    ),
+    library_label = paste0(
+      library_header,
+      "<div style='font-size: 12px;'>",
+      str_to_title(ADDRESS),
+      ", ",
+      str_to_title(CITY),
+      ", ",
+      ZIP,
+      "<hr><div style='font-size: 12px;'>",
+      "Click to see system-wide information",
+      "</div> </table>"
+    ),
+    library_popup = paste0(
+      library_data_header,
+      library_data_table
     )
   )
+
 
 ##### Sync Inputa #####
 observe({
@@ -69,59 +182,31 @@ observe({
   )
 })
 
-# observe({
-#   system_type <- outlets %>%
-#     filter(
-#       CNTY %in% input$st_county,
-#       CURRENT_LIBNAME_AE %in% input$ae,
-#       C_OUT_TY %in% input$outlet_type
-#     ) %>%
-#     reframe(unique(SERVICE_AREA)) %>%
-#     pull() %>%
-#     sort()
-
-#   updatePickerInput(
-#     session,
-#     "system_type",
-#     choices = c("City Library" = "city", "County Library" = "county"),
-#     selected = system_type,
-#     options = list(
-#       `actions-box` = TRUE,
-#       `selected-text-format` = paste0(
-#         "count > ",
-#         1
-#       ),
-#       `count-selected-text` = "All Library Types"
-#     )
-#   )
+# observeEvent(input$submitButton, {
+#   output$ce_text <- renderUI({
+#     req(input$submitButton)
+#     if ("CE" %in% input$outlet_type & !"BR" %in% input$outlet_type) {
+#       HTML(
+#         "<hr><em>Note: Emery County, Salt Lake County, and San Juan County do not have a central library.</em>"
+#       )
+#     }
+#   })
 # })
 
-# observe({
-#   outlet_type <- outlets %>%
-#     filter(
-#       CNTY %in% input$st_county,
-#       CURRENT_LIBNAME_AE %in% input$ae,
-#       SERVICE_AREA %in% input$system_type
-#     ) %>%
-#     reframe(unique(C_OUT_TY)) %>%
-#     pull() %>%
-#     sort()
+ce_selected <- eventReactive(input$submitButton, {
+  input$outlet_type
+})
 
-#   updatePickerInput(
-#     session,
-#     "outlet_type",
-#     choices = c("Central Library" = "CE", "Branch Library" = "BR"),
-#     selected = outlet_type,
-#     options = list(
-#       `actions-box` = TRUE,
-#       `selected-text-format` = paste0(
-#         "count > ",
-#         1
-#       ),
-#       `count-selected-text` = "All Location Types"
-#     )
-#   )
-# })
+output$ce_text <- renderUI({
+  req(ce_selected())
+
+  if ("CE" %in% ce_selected() && !"BR" %in% ce_selected()) {
+    HTML(
+      "<hr><em>Note: Emery County, Salt Lake County, and San Juan County do not have a central library.</em>"
+    )
+  }
+})
+
 
 ##### Filter Data #####
 map_libs_filtered <- eventReactive(
@@ -168,8 +253,9 @@ output$state_map <- renderLeaflet({
       lat = ~LAT,
       radius = 4,
       fillOpacity = .75,
-      color = "#002f6c",
-      label = ~ lapply(library_info, HTML),
+      color = "#002f6c", #~ marker_color(C_OUT_TY)
+      label = ~ lapply(library_label, HTML),
+      popup = ~ lapply(library_popup, HTML),
       popupOptions = popupOptions(keepInView = TRUE),
     )
 

@@ -54,3 +54,19 @@
 .bslib-sidebar-layout>.collapse-toggle>.collapse-icon {
     fill: #ffffff !important;
 }
+
+hr {
+    border-top: 1px solid #000000;
+    padding: 0;
+    margin: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr,
+td,
+th {
+    padding: 0em;
+}
