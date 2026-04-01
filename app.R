@@ -32,6 +32,8 @@ hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 options(scipen = 999)
 
+#rsconnect::writeManifest()
+
 #### Load Data ####
 
 variable_key <- read.csv("data/pls_variable_key.csv")
