@@ -1,5 +1,5 @@
 # Load necessary packages
-# library(highcharter)
+library(highcharter)
 library(tidyverse)
 library(magrittr)
 library(shiny)
@@ -9,8 +9,8 @@ library(shinyWidgets)
 library(DT)
 library(leaflet)
 library(shinycssloaders)
-# library(reactable)
-# library(reactablefmtr)
+library(reactable)
+library(reactablefmtr)
 library(bslib)
 library(bsicons)
 library(shinyalert)
@@ -19,6 +19,7 @@ library(htmlwidgets)
 library(thematic)
 library(fontawesome)
 library(scales)
+library(sf)
 
 #### Color Palette ####
 # head_color <- "#002F6C"
@@ -26,52 +27,35 @@ library(scales)
 # sub2_color <- "#4EC3E0"
 
 #### Set Options ####
-# hcoptslang <- getOption("highcharter.lang")
-# hcoptslang$thousandsSep <- ","
-# options(highcharter.lang = hcoptslang)
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+options(highcharter.lang = hcoptslang)
 options(scipen = 999)
 
 #### Load Data ####
 
-outlets <- readRDS("data/pls_outlet_national.rds") %>%
-  filter(STABR == "UT", hide_lib == 0, FISCAL_YEAR == max(FISCAL_YEAR)) %>%
-  mutate(
-    CITY = case_when(
-      CITY == "South Salt Lake City" ~ "South Salt Lake",
-      CITY == "Mt. Pleasant" ~ "Mount Pleasant",
-      .default = CITY
-    ),
-    LAT = case_when(
-      CURRENT_LIBNAME_OUTLET == "Teen Center" ~ 38.57367327593949,
-      .default = LAT
-    ),
-    LONG = case_when(
-      CURRENT_LIBNAME_OUTLET == "Teen Center" ~ -109.54459779999999,
-      .default = LONG
-    )
-  )
+variable_key <- read.csv("data/pls_variable_key.csv")
+outlets <- readRDS("data/processed/outlet_ut_app.RDS")
+pls <- readRDS("data/processed/pls_ut_app.RDS")
+pls_national <- readRDS("data/processed/pls_national_app.RDS")
+pls_utah <- readRDS("data/processed/pls_utah_app.RDS")
+pls_national_state <- readRDS("data/processed/pls_national_state_app.RDS")
+pls_national_state_map <- read_sf(
+  "data/processed/pls_national_state_map_app.shp"
+)
 
-pls <- readRDS("data/pls_national.rds") %>%
-  filter(
-    STABR == "UT",
-    hide_lib == 0,
-    FISCAL_YEAR == max(FISCAL_YEAR)
-  ) %>%
-  mutate(CNTY = str_to_title(CNTY), CITY = str_to_title(CITY)) %>%
-  select(
-    CURRENT_LIBNAME,
-    POPU_LSA,
-    VISITS,
-    TOTSTAFF,
-    TOT_LIB_STAFF,
-    LOCGVT,
-    STGVT,
-    FEDGVT,
-    OTHINCM,
-    TOTINCM
-  ) %>%
-  mutate(across(c(POPU_LSA:TOT_LIB_STAFF), ~ format(., big.mark = ","))) %>%
-  mutate(across(c(LOCGVT:TOTINCM), ~ dollar(.)))
+current_year <- max(as.numeric(outlets$FISCAL_YEAR))
+
+national_vars <- setdiff(
+  names(pls_national),
+  c("FISCAL_YEAR", "CURRENT_LIBNAME_DISAMB", "STABR", "state", "POPU_LSA")
+)
+
+national_vars_pretty <- variable_key %>%
+  filter(SHORTNAME %in% national_vars) %>%
+  select(GROUP, SHORTNAME, INDICATOR)
+
+states <- unique(pls_national$state) %>% sort()
 
 counties <- outlets %>%
   reframe(unique(CNTY)) %>%
@@ -83,8 +67,7 @@ aes <- outlets %>%
   pull() %>%
   sort()
 
-current_year <- max(as.numeric(outlets$FISCAL_YEAR))
-
+source("RScripts/lists.R", local = TRUE)$value
 source("RScripts/theme.R", local = TRUE)$value
 
 #### UI ####
@@ -93,7 +76,7 @@ ui <- fluidPage(
   theme = usl_theme,
 
   page_navbar(
-    title = strong("Utah Public Libraries - Central Library and Branch Map"),
+    title = strong("Utah Public Libraries"),
     navbar_options = navbar_options(
       bg = NULL,
       underline = TRUE
@@ -101,6 +84,8 @@ ui <- fluidPage(
     shiny::includeCSS("www/styles.css"),
 
     source("RScripts/state_service_ui.R", local = TRUE)$value,
+    source("RScripts/national_compare_ui.R", local = TRUE)$value,
+    source("RScripts/utah_compare_ui.R", local = TRUE)$value,
     nav_spacer(),
     #source("RScripts/about_ui.R", local = TRUE)$value
   )
@@ -109,6 +94,8 @@ ui <- fluidPage(
 #### Server ####
 server <- function(input, output, session) {
   source("RScripts/state_service_server.R", local = TRUE)$value
+  source("RScripts/national_compare_server.R", local = TRUE)$value
+  source("RScripts/utah_compare_server.R", local = TRUE)$value
 }
 
 

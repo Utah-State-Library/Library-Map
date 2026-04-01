@@ -61,56 +61,56 @@ map_all %<>%
       "Population of Legal Service Area: ",
       "</td>
           <td style = \"text-align: right; background-color: #ffffff;\">",
-      POPU_LSA,
+      format(POPU_LSA, big.mark = ","),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "Visits: ",
       "</td>
           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      VISITS,
+      format(VISITS, big.mark = ","),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #ffffff;\">",
       "Number of Library Staff: ",
       "</td>
           <td style = \"text-align: right; background-color: #ffffff;\">",
-      TOT_LIB_STAFF,
+      format(TOT_LIB_STAFF, big.mark = ""),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "Total FTE of Library Staff: ",
       "</td>
           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      TOTSTAFF,
+      format(TOTSTAFF, big.mark = ","),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #ffffff;\">",
       "Local Government Revenue: ",
       "</td>
           <td style = \"text-align: right; background-color: #ffffff;\">",
-      LOCGVT,
+      dollar(LOCGVT),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "State Government Revenue: ",
       "</td>
           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      STGVT,
+      dollar(STGVT),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #ffffff;\">",
       "Federal Government Revenue: ",
       "</td>
           <td style = \"text-align: right; background-color: #ffffff;\">",
-      FEDGVT,
+      dollar(FEDGVT),
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "Other Revenue: ",
       "</td>
           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      OTHINCM,
+      dollar(OTHINCM),
       "</td>
         </tr> </table>"
     ),
@@ -182,17 +182,6 @@ observe({
   )
 })
 
-# observeEvent(input$submitButton, {
-#   output$ce_text <- renderUI({
-#     req(input$submitButton)
-#     if ("CE" %in% input$outlet_type & !"BR" %in% input$outlet_type) {
-#       HTML(
-#         "<hr><em>Note: Emery County, Salt Lake County, and San Juan County do not have a central library.</em>"
-#       )
-#     }
-#   })
-# })
-
 ce_selected <- eventReactive(input$submitButton, {
   input$outlet_type
 })
@@ -262,6 +251,9 @@ output$state_map <- renderLeaflet({
   map
 })
 
+output$map_year <- renderUI({
+  paste0("Utah Public Libraries - ", current_year)
+})
 
 output$n_aes <- renderUI({
   map_libs_filtered() %>%
@@ -286,5 +278,29 @@ output$n_countylibs <- renderUI({
   map_libs_filtered() %>%
     filter(SERVICE_AREA == "county") %>%
     reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    pull(n)
+})
+
+output$n_visits <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, VISITS) %>%
+    distinct() %>%
+    reframe(n = format(sum(VISITS, na.rm = T), big.mark = ",")) %>%
+    pull(n)
+})
+
+output$n_popu_lsa <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, POPU_LSA) %>%
+    distinct() %>%
+    reframe(n = format(sum(POPU_LSA, na.rm = T), big.mark = ",")) %>%
+    pull(n)
+})
+
+output$n_regbor <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, REGBOR) %>%
+    distinct() %>%
+    reframe(n = format(sum(REGBOR, na.rm = T), big.mark = ",")) %>%
     pull(n)
 })

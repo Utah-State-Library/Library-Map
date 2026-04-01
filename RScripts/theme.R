@@ -9,9 +9,9 @@ usl_theme <- bs_theme(
   info = "#66748F",
   warning = "#E9CF72",
   danger = "#AF4646",
-  base_font = "Raleway",
+  base_font = "Raleway", #Raleway
   code_font = NULL,
-  heading_font = bslib::font_google("Raleway")
+  heading_font = bslib::font_google("Raleway") #Raleway
 )
 
 options(shiny.useragg = TRUE)

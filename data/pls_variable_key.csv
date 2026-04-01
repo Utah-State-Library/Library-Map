@@ -1,0 +1,266 @@
+GROUP,INDICATOR,INDICATOR_OFFICIAL,SHORTNAME,APPCOL
+Data,Fiscal Year,Fiscal Year,FISCAL_YEAR,1
+Identification,FSCS ID,FSCS ID,FSCSKEY,1
+Identification,Library Code,Library Code,LIBID,1
+Identification,Name of Library,Name of Library,LIBNAME,1
+Identification,Street Address,Street Address,ADDRESS,1
+Identification,City,City (of street address),CITY,1
+Identification,ZIP Code,ZIP Code (of street address),ZIP,1
+Identification,ZIP+4,ZIP+4 (of street address),ZIP4,
+Identification,Mailing Address,Mailing Address,ADDRES_M,
+Identification,City (of mailing address),City (of mailing address),CITY_M,
+Identification,ZIP Code (of mailing address),ZIP Code (of mailing address),ZIP_M,
+Identification,ZIP+4 (of mailing address),ZIP+4 (of mailing address),ZIP4_M,
+Identification,County of the Entity,County of the Entity,CNTY,1
+Identification,Telephone,Telephone (include area code),PHONE,
+Identification,Library Website,Library's main website address,WEB_ADDR,
+General Information,Population of Legal Service Area,Population of Legal Service Area,POPU_LSA,1
+General Information,Reporting Period Start Date,Reporting Period Start Date (mm/dd/yyyy),STARTDAT,
+General Information,Reporting Period End Date,Reporting Period End Date (mm/dd/yyyy),ENDDATE,
+Service Outlets,Number of Central Libraries,Number of Central Libraries,CENTLIB,1
+Service Outlets,Number of Branch Libraries,Number of Branch Libraries,BRANLIB,1
+Service Outlets,Number of Bookmobiles,Number of Bookmobiles,BKMOB,1
+Paid Staff,FTE of Librarians with ALA-Accredited Master's Degree,FTE of Librarians with ALA-accredited master's degree,MASTER,1
+Paid Staff,Total FTE of Librarians,Total FTE of Librarians,LIBRARIA,1
+Paid Staff,FTE of All Other Paid Staff,FTE of All Other Paid Staff,OTHPAID,1
+Paid Staff,Total FTE of Paid Staff,Total FTE of Paid Staff,TOTSTAFF,1
+Paid Staff,Total Library Staff,Total Library Staff,TOT_LIB_STAFF,1
+Volunteers,Volunteers,Number of individuals who worked for the library this fiscal year,VLNT,1
+Volunteers,Volunteer Hours,Number of hours volunteers worked for the library this fiscal year,VLNT_HRS,1
+Library Stories,What are you most proud of this year?,What are you most proud of this year?,PROUD_MOMENT,
+Library Stories,What was your biggest challenge this year?,What was your biggest challenge this year?,BIGGEST_CHALLENGE,
+Operating Revenue,Local Operating Revenue,Local Operating Revenue,LOCGVT,1
+Operating Revenue,State Operating Revenue,State Operating Revenue,STGVT,1
+Operating Revenue,Federal Operating Revenue,Federal Operating Revenue,FEDGVT,1
+Operating Revenue,Other Operating Revenue,Other Operating Revenue,OTHINCM,1
+Operating Revenue,Total Operating Revenue,Total Operating Revenue,TOTINCM,1
+Operating Expenditures,Local Operating Expenditures,Local Operating Expenditures,LOCEXP,1
+Operating Expenditures,State Operating Expenditures,State Operating Expenditures,STEXP,1
+Operating Expenditures,Federal Operating Expenditures,Federal Operating Expenditures,FEDEXP,1
+Operating Expenditures,Other Operating Expenditures,Other Operating Expenditures,OTHEXP,1
+Operating Expenditures,Total Operating Expenditures,Total Operating Expenditures,TOTEXP,1
+Staff Expenditures,Salaries and Wages,Salaries and Wages,SALARIES,1
+Staff Expenditures,Employee Benefits,Employee Benefits,BENEFIT,1
+Staff Expenditures,Total Staff Expenditures,Total Staff Expenditures,STAFFEXP,1
+Collection Expenditures,Print Materials Expenditures,Print Materials,PRMATEXP,1
+Collection Expenditures,Electronic Materials Expenditures,Electronic Materials,ELMATEXP,1
+Collection Expenditures,Other Materials Expenditures,Other Materials,OTHMATEX,1
+Collection Expenditures,Total Collection Expenditures,Total Collection Expenditures,TOTEXPCO,1
+Other Operating Expenditures,Other Operating Expenditures,Other Operating Expenditures,OTHOPEXP,1
+Total Operating Expenditures,Total Operating Expenditures,Total Operating Expenditures,TOTOPEXP,1
+Capital Revenue,Local Capital Revenue,Local Capital Revenue,LCAP_REV,1
+Capital Revenue,State Capital Revenue,State Capital Revenue,SCAP_REV,1
+Capital Revenue,Federal Capital Revenue,Federal Capital Revenue,FCAP_REV,1
+Capital Revenue,Other Capital Revenue,Other Capital Revenue,OCAP_REV,1
+Capital Revenue,Total Capital Revenue,Total Capital Revenue,CAP_REV,1
+Capital Expenditures,Total Capital Expenditures,Total Capital Expenditures,CAPITAL,1
+Collections,Print Materials,Print Materials,BKVOL,1
+Collections,Audio Materials - Physical Units,Audio Materials - Physical Units,AUDIO_PH,1
+Collections,Video Materials - Physical Units,Video Materials - Physical Units,VIDEO_PH,1
+Collections,Other Materials,Other Materials,OTHMATS,1
+Collections,Total Library Collection,Total Library Collection,TOTHOLD,1
+Collections,Total Library Collection - Physical Items,Total Library Collection - Physical Items,TOTPHYS,1
+Services,Weekly Scheduled Public Service Hours (all branches),Weekly Scheduled Public Service Hours (all outlets),WK_HRS,
+Services,Library Visits,Library Visits,VISITS,1
+Services,Library Visits Reporting Method,Library Visits Reporting Method,VISITRPT,1
+Services,Reference Transactions,Reference Transactions,REFERENC,1
+Services,Reference Transactions Reporting Method,Reference Transactions Reporting Method,REFERRPT,1
+Services,Number of Registered Users,Number of registered users,REGBOR,1
+Services,Current Overdue Fine Policy,Current Overdue Fine Policy,FINEPOL,1
+Services,Current Overdue Fine Policy,Current Overdue Fine Policy,ODFINE,1
+Services,Automatic Renewal of Physical Materials,Automatic Renewal of Physical Materials,AUTORENEW,1
+Electronic Books,E-Books via AE,E-Books via AE,EBOOK_AE,
+Electronic Books,E-Books via Collective,E-Books via Collective,EBOOK_CO,
+Electronic Books,E-Books via State,E-Books via State,EBOOK_SL,
+Electronic Serials,E-Serials via AE,E-Serials via AE,ESERIAL_AE,
+Electronic Serials,E-Serials via Collective,E-Serials via Collective,ESERIAL_CO,
+Electronic Serials,E-Serials via State,E-Serials via State,ESERIAL_SL,
+Electronic Audio,E-Audio via AE,E-Audio via AE,EAUDIO_AE,
+Electronic Audio,E-Audio via Collective,E-Audio via Collective,EAUDIO_CO,
+Electronic Audio,E-Audio via State,E-Audio via State,EAUDIO_SL,
+Electronic Video,E-Video via AE,E-Video via AE,EVIDEO_AE,
+Electronic Video,E-Video via Collective,E-Video via Collective,EVIDEO_CO,
+Electronic Video,E-Video via State,E-Video via State,EVIDEO_SL,
+Research Databases,Research Databases via AE,Research Databases via AE,RESDB_AE,
+Research Databases,Research Databases via Collective,Research Databases via Collective,RESDB_CO,
+Research Databases,Research Databases via State,Research Databases via State,RESDB_SL,
+Online Learning Platforms,Online Learning Platforms via AE,Online Learning Platforms via AE,OLP_AE,
+Online Learning Platforms,Online Learning Platforms via Collective,Online Learning Platforms via Collective,OLP_CO,
+Online Learning Platforms,Online Learning Platforms via State,Online Learning Platforms via State,OLP_SL,
+Circulation,E-book Circulation,E-book Circulation,EBOOK_CIR,1
+Circulation,E-serial Circulation,E-serial Circulation,ESERIAL_CIR,1
+Circulation,E-audio Circulation,E-audio Circulation,EAUDIO_CIR,1
+Circulation,E-video Circulation,E-video Circulation,EVIDEO_CIR,1
+Circulation,Circulation of Children's Physical Material,Circulation of Children's Physical Materials,KIDCIRCL,1
+Circulation,Circulation of Physical Items,Physical Item Circulation,PHYSCIR,1
+Circulation,Circulation of Other Physical Items,Circulation of Other Physical Items,OTHPHCIR,1
+Circulation,Total Circulation of Material,Total Circulation of Materials,TOTCIR,1
+Circulation,Circulation of Electronic Material,Electronic Material Circulation (Use of Electronic Materials),ELMATCIR,1
+Retired (2023),Website Visits,Website Visits retired 2023,WEBVISIT,
+Retired (2023),Successful Retrieval of Electronic Information,Successful Retrieval of Electronic Information retired 2023,EINFO,
+Retired (2023),Total Library Collection - Downloadable Items,Total Library Collection - Downloadable Items Retired 2023,TOT_DOWN,
+Retired (2023),Electronic Content Use,Electronic Content Use retired 2023,EUSE,
+Retired (2023),Total Collection Use,Total Collection Use retired 2023,TUSE,
+Retired (2023),Circulation of Electronic Material - old,Electronic Material Circulation (Use of Electronic Materials) retired 2023,ELMATCIR_OLD,
+Interlibrary Loan,ILLs Provided To Other Libraries,Number of Items Provided To Other Libraries,LOANTO,1
+Interlibrary Loan,ILLs Received From Other Libraries,Number of Items Received From Other Libraries,LOANFM,1
+Children (Ages 0-5),Number In-Person Onsite Children's Programs (ages 0-5),Number In-Person Onsite Children's Programs (ages 0-5),INPERSON_BABY_PRO,
+Children (Ages 0-5),In-Person Onsite Children's Program Attendance (ages 0-5),In-Person Onsite Children's Program Attendance (ages 0-5),INPERSON_BABY_ATTEND,
+Children (Ages 0-5),Number In-Person Offsite Children's Programs (ages 0-5),Number In-Person Offsite Children's Programs (ages 0-5),OFFSITE_BABY_PRO,
+Children (Ages 0-5),In-Person Offsite Children's Program Attendance (ages 0-5),In-Person Offsite Children's Program Attendance (ages 0-5),OFFSITE_BABY_ATTEND,
+Children (Ages 0-5),Number Live Virtual Children's Programs (ages 0-5),Number Live Virtual Children's Programs (ages 0-5),LIVE_BABY_PRO,
+Children (Ages 0-5),Live Virtual Children's Program Attendance (ages 0-5),Live Virtual Children's Program Attendance (ages 0-5),LIVE_BABY_ATTEND,
+Children (Ages 0-5),Number Prerecorded (on-demand) Children's Programs (ages 0-5),Number Prerecorded (on-demand) Children's Programs (ages 0-5),RECORDED_BABY_PRO,
+Children (Ages 0-5),Views of Prerecorded Children's Programs (ages 0-5) within 7 days,Views of Prerecorded Children's Programs (ages 0-5) within 7 days,RECORDED_BABY_ATTEND,
+Children (Ages 6-11),Number In-Person Onsite Children's Programs (ages 6-11),Number In-Person Onsite Children's Programs (ages 6-11),INPERSON_CHILD_PRO,
+Children (Ages 6-11),In-Person Onsite Children's Program Attendance (ages 6-11),In-Person Onsite Children's Program Attendance (ages 6-11),INPERSON_CHILD_ATTEND,
+Children (Ages 6-11),Number In-Person Offsite Children's Programs (ages 6-11),Number In-Person Offsite Children's Programs (ages 6-11),OFFSITE_CHILD_PRO,
+Children (Ages 6-11),In-Person Offsite Children's Program Attendance (ages 6-11),In-Person Offsite Children's Program Attendance (ages 6-11),OFFSITE_CHILD_ATTEND,
+Children (Ages 6-11),Number Live Virtual Children's Programs (ages 6-11),Number Live Virtual Children's Programs (ages 6-11),LIVE_CHILD_PRO,
+Children (Ages 6-11),Live Virtual Children's Program Attendance (ages 6-11),Live Virtual Children's Program Attendance (ages 6-11),LIVE_CHILD_ATTEND,
+Children (Ages 6-11),Number Prerecorded (on-demand) Children's Programs (ages 6-11),Number Prerecorded (on-demand) Children's Programs (ages 6-11),RECORDED_CHILD_PRO,
+Children (Ages 6-11),Views of Prerecorded Children's Programs (ages 6-11) within 7 days,Views of Prerecorded Children's Programs (ages 6-11) within 7 days,RECORDED_CHILD_ATTEND,
+Ya/Teens (Ages 12-18),Number In-Person Onsite YA Programs (ages 12-18),Number In-Person Onsite YA Programs (ages 12-18),INPERSON_YA_PRO,
+Ya/Teens (Ages 12-18),In-Person Onsite YA Program Attendance (ages 12-18),In-Person Onsite YA Program Attendance (ages 12-18),INPERSON_YA_ATTEND,
+Ya/Teens (Ages 12-18),Number In-Person Offsite YA Programs (ages 12-18),Number In-Person Offsite YA Programs (ages 12-18),OFFSITE_YA_PRO,
+Ya/Teens (Ages 12-18),In-Person Offsite YA Program Attendance (ages 12-18),In-Person Offsite YA Program Attendance (ages 12-18),OFFSITE_YA_ATTEND,
+Ya/Teens (Ages 12-18),Number Live Virtual YA Programs (ages 12-18),Number Live Virtual YA Programs (ages 12-18),LIVE_YA_PRO,
+Ya/Teens (Ages 12-18),Live Virtual YA Program Attendance (ages 12-18),Live Virtual YA Program Attendance (ages 12-18),LIVE_YA_ATTEND,
+Ya/Teens (Ages 12-18),Number Prerecorded (on-demand) YA Programs (ages 12-18),Number Prerecorded (on-demand) YA Programs (ages 12-18),RECORDED_YA_PRO,
+Ya/Teens (Ages 12-18),Views of Prerecorded YA Programs (ages 12-18) within 7 days,Views of Prerecorded YA Programs (ages 12-18) within 7 days,RECORDED_YA_ATTEND,
+Adults (Ages 19+),Number In-Person Onsite Adult Programs (ages 19+),Number In-Person Onsite Adult Programs (ages 19+),INPERSON_ADULT_PRO,
+Adults (Ages 19+),In-Person Onsite Adult Program Attendance (ages 19+),In-Person Onsite Adult Program Attendance (ages 19+),INPERSON_ADULT_ATTEND,
+Adults (Ages 19+),Number In-Person Offsite Adult Programs (ages 19+),Number In-Person Offsite Adult Programs (ages 19+),OFFSITE_ADULT_PRO,
+Adults (Ages 19+),In-Person Offsite Adult Program Attendance (ages 19+),In-Person Offsite Adult Program Attendance (ages 19+),OFFSITE_ADULT_ATTEND,
+Adults (Ages 19+),Number Live Virtual Adult Programs (ages 19+),Number Live Virtual Adult Programs (ages 19+),LIVE_ADULT_PRO,
+Adults (Ages 19+),Live Virtual Adult Program Attendance (ages 19+),Live Virtual Adult Program Attendance (ages 19+),LIVE_ADULT_ATTEND,
+Adults (Ages 19+),Number Prerecorded (on-demand) Adult Programs (ages 19+),Number Prerecorded (on-demand) Adult Programs (ages 19+),RECORDED_ADULT_PRO,
+Adults (Ages 19+),Views of Prerecorded Adult Programs (ages 19+) within 7 days,Views of Prerecorded Adult Programs (ages 19+) within 7 days,RECORDED_ADULT_ATTEND,
+Other/Family/All Ages,Number In-Person Onsite General Programs,Number In-Person Onsite General Programs,INPERSON_GENERAL_PRO,
+Other/Family/All Ages,In-Person Onsite General Program Attendance,In-Person Onsite General Program Attendance,INPERSON_GENERAL_ATTEND,
+Other/Family/All Ages,Number In-Person Offsite General Programs,Number In-Person Offsite General Programs,OFFSITE_GENERAL_PRO,
+Other/Family/All Ages,In-Person Offsite General Program Attendance,In-Person Offsite General Program Attendance,OFFSITE_GENERAL_ATTEND,
+Other/Family/All Ages,Number Live Virtual General Programs,Number Live Virtual General Programs,LIVE_GENERAL_PRO,
+Other/Family/All Ages,Live Virtual General Program Attendance,Live Virtual General Program Attendance,LIVE_GENERAL_ATTEND,
+Other/Family/All Ages,Number Prerecorded (on-demand) General Programs,Number Prerecorded (on-demand) General Programs,RECORDED_GENERAL_PRO,
+Other/Family/All Ages,Views of Prerecorded General Programs within 7 days,Views of Prerecorded General Programs within 7 days,RECORDED_GENERAL_ATTEND,
+Self-Directed Activities,Number Self-directed activities for ages 0-5,Number Self-directed activities for ages 0-5,SELFDIR_BABY_PRO,
+Self-Directed Activities,Number Participants in activities for ages 0-5,Number Participants in activities for ages 0-5,SELFDIR_BABY_ATTEND,
+Self-Directed Activities,Number Self-directed activities for ages 6-11,Number Self-directed activities for ages 6-11,SELFDIR_CHILD_PRO,
+Self-Directed Activities,Number Participants in activities for ages 6-11,Number Participants in activities for ages 6-11,SELFDIR_CHILD_ATTEND,
+Self-Directed Activities,Number Self-directed activities for ages 12-18,Number Self-directed activities for ages 12-18,SELFDIR_YA_PRO,
+Self-Directed Activities,Number Participants in activities for ages 12-18,Number Participants in activities for ages 12-18,SELFDIR_YA_ATTEND,
+Self-Directed Activities,Number Self-directed activities for ages 19+,Number Self-directed activities for ages 19+,SELFDIR_ADULT_PRO,
+Self-Directed Activities,Number Participants in activities for ages 19+,Number Participants in activities for ages 19+,SELFDIR_ADULT_ATTEND,
+Self-Directed Activities,Number Self-directed activities for general interest,Number Self-directed activities for general interest,SELFDIR_GENERAL_PRO,
+Self-Directed Activities,Number Participants in activities  for general interest,Number Participants in activities  for general interest,SELFDIR_GENERAL_ATTEND,
+New Programming Measures - Totals,Total Number of Library Programs,Total Number of Library Programs,TOTPRO,1
+New Programming Measures - Totals,Number of Childrens Programs,Number of Childrens Programs,KIDPRO,1
+New Programming Measures - Totals,Live Childrens Programs (Ages 0-5),Number of Synchronous Program Sessions Targeted at Children Ages 0-5,K0_5PRO,1
+New Programming Measures - Totals,Live Young Adult Programs (Ages 12-18),Number of Young Adult Programs,YAPRO,1
+New Programming Measures - Totals,Live Childrens Programs (Ages 6-11),Number of Synchronous Program Sessions Targeted at Children Ages 6-11,K6_11PRO,1
+New Programming Measures - Totals,Total Attendance at Library Programs,Total Attendance at Library Programs,TOTATTEN,1
+New Programming Measures - Totals,Attendance at Childrens Programs (Ages 0-11),Attendance at Childrens Programs,KIDATTEN,1
+New Programming Measures - Totals,Live Adult Programs (Ages 19+),Number of Synchronous Program Sessions Targeted at Adults Age 19 or Older,ADULTPRO,1
+New Programming Measures - Totals,Attendance at Young Adult Programs (Ages 12-18),Attendance at Young Adult Programs,YAATTEN,1
+New Programming Measures - Totals,Live General Interest Programs,Number of Synchronous General Interest Program Sessions,GENPRO,1
+New Programming Measures - Totals,Live In-Person Onsite Programs,Number of Synchronous In-Person Onsite Program Sessions,ONPRO,1
+New Programming Measures - Totals,Live In-Person Offsite Programs,Number of Synchronous In-Person Offsite Program Sessions,OFFPRO,1
+New Programming Measures - Totals,Live Virtual Programs,Number of Synchronous Virtual Program Sessions,VIRPRO,1
+New Programming Measures - Totals,Attendance at Live Programs (Ages 0-5),Attendance at Synchronous Programs Targeted at Children Ages 0-5,K0_5ATTEN,1
+New Programming Measures - Totals,Attendance at Live Programs (Ages 6-11),Attendance at Synchronous Programs Targeted at Children Ages 6-11,K6_11ATTEN,1
+New Programming Measures - Totals,Attendance at Live Programs (Age 19+),Attendance at Synchronous Programs Targeted at Adults Age 19 or Older,ADULTATTEN,1
+New Programming Measures - Totals,Attendance at Live General Interest Programs,Attendance at Synchronous General Interest Programs,GENATTEN,1
+New Programming Measures - Totals,Attendance at Live In-Person Onsite Programs,Synchronous In-Person Onsite Program Attendance,ONATTEN,1
+New Programming Measures - Totals,Attendance at Live In-Person Offsite Programs,Synchronous In-Person Offsite Program Attendance,OFFATTEN,1
+New Programming Measures - Totals,Attendance at Live Virtual Programs,Synchronous Virtual Program Attendance,VIRATTEN,1
+New Programming Measures - Totals,Total Number of Asynchronous Programs,Total Number of Asynchronous Program Presentations,TOTPRES,1
+New Programming Measures - Totals,Total Views of Asynchronous Program Presentations within 30 Days,Total Views of Asynchronous Program Presentations within 30 Days,TOTVIEWS,1
+Internet Access,Internet Computers for General Public Use,Number of Internet Computers for the General Public,GPTERMS,1
+Internet Access,Number of Uses (sessions) of Public Internet Computers,Number of Uses (sessions) of Public Internet Computers,PITUSR,1
+Internet Access,Reporting Method for Number of Uses of Public Internet Computers Per Year,Reporting Method for Number of Uses of Public Internet Computers Per Year,PITUSRRPT,1
+Internet Access,Number of Times Patrons Used the Wireless Network,Number of Times (sessions) Patrons Used the Wireless Network,WIFISESS,1
+Internet Access,Reporting Method for Wireless Sessions,Reporting Method for Wireless Sessions,WIFISRPT,1
+Internet Access,Public Wi-Fi Network Availability Hours,Public Wi-Fi Network Availability Hours,WIFI_HOURS,
+Internet Access,Guest Wi-Fi Network SSID,Guest Wi-Fi Network SSID,WIFI_SSID,
+Internet Access,Hotspots Available for Checkout,Total Number of Hotspots Available for Circulation,HOTSPOT,1
+Internet Access,Circulation of Hotspots,Hotspot Circulation for Reporting Period,HOTSPOT_CIRC,1
+Internet Access,Library IP Address or IP Address Range,Library IP Address or IP Address Range,IP_ADDRESS,
+Outlet Data,WebPLUS Identification number,WebPLUS Identification number,FSCSKEY_OUT,
+Outlet Data,Unique ID suffix assigned by WebPLUS,Unique ID suffix assigned by WebPLUS,FSCS_SEQ,
+Outlet Data,State assigned identification number,State assigned identification number,LIBID_OUT,
+Outlet Data,Legal Name,Legal Name,LIBNAME_OUT,
+Outlet Address,Physical Street Address,Physical Street Address,ADDRESS_OUT,
+Outlet Address,City,City,CITY_OUT,
+Outlet Address,ZIP Code,ZIP Code,ZIP_OUT,
+Outlet Address,ZIP+4 Code,ZIP+4 Code,ZIP4_OUT,
+Outlet Address,County,County,CNTY_OUT,
+Outlet Information,Phone,Phone,PHONE_OUT,
+Outlet Information,Outlet Type Code,Outlet Type Code,C_OUT_TY,
+Outlet Information,Metropolitan Status Code,Metropolitan Status Code,C_MSA,
+Outlet Square Feet And Bookmobiles,Area in Square Feet of outlet,Area in Square Feet of outlet,SQ_FEET,
+Outlet Square Feet And Bookmobiles,Number of Bookmobiles,Number of Bookmobiles,L_NUM_BM,
+Outlet Hours,Public Service Hours Per Year,Public Service Hours Per Year,HOURS,
+Outlet Hours,Number of Weeks Open,Number of Weeks Open,WKS_OPEN,
+Outlet Hours,Number of Weeks an Outlet Closed Due to COVID-19,Number of Weeks an Outlet Closed Due to COVID-19,C19WKSCL,
+Outlet Hours,Number of Weeks an Outlet Had Limited Occupancy Due to COVID-19,Number of Weeks an Outlet Had Limited Occupancy Due to COVID-19,C19WKSLO,
+Kpis,Audio Materials - Total,Audio Materials - Total,AUDIO_TOT,
+Kpis,Video Materials - Total,Video Materials - Total,VID_TOT,
+Retired Questions,Public Service Hours Per Year (all outlets),Public Service Hours Per Year (all outlets),HRS_OPEN,
+Retired Questions,Total Circulation,Total Circulation,TOTCIR_INPUT,
+Retired Questions,600.1 Number of Other Programs,600.1 Number of Other Programs,OTHPRO,
+Retired Questions,603.1 Attendance at all other programs,603.1 Attendance at all other programs,OTHATTEN,
+Retired Questions,Expenditures Audiovisual Materials - Physical Units,Expenditures Audiovisual Materials - Physical Units,AUDVISEXP,
+Retired Questions,458 Licensed Databases paid by other cooperative agreements (or consortia),458 Licensed Databases paid by other cooperative agreements (or consortia),DB_OTH,
+Covid,Closed Outlets Due to COVID-19,Closed Outlets Due to COVID-19,C19CLOSE,
+Covid,Public Services During COVID-19,Public Services During COVID-19,C19PUBSV,
+Covid,Electronic Library Cards Issued During COVID-19,Electronic Library Cards Issued During COVID-19,C19ECRD2,
+Covid,Reference Service During COVID-19,Reference Service During COVID-19,C19REFER,
+Covid,Outside Service During COVID-19,Outside Service During COVID-19,C19OUTSD,
+Covid,External WiFi Access Added During COVID-19,External WiFi Access Added During COVID-19,C19XWIF2,
+Covid,External WiFi Access Increased During COVID-19,External WiFi Access Increased During COVID-19,C19XWIF3,
+Covid,Staff Re-Assigned During COVID-19,Staff Re-Assigned During COVID-19,C19STOTH,
+Retired In 2020,Electronic Materials Added Due to COVID-19,Electronic Materials Added Due to COVID-19,C19ELMAT,
+Retired In 2020,Electronic Library Cards Issued Before COVID-19,Electronic Library Cards Issued Before COVID-19,C19ECRD1,
+Retired In 2020,Live Virtual Programs During COVID-19,Live Virtual Programs During COVID-19,C19LIVEP,
+Retired In 2020,Recordings of Program Content During COVID-19,Recordings of Program Content During COVID-19,C19RECDP,
+Retired In 2020,External WiFi Access Before COVID-19,External WiFi Access Before COVID-19,C19XWIF1,
+Virtual Programing,Total Number of Live Virtual Programs,Total Number of Live Virtual Programs,TOT_NUM_VIRTUAL_PRO,
+Virtual Programing,Total Number of Live Virtual Children's Programs,Total Number of Live Virtual Children's Programs,TOT_NUM_VIRTUAL_CHPRO,
+Virtual Programing,Total Number of Live Virtual Young Adult Programs,Total Number of Live Virtual Young Adult Programs,TOT_NUM_VIRTUAL_YAPRO,
+Virtual Programing,Total Live Virtual Attendance,Total Live Virtual Attendance,TOT_VIRTUAL_ATTEND,
+Virtual Programing,Attendance at Live Virtual Childrens Programs,Attendance at Live Virtual Childrens Programs,VIRTUAL_CHPRO_ATTEND,
+Virtual Programing,Attendance at Live Virtual Young Adult Programs,Attendance at Live Virtual Young Adult Programs,VIRTUAL_YAPRO_ATTEND,
+Virtual Programing,Total Recordings of Program Content,Total Recordings of Program Content,PROG_RECORDING,
+Virtual Programing,Total Views of Recorded Program Content,Total Views of Recorded Program Content,PROG_RECORDING_VIEWS,
+Virtual Programing,Total On-Demand Views of Live Virtual Programs,Total On-Demand Views of Live Virtual Programs,PROG_RECORDING_ONDEMAND,
+Retired 2024,Local/Other cooperative agreements,Local/Other cooperative agreements,EC_LO_OT,
+Retired 2024,Electronic Books (e-Books),Electronic Books (e-Books),EBOOK,
+Retired 2024,Audio Materials - Downloadable Titles,Audio Materials - Downloadable Titles,AUDIO_DL,
+Retired 2024,Video Materials - Downloadable Titles,Video Materials - Downloadable Titles,VIDEO_DL,
+Electronic Collections,State (state government or state library),State (state government or state library),EC_ST,
+Electronic Collections,Total Electronic Collections,Total Electronic Collections,ELECCOLL,1
+Current Serial Subscriptions,Number of Current Print Serial Subscriptions,Number of Current Print Serial Subscriptions,SUBSCRIP,
+Webplus,Maintenance of Effort,Maintenance of Effort,MNT_EFRT,
+Webplus,Tax Rate,Tax Rate,TAX_RATE,
+Webplus,Status of AE record current to prior year,Status of AE record current to prior year,STATSTRU,1
+Webplus,Status of LIBNAME current to prior year,Status of LIBNAME current to prior year,STATNAME,
+Webplus,Status of ADDRESS current to prior year,Status of ADDRESS current to prior year,STATADDR,
+Webplus,User defined ID. used to link two or more AEs together.,User defined ID. used to link two or more AEs together.,LINKID,
+Webplus,Old FSCSKEY,Old FSCSKEY,OLDID,
+Webplus,Interlibrary Relationship Code,Interlibrary Relationship Code,C_RELATN,
+Webplus,Legal Basis Code,Legal Basis Code,C_LEGBAS,
+Webplus,Administrative Structure Code,Administrative Structure Code,C_ADMIN,
+Webplus,FSCS Public Library Definition,FSCS Public Library Definition,C_FSCS,
+Webplus,Geographic Code,Geographic Code,GEOCODE,
+Webplus,Legal Service Area Boundary Change,Legal Service Area Boundary Change,LSABOUND,
+Delete,Audio Materials - Downloadable Titles-DELETE,Audio Materials - Downloadable Titles-DELETE,AUDIO_DL_DELETE,
+Identification,State,State,STABR,1
+Identification,Current Library Name,Current Library Name,CURRENT_LIBNAME,
+Identification,Current Library Name,Current Library Name Disambiguated,CURRENT_LIBNAME_DISAMB,
+Identification,Current Name of Administrative Entity,Current Library Name of Administrative Entity,CURRENT_LIBNAME_AE,
+Identification,Current Name of Administrative Entity,Current Library Name of Administrative Entity Disambiguated,CURRENT_LIBNAME_DISAMB_AE,
+Identification,Current Name of Library,Current Library Name of Outlet,CURRENT_LIBNAME_OUTLET,
+Identification,Current Name of Library,Current Library Name of Outlet Disambiguated,CURRENT_LIBNAME_OUTLET_DISAMB,
+Identification,Longitude,Longitude,LONG,
+Identification,Latitude,Latitude,LAT,

@@ -3,6 +3,11 @@
     color: #002f6C !important;
 }
 
+.header-text {
+    font-size: 18px;
+    color: #002f6c !important;
+}
+
 /* Set Reactable Hover Color */
 .ReactTable .rt-tr:hover {
     background-color: #4EC3E0 !important;
@@ -53,6 +58,33 @@
 /* Change color of sidebar toggle caret to white for visibility */
 .bslib-sidebar-layout>.collapse-toggle>.collapse-icon {
     fill: #ffffff !important;
+}
+
+/* Card Header Color */
+.my-header-dkblue {
+    background-color: #002F6C;
+}
+
+/* Target the header within the specific card underline navset */
+.navset-card-underline .card-header {
+    background-color: #002F6C !important;
+    /* Change to your desired color */
+    border-bottom: 2px solid #002F6C;
+    /* Optional: change underline color */
+}
+
+.sidebar {
+    overflow: visible !important;
+    z-index: 10;
+}
+
+/* Slide Bar Color*/
+.irs-bar,
+.irs-bar-edge,
+.irs-single,
+.irs-grid-pol {
+    background: #002F6C;
+    border-color: #002F6C;
 }
 
 hr {
