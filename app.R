@@ -45,6 +45,8 @@ pls_national_state <- readRDS("data/processed/pls_national_state_app.RDS")
 pls_national_state_map <- read_sf(
   "data/processed/pls_national_state_map_app.shp"
 )
+pls_national_peers <- readRDS("data/processed/pls_national_peers_app.RDS")
+pls_national_simlibs <- readRDS("data/processed/pls_national_simlibs.RDS")
 
 current_year <- max(as.numeric(outlets$FISCAL_YEAR))
 
@@ -69,6 +71,11 @@ aes <- outlets %>%
   pull() %>%
   sort()
 
+aes_national <- pls_national_simlibs %>%
+  reframe(unique(CURRENT_LIBNAME_DISAMB)) %>%
+  pull() %>%
+  sort()
+
 source("RScripts/lists.R", local = TRUE)$value
 source("RScripts/theme.R", local = TRUE)$value
 
@@ -88,6 +95,7 @@ ui <- fluidPage(
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     source("RScripts/national_compare_ui.R", local = TRUE)$value,
     source("RScripts/utah_compare_ui.R", local = TRUE)$value,
+    #source("RScripts/single_library_ui.R", local = TRUE)$value,
     nav_spacer(),
     #source("RScripts/about_ui.R", local = TRUE)$value
   )
@@ -98,6 +106,7 @@ server <- function(input, output, session) {
   source("RScripts/state_service_server.R", local = TRUE)$value
   source("RScripts/national_compare_server.R", local = TRUE)$value
   source("RScripts/utah_compare_server.R", local = TRUE)$value
+  #source("RScripts/single_library_server.R", local = TRUE)$value
 }
 
 

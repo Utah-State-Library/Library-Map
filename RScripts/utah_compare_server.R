@@ -58,7 +58,7 @@ output$utah_hc <- renderHighchart({
       hc_add_series(
         df_nhighlight,
         type = "line",
-        color = "#d6d3d3ff",
+        color = "#000000", # "#d6d3d3ff",
         fillOpacity = .6,
         index = 1,
         lineWidth = 1,
@@ -173,8 +173,6 @@ output$utah_hc <- renderHighchart({
     )
 })
 
-## see if highcharter has a zoom function
-## add data table below
 
 output$utah_dt <- renderReactable({
   req(input$utah_var)

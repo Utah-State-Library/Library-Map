@@ -102,6 +102,18 @@ pls_national <- readRDS("data/pls_national.rds") %>%
     WIFISESS
   )
 
+pls_national %<>%
+  mutate(
+    drop = ifelse(
+      STABR == "UT" &
+        str_detect(CURRENT_LIBNAME_DISAMB, "Bookmobile|Garden City"),
+      1,
+      0
+    )
+  ) %>%
+  filter(drop != 1) %>%
+  select(-drop)
+
 pls_national[pls_national == -1] <- NA
 pls_national[pls_national == -3] <- NA
 pls_national[pls_national == -9] <- NA
@@ -125,8 +137,6 @@ pls_national %<>% select(-CURRENT_LIBNAME)
 
 saveRDS(pls_national, "data/processed/pls_national_app.RDS")
 
-
-pls_utah %<>% filter(!str_detect(CURRENT_LIBNAME, "Bookmobile|Garden City"))
 
 pls_utah %<>%
   pivot_longer(cols = national_vars, names_to = "var", values_to = "value")
@@ -170,6 +180,49 @@ pls_utah %<>%
   ungroup()
 
 saveRDS(pls_utah, "data/processed/pls_utah_app.RDS")
+
+
+#### PLS National - Peer Libraries Data ####
+
+# Subset to most recent 6 years for peer stability & data size
+pls_national_peers <- pls_national %>%
+  filter(FISCAL_YEAR %in% c(current_year:(current_year - 5))) %>%
+  pivot_longer(cols = national_vars, names_to = "var", values_to = "value")
+
+pls_national_peers %<>%
+  rowwise() %>%
+  mutate(percap = value / POPU_LSA) %>%
+  ungroup() %>%
+  mutate(
+    percap_multiplier = case_when(
+      var %in% per100cols ~ 100,
+      var %in% per1000cols ~ 1000,
+      #var %in% per10000cols ~ 10000,
+      # median(percap, na.rm = T) <= 1 & median(percap, na.rm = T) > .1 ~ 100,
+      # median(percap, na.rm = T) <= .1 & median(percap, na.rm = T) > .01 ~ 1000,
+      # median(percap, na.rm = T) <= .01 ~ 10000,
+      # median(percap, na.rm = T) <= .001 ~ 100000,
+      .default = 1
+    ),
+    percap_text = case_when(
+      percap_multiplier == 100 ~ "Per 100 People",
+      percap_multiplier == 1000 ~ "Per 1,000 People",
+      percap_multiplier == 10000 ~ "Per 10,000 People",
+      # percap_multiplier == 100000 ~ "Per 100,000 People",
+      .default = "Per Capita"
+    )
+  ) %>%
+  ungroup()
+
+pls_national_peers %<>%
+  rowwise() %>%
+  mutate(percap = round((percap * percap_multiplier), 2)) %>%
+  ungroup()
+
+saveRDS(pls_national_peers, "data/processed/pls_national_peers_app.RDS")
+
+
+#### PLS National - Statewide Summarised Data ####
 
 pls_national_state <- pls_national %>%
   group_by(state, FISCAL_YEAR) %>%
@@ -254,16 +307,31 @@ write_sf(
 )
 
 
-### Testing - Similarity
+### Similarity Data
 
 df <- pls_national %>% filter(FISCAL_YEAR == 2023)
 
 df$name <- paste0(df$CURRENT_LIBNAME_DISAMB, 1:nrow(df))
 
+df %<>%
+  mutate(
+    POPU_LSA_scl = scale(POPU_LSA),
+    TOTSTAFF_scl = scale(TOTSTAFF),
+    TOTINCM_scl = scale(TOTINCM),
+    REGBOR_scl = scale(REGBOR),
+    VISITS_scl = scale(VISITS)
+  )
+
 # Make a distance matrix, and name the dimensions
 distances <- as.matrix(dist(
-  df[, c("POPU_LSA", "TOTSTAFF", "TOTINCM")],
-  method = 'euclidean'
+  df[, c(
+    "POPU_LSA_scl",
+    "TOTSTAFF_scl",
+    "TOTINCM_scl",
+    "REGBOR_scl",
+    "VISITS_scl"
+  )],
+  method = 'manhattan' #'euclidean'
 ))
 dimnames(distances) <- list(df$name, df$name)
 
@@ -278,22 +346,38 @@ closest_neighbors <- function(dists, num_closest) {
 
 # The distance matrix rows/columns are already named,
 # so the vector passed to closest_neighbors() by apply() is named
-df$closest10 <- apply(distances, 1, closest_neighbors, num_closest = 10)
 
-# Look at results
-head(df[, c('name', 'closest10')], 5)
+df$peers <- apply(distances, 1, closest_neighbors, num_closest = 10)
+
+# make a save df so we can still use all of the df columns for testing below
+df_save <- df %>% select(FISCAL_YEAR, CURRENT_LIBNAME_DISAMB, peers)
+
+saveRDS(df_save, "data/processed/pls_national_simlibs.RDS")
+
+### Testing
+head(df[, c('name', 'peers')], 5)
 
 x <- df %>%
-  select(CURRENT_LIBNAME_DISAMB, POPU_LSA, TOTSTAFF, TOTINCM, closest10)
+  select(
+    CURRENT_LIBNAME_DISAMB,
+    POPU_LSA,
+    TOTSTAFF,
+    TOTINCM,
+    REGBOR,
+    VISITS,
+    peers
+  )
 
-lib <- "Kanab City Library"
+lib <- "South Routt Library District"
 
 y <- x %>% filter(CURRENT_LIBNAME_DISAMB == lib)
+y$peers <- gsub("[0-9]", "", y$peers)
+closest <- eval(parse(text = y$peers))
 
-closest <- paste0(unlist(y$closest10), collapse = "|")
-closest <- gsub("[0-9]", "", closest)
+#closest <- paste0(unlist(y$peers), collapse = "|")
+#closest <- gsub("[0-9]", "", closest)
 
 z <- x %>%
   filter(
-    CURRENT_LIBNAME_DISAMB == lib | str_detect(CURRENT_LIBNAME_DISAMB, closest)
+    CURRENT_LIBNAME_DISAMB == lib | CURRENT_LIBNAME_DISAMB %in% closest #str_detect(CURRENT_LIBNAME_DISAMB, closest)
   )

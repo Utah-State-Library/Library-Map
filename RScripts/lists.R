@@ -3,6 +3,8 @@ per1000cols <- c(
   "VLNT",
   "VLNT_HRS",
   "GPTERMS",
+  "PITUSR",
+  "REFERENC",
   "HOTSPOT",
   "HOTSPOT_CIRC",
   "K0_5PRO",
@@ -20,15 +22,18 @@ per1000cols <- c(
   "YAATTEN",
   "ADULTATTEN",
   "GENATTEN",
-  "VIRATTEN"
-)
-
-per10000cols <- c(
+  "VIRATTEN",
   "TOTSTAFF",
   "MASTER",
   "LIBRARIA",
   "OTHPAID",
   "TOT_LIB_STAFF"
+)
+
+per100cols <- c(
+  "REGBOR",
+  "LOANFM",
+  "LOANTO"
 )
 
 ## Currency Columns
