@@ -1,157 +1,156 @@
-## Create the library locations df
+# ## Create the library locations df
 
-map_all <- outlets %>%
-  left_join(pls, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>%
-  group_by(CURRENT_LIBNAME_AE) %>%
-  mutate(
-    n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"),
-    OUTLET_NAME = gsub(
-      paste0(CURRENT_LIBNAME_AE, " "),
-      "",
-      CURRENT_LIBNAME_OUTLET
-    ),
-    OUTLET_NAME = gsub(
-      "Salt Lake City Public Library |Washington County Library |Weber County Library",
-      "",
-      OUTLET_NAME
-    ),
-    OUTLET_NAME = trimws(OUTLET_NAME)
-  ) %>%
-  ungroup()
+# map_all <- outlets %>%
+#   left_join(pls, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>%
+#   group_by(CURRENT_LIBNAME_AE) %>%
+#   mutate(
+#     n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"),
+#     OUTLET_NAME = gsub(
+#       paste0(CURRENT_LIBNAME_AE, " "),
+#       "",
+#       CURRENT_LIBNAME_OUTLET
+#     ),
+#     OUTLET_NAME = gsub(
+#       "Salt Lake City Public Library |Washington County Library |Weber County Library",
+#       "",
+#       OUTLET_NAME
+#     ),
+#     OUTLET_NAME = trimws(OUTLET_NAME)
+#   ) %>%
+#   ungroup()
 
-map_all %<>%
-  mutate(
-    LAT = as.numeric(LAT),
-    LONG = as.numeric(LONG),
-    library_data_header = case_when(
-      n_locs == 1 ~ paste0(
-        "
-      <table style='width: 100%'>
-        <div style='font-size: 14px;'><b>",
-        CURRENT_LIBNAME_AE,
-        "</b><br>",
-        FISCAL_YEAR,
-        " Public Library Survey",
-        "<br></div><br>"
-      ),
-      n_locs > 1 ~ paste0(
-        "
-      <table style='width: 100%'>
-        <div style='font-size: 14px;'><b>",
-        CURRENT_LIBNAME_AE,
-        "</b><br>",
-        FISCAL_YEAR,
-        " Public Library Survey",
-        "<br>",
-        "</div> <div style='font-size: 12px;'><em>",
-        "This table shows data for the entire library system, and is not branch specific.</em>",
-        "<br></div>"
-      )
-    ),
-    library_data_table = paste0(
-      "<tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
-      "Number of Library Locations: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      n_locs,
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
-      "Population of Legal Service Area: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #ffffff;\">",
-      format(POPU_LSA, big.mark = ","),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
-      "Visits: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      format(VISITS, big.mark = ","),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
-      "Number of Library Staff: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #ffffff;\">",
-      format(TOT_LIB_STAFF, big.mark = ""),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
-      "Total FTE of Library Staff: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      format(TOTSTAFF, big.mark = ","),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
-      "Local Government Revenue: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #ffffff;\">",
-      dollar(LOCGVT),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
-      "State Government Revenue: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      dollar(STGVT),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
-      "Federal Government Revenue: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #ffffff;\">",
-      dollar(FEDGVT),
-      "</td>
-        </tr> <tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
-      "Other Revenue: ",
-      "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
-      dollar(OTHINCM),
-      "</td>
-        </tr> </table>"
-    ),
-    library_header = case_when(
-      CURRENT_LIBNAME_OUTLET != CURRENT_LIBNAME_AE ~
-        paste0(
-          "<table style='width: 100%'>
-           <div style='font-size: 16px;'><b>",
-          CURRENT_LIBNAME_AE,
-          "</b> </div> <hr>
-           <div style='font-size: 14px;'><b>",
-          OUTLET_NAME,
-          "</b> </div>"
-        ),
-      CURRENT_LIBNAME_OUTLET == CURRENT_LIBNAME_AE ~
-        paste0(
-          "<table>
-           <div style='font-size: 16px;'><b>",
-          CURRENT_LIBNAME_OUTLET,
-          "</b>",
-          "</div>"
-        )
-    ),
-    library_label = paste0(
-      library_header,
-      "<div style='font-size: 12px;'>",
-      str_to_title(ADDRESS),
-      ", ",
-      str_to_title(CITY),
-      ", ",
-      ZIP,
-      "<hr><div style='font-size: 12px;'>",
-      "Click to see system-wide information",
-      "</div> </table>"
-    ),
-    library_popup = paste0(
-      library_data_header,
-      library_data_table
-    )
-  )
-
+# map_all %<>%
+#   mutate(
+#     LAT = as.numeric(LAT),
+#     LONG = as.numeric(LONG),
+#     library_data_header = case_when(
+#       n_locs == 1 ~ paste0(
+#         "
+#       <table style='width: 100%'>
+#         <div style='font-size: 14px;'><b>",
+#         CURRENT_LIBNAME_AE,
+#         "</b><br>",
+#         FISCAL_YEAR,
+#         " Public Library Survey",
+#         "<br></div><br>"
+#       ),
+#       n_locs > 1 ~ paste0(
+#         "
+#       <table style='width: 100%'>
+#         <div style='font-size: 14px;'><b>",
+#         CURRENT_LIBNAME_AE,
+#         "</b><br>",
+#         FISCAL_YEAR,
+#         " Public Library Survey",
+#         "<br>",
+#         "</div> <div style='font-size: 12px;'><em>",
+#         "This table shows data for the entire library system, and is not branch specific.</em>",
+#         "<br></div>"
+#       )
+#     ),
+#     library_data_table = paste0(
+#       "<tr>
+#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+#       "Number of Library Locations: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
+#       n_locs,
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #ffffff;\">",
+#       "Population of Legal Service Area: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #ffffff;\">",
+#       format(POPU_LSA, big.mark = ","),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+#       "Visits: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
+#       format(VISITS, big.mark = ","),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #ffffff;\">",
+#       "Number of Library Staff: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #ffffff;\">",
+#       format(TOT_LIB_STAFF, big.mark = ""),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+#       "Total FTE of Library Staff: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
+#       format(TOTSTAFF, big.mark = ","),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #ffffff;\">",
+#       "Local Government Revenue: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #ffffff;\">",
+#       dollar(LOCGVT),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+#       "State Government Revenue: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
+#       dollar(STGVT),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #ffffff;\">",
+#       "Federal Government Revenue: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #ffffff;\">",
+#       dollar(FEDGVT),
+#       "</td>
+#         </tr> <tr>
+#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+#       "Other Revenue: ",
+#       "</td>
+#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
+#       dollar(OTHINCM),
+#       "</td>
+#         </tr> </table>"
+#     ),
+#     library_header = case_when(
+#       CURRENT_LIBNAME_OUTLET != CURRENT_LIBNAME_AE ~
+#         paste0(
+#           "<table style='width: 100%'>
+#            <div style='font-size: 16px;'><b>",
+#           CURRENT_LIBNAME_AE,
+#           "</b> </div> <hr>
+#            <div style='font-size: 14px;'><b>",
+#           OUTLET_NAME,
+#           "</b> </div>"
+#         ),
+#       CURRENT_LIBNAME_OUTLET == CURRENT_LIBNAME_AE ~
+#         paste0(
+#           "<table>
+#            <div style='font-size: 16px;'><b>",
+#           CURRENT_LIBNAME_OUTLET,
+#           "</b>",
+#           "</div>"
+#         )
+#     ),
+#     library_label = paste0(
+#       library_header,
+#       "<div style='font-size: 12px;'>",
+#       str_to_title(ADDRESS),
+#       ", ",
+#       str_to_title(CITY),
+#       ", ",
+#       ZIP,
+#       "<hr><div style='font-size: 12px;'>",
+#       "Click to see system-wide information",
+#       "</div> </table>"
+#     ),
+#     library_popup = paste0(
+#       library_data_header,
+#       library_data_table
+#     )
+#   )
 
 ##### Sync Inputa #####
 observe({

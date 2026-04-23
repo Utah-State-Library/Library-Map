@@ -37,8 +37,8 @@ Operating Revenue,Total Operating Revenue,Total Operating Revenue,TOTINCM,1
 Operating Expenditures,Local Operating Expenditures,Local Operating Expenditures,LOCEXP,1
 Operating Expenditures,State Operating Expenditures,State Operating Expenditures,STEXP,1
 Operating Expenditures,Federal Operating Expenditures,Federal Operating Expenditures,FEDEXP,1
-Operating Expenditures,Other Operating Expenditures,Other Operating Expenditures,OTHEXP,1
-Operating Expenditures,Total Operating Expenditures,Total Operating Expenditures,TOTEXP,1
+Operating Expenditures,Other Expenditures,Other Operating Expenditures,OTHEXP,1
+Operating Expenditures,Total Expenditures,Total Operating Expenditures,TOTEXP,1
 Staff Expenditures,Salaries and Wages,Salaries and Wages,SALARIES,1
 Staff Expenditures,Employee Benefits,Employee Benefits,BENEFIT,1
 Staff Expenditures,Total Staff Expenditures,Total Staff Expenditures,STAFFEXP,1
