@@ -10,16 +10,14 @@ library(DT)
 library(leaflet)
 library(shinycssloaders)
 library(reactable)
-library(reactablefmtr)
 library(bslib)
 library(bsicons)
-library(shinyalert)
 library(sjmisc)
 library(htmlwidgets)
 library(thematic)
-library(fontawesome)
 library(scales)
 library(sf)
+
 
 #### Color Palette ####
 # head_color <- "#002F6C"
@@ -36,19 +34,38 @@ options(scipen = 999)
 
 #### Load Data ####
 
-variable_key <- read.csv("data/pls_variable_key.csv")
-outlets <- readRDS("data/processed/outlet_ut_app.RDS")
-pls <- readRDS("data/processed/pls_ut_app.RDS")
+# pls <- readRDS("data/processed/pls_ut_app.RDS")
+# pls_ut_simlibs <- readRDS("data/processed/pls_ut_simlibs.RDS")
 pls_national <- readRDS("data/processed/pls_national_app.RDS")
-pls_utah <- readRDS("data/processed/pls_utah_app.RDS")
-pls_national_state <- readRDS("data/processed/pls_national_state_app.RDS")
+
+# All Pages
+variable_key <- read.csv("data/pls_variable_key.csv")
+
+# Library Map Page
+map_all <- readRDS("data/processed/library_map_app.RDS")
+outlets <- readRDS("data/processed/outlet_ut_app.RDS")
+
+# State Comp Page
+pls_national_state <- readRDS("data/processed/pls_national_state_appv2.RDS")
 pls_national_state_map <- read_sf(
-  "data/processed/pls_national_state_map_app.shp"
+  "data/processed/pls_national_state_map_appv2.shp"
 )
-pls_national_peers <- readRDS("data/processed/pls_national_peers_app.RDS")
+
+# Utah Library Comp Page
+pls_utah <- readRDS("data/processed/pls_utah_appv2.RDS")
+
+# Peer Page
 pls_national_simlibs <- readRDS("data/processed/pls_national_simlibs.RDS")
+pls_national_peers <- readRDS("data/processed/pls_national_peers_appv2.RDS")
+
+
+#### Global Values ####
 
 current_year <- max(as.numeric(outlets$FISCAL_YEAR))
+imls_year <- pls_national_state %>%
+  filter(STABR != "UT") %>%
+  summarise(max(FISCAL_YEAR)) %>%
+  pull()
 
 national_vars <- setdiff(
   names(pls_national),
@@ -79,6 +96,7 @@ aes_national <- pls_national_simlibs %>%
 source("RScripts/lists.R", local = TRUE)$value
 source("RScripts/theme.R", local = TRUE)$value
 
+
 #### UI ####
 
 ui <- fluidPage(
@@ -95,18 +113,19 @@ ui <- fluidPage(
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     source("RScripts/national_compare_ui.R", local = TRUE)$value,
     source("RScripts/utah_compare_ui.R", local = TRUE)$value,
-    #source("RScripts/single_library_ui.R", local = TRUE)$value,
+    source("RScripts/peer_ui.R", local = TRUE)$value,
     nav_spacer(),
     #source("RScripts/about_ui.R", local = TRUE)$value
   )
 )
+
 
 #### Server ####
 server <- function(input, output, session) {
   source("RScripts/state_service_server.R", local = TRUE)$value
   source("RScripts/national_compare_server.R", local = TRUE)$value
   source("RScripts/utah_compare_server.R", local = TRUE)$value
-  #source("RScripts/single_library_server.R", local = TRUE)$value
+  source("RScripts/peer_server.R", local = TRUE)$value
 }
 
 

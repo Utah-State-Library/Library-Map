@@ -1,16 +1,16 @@
 /* Set Icon Color */
 .icon-color {
-    color: #002f6C !important;
+    color: #093692 !important;
 }
 
 .header-text {
     font-size: 18px;
-    color: #002f6c !important;
+    color: #093692 !important;
 }
 
 /* Set Reactable Hover Color */
 .ReactTable .rt-tr:hover {
-    background-color: #4EC3E0 !important;
+    background-color: #81D0F0 !important;
     /* color: #ffffff; */
 }
 
@@ -31,13 +31,13 @@
 
 /* Set Hover Color of Dropdown Items */
 .dropdown-item:hover {
-    background-color: #4EC3E0 !important;
+    background-color: #81D0F0 !important;
     /* color: #ffffff; */
 }
 
 /* Set Button Color */
 .btn-default {
-    background-color: #002F6C !important;
+    background-color: #093692 !important;
     color: #ffffff;
 }
 
@@ -52,7 +52,7 @@
 .bslib-sidebar-layout>.collapse-toggle {
     padding: 20px 0;
     margin-bottom: 20px;
-    background-color: #002F6C;
+    background-color: #093692;
 }
 
 /* Change color of sidebar toggle caret to white for visibility */
@@ -62,14 +62,23 @@
 
 /* Card Header Color */
 .my-header-dkblue {
-    background-color: #002F6C;
+    background-color: #093692;
+}
+
+.my-header-grey {
+    background-color: #d6d6d6;
+}
+
+.wide-tooltip .tooltip-inner {
+    max-width: 400px;
+    text-align: left;
 }
 
 /* Target the header within the specific card underline navset */
 .navset-card-underline .card-header {
-    background-color: #002F6C !important;
+    background-color: #093692 !important;
     /* Change to your desired color */
-    border-bottom: 2px solid #002F6C;
+    border-bottom: 2px solid #093692;
     /* Optional: change underline color */
 }
 
@@ -83,8 +92,8 @@
 .irs-bar-edge,
 .irs-single,
 .irs-grid-pol {
-    background: #002F6C;
-    border-color: #002F6C;
+    background: #093692;
+    border-color: #093692;
 }
 
 hr {

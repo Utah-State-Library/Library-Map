@@ -6,21 +6,58 @@ selected_var_utah <- reactive({
 
 pls_utah_reactive <- reactive({
   pls_utah %>%
+    mutate(
+      per_name_pretty = case_when(
+        per_name == "POP_col" ~ "Per Capita",
+        per_name == "FTE_col" ~ "Per FTE"
+      )
+    ) %>%
     filter(
-      var == selected_var_utah() #,
-      #CURRENT_LIBNAME %in% input$utah_libraries
+      var == selected_var_utah(),
+      per_name_pretty == input$utah_per
     )
 })
+
+#### HC Line Graph ####
+
+output$utah_line_header <- renderUI({
+  tooltip(
+    span(
+      paste0(
+        input$utah_highlight,
+        " Compared to All Other Utah Libraries"
+      ),
+      bs_icon("info-circle")
+    ),
+    p(
+      HTML(
+        paste0(
+          "Trends in library data are affected by many factors, and changes should not be interpreted without considering potential context. Many libraries, for example, undergo construction and need to close for a while which naturally reduces service. Staffing changes can also impact annual numbers. For questions about fluctuations in annual data, please contact the State Data Coordinator."
+        )
+      )
+    ),
+    options = list(customClass = "wide-tooltip")
+  )
+})
+
 
 output$utah_hc <- renderHighchart({
   if (selected_var_utah() %in% currency_cols) {
     y_tt <- "${point.y:,.2f}"
     var_tt <- "${point.value:,.0f}"
+    per_val_tt <- "${point.per_value:,.0f}"
     # Y axis $ prefix
   } else {
     # TODO remove decimals from non-decimal vars
     y_tt <- "{point.y:,.2f}" #
     var_tt <- "{point.value:,f}" #:,.2f
+    per_val_tt <- "{point.per_value:,f}"
+  }
+
+  if (input$utah_per == "Per Capita") {
+    per_total_text <- "Population of Legal Service Area"
+  } else {
+    per_total_text <- "Total FTE"
   }
 
   col_name_pretty <- input$utah_var
@@ -31,138 +68,78 @@ output$utah_hc <- renderHighchart({
       FISCAL_YEAR <= input$utah_years[2]
     )
 
-  percap_text <- unique(df$percap_text)
+  per_text <- unique(df$per_text)
 
   df_highlight <- df %>% filter(CURRENT_LIBNAME == input$utah_highlight)
   df_nhighlight <- df %>% filter(CURRENT_LIBNAME != input$utah_highlight)
-  df_stavg <- df %>%
-    group_by(FISCAL_YEAR) %>%
-    mutate(
-      percap = round(mean(percap, na.rm = T), 2)
-    ) %>%
-    ungroup()
 
   hc <- highchart() %>%
     hc_chart(zoomType = "y") %>%
     hc_add_series(
       df_highlight,
       type = "line",
-      color = "#4EC3E0",
+      color = "#81D0F0",
       index = 2,
       lineWidth = 4,
-      hcaes(x = FISCAL_YEAR, y = percap, group = CURRENT_LIBNAME)
+      hcaes(x = FISCAL_YEAR, y = per_calc, group = CURRENT_LIBNAME)
     )
 
-  if (input$utah_switch) {
-    hc %<>%
-      hc_add_series(
-        df_nhighlight,
-        type = "line",
-        color = "#000000", # "#d6d3d3ff",
-        fillOpacity = .6,
-        index = 1,
-        lineWidth = 1,
-        hcaes(x = FISCAL_YEAR, y = percap, group = CURRENT_LIBNAME)
-      ) %>%
-      hc_legend(enabled = FALSE) %>%
-      hc_tooltip(
-        pointFormat = paste0(
-          "<b>{series.name}</b><br>",
-          "<b>Rank: {point.rank} out of {point.n}</b><br>",
-          "<b>",
-          col_name_pretty,
-          " {point.percap_text}",
-          ": ",
-          y_tt,
-          "</b><br>",
-          col_name_pretty,
-          ": ",
-          var_tt,
-          "<br>",
-          "Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
-          "{point.x}"
-        ),
-        headerFormat = ""
-      ) %>%
-      hc_yAxis(
-        title = list(
-          text = paste0(col_name_pretty, " ", percap_text),
-          style = list(fontSize = "15px")
-        ),
-        labels = list(
-          style = list(fontSize = "15px")
-        )
-      ) %>%
-      hc_xAxis(
-        allowDecimals = FALSE,
-        labels = list(
-          style = list(fontSize = "15px")
-        )
-      ) %>%
-      hc_title(
-        text = paste0(col_name_pretty, " ", percap_text, " by Library")
-      ) %>%
-      hc_caption(
-        text = "Some libraries may have no data for certain years. Rankings reflect those that did submit data for a given year."
+  hc %<>%
+    hc_add_series(
+      df_nhighlight,
+      type = "line",
+      color = "#d6d3d3ff",
+      fillOpacity = .6,
+      index = 1,
+      lineWidth = 1,
+      hcaes(x = FISCAL_YEAR, y = per_calc, group = CURRENT_LIBNAME)
+    ) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_tooltip(
+      pointFormat = paste0(
+        "<b>{series.name}</b><br>",
+        "<b>Rank: {point.rank} out of {point.n}</b><br>",
+        "<b>",
+        col_name_pretty,
+        " {point.per_text}",
+        ": ",
+        y_tt,
+        "</b><br>",
+        col_name_pretty,
+        ": ",
+        var_tt,
+        "<br>",
+        per_total_text, # Per category total - e.g., 'Total FTE: 1234'
+        ": ",
+        per_val_tt,
+        "<br>",
+        #"Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
+        "{point.x}"
+      ),
+      headerFormat = ""
+    ) %>%
+    hc_yAxis(
+      # title = list(
+      #   text = paste0(col_name_pretty, " ", per_text),
+      #   style = list(fontSize = "15px")
+      # ),
+      labels = list(
+        style = list(fontSize = "15px")
       )
-  } else {
-    hc %<>%
-      hc_add_series(
-        df_stavg,
-        name = "State Average",
-        type = "line",
-        color = "#000000ff",
-        fillOpacity = .6,
-        index = 1,
-        lineWidth = 1,
-        hcaes(x = FISCAL_YEAR, y = percap)
-      ) %>%
-      hc_legend(enabled = FALSE) %>%
-      hc_tooltip(
-        pointFormat = paste0(
-          "<b>{series.name}</b><br>",
-          "<b>",
-          col_name_pretty,
-          " {point.percap_text}",
-          ": ",
-          y_tt,
-          "</b>"
-        ),
-        headerFormat = "",
-        shared = TRUE,
-        split = TRUE
-      ) %>%
-      hc_yAxis(
-        title = list(
-          text = paste0(col_name_pretty, " ", percap_text),
-          style = list(fontSize = "15px")
-        ),
-        labels = list(
-          style = list(fontSize = "15px")
-        )
-      ) %>%
-      hc_xAxis(
-        allowDecimals = FALSE,
-        labels = list(
-          style = list(fontSize = "15px")
-        )
-      ) %>%
-      hc_title(
-        text = paste0(
-          col_name_pretty,
-          " ",
-          percap_text
-        )
-      ) %>%
-      hc_subtitle(text = paste0(input$utah_highlight, " vs. State Average")) %>%
-      hc_caption(
-        text = paste0(
-          "The state average represents the average per capita value across all libraries, including ",
-          input$utah_highlight,
-          "."
-        )
+    ) %>%
+    hc_xAxis(
+      allowDecimals = FALSE,
+      labels = list(
+        style = list(fontSize = "15px")
       )
-  }
+    ) %>%
+    hc_title(
+      text = paste0(col_name_pretty, " ", per_text),
+      align = "left"
+    ) %>%
+    hc_caption(
+      text = "Some libraries may have no data for certain years. Rankings reflect those that did submit data for a given year."
+    )
 
   hc %>%
     hc_plotOptions(
@@ -174,10 +151,156 @@ output$utah_hc <- renderHighchart({
 })
 
 
+#### HC Bar Graph ####
+
+output$utah_bar_header <- renderUI({
+  tooltip(
+    span(
+      paste0(
+        input$utah_highlight,
+        " Compared to the Utah Average"
+      ),
+      bs_icon("info-circle")
+    ),
+    p(
+      HTML(
+        paste0(
+          "<b>Utah Average</b> is the average of totals across all Utah libraries that submitted data, including ",
+          input$utah_highlight,
+          "."
+        )
+      )
+    ),
+    #placement = "right"
+    options = list(customClass = "wide-tooltip")
+  )
+})
+
+
+output$utah_hc_bar <- renderHighchart({
+  if (selected_var() %in% currency_cols) {
+    y_tt <- "${point.y:,.2f}"
+    var_tt <- "${point.value:,.0f}"
+    per_val_tt <- "${point.per_value:,.0f}"
+    # Y axis $ prefix
+  } else {
+    # TODO remove decimals from non-decimal vars
+    y_tt <- "{point.y:,.2f}" #
+    var_tt <- "{point.value:,f}" #:,.2f
+    per_val_tt <- "{point.per_value:,f}"
+  }
+
+  if (input$utah_per == "Per Capita") {
+    per_total_text <- "Population of Legal Service Area"
+  } else {
+    per_total_text <- "Total FTE"
+  }
+
+  col_name_pretty <- input$utah_var
+
+  df <- pls_utah_reactive() %>%
+    filter(
+      FISCAL_YEAR >= input$utah_years_bar[1],
+      FISCAL_YEAR <= input$utah_years_bar[2]
+    )
+
+  per_text <- unique(df$per_text)
+
+  df_ut <- df %>%
+    filter(CURRENT_LIBNAME == input$utah_highlight) %>%
+    mutate(level = CURRENT_LIBNAME, per_text_prefix = "")
+
+  df_stavg <- df %>% ### TODO, avg of state or avg of library per_calcs?
+    group_by(FISCAL_YEAR) %>%
+    summarise(
+      level = "Utah Average",
+      value = sum(value, na.rm = T),
+      #per_avg = round(mean(per_calc, na.rm = T), 2),
+      per_calc = sum(per_calc, na.rm = T),
+      per_value = sum(per_value, na.rm = T),
+      per_avg = round(value / per_value, 2),
+      per_text_prefix = "Average "
+    )
+
+  per_text <- unique(df$per_text)
+
+  df_ut %<>%
+    rename("per_avg" = "per_calc")
+
+  highchart() %>%
+    hc_add_series(
+      df_ut,
+      type = "column",
+      color = "#FFB81D",
+      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+    ) %>%
+    hc_add_series(
+      df_stavg,
+      type = "column",
+      color = "#093692",
+      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+    ) %>%
+    hc_tooltip(
+      pointFormat = paste0(
+        "<b>{series.name}</b><br>",
+        "<b>",
+        "{point.per_text_prefix}", # Per category value - e.g., "Visits Per FTE: 1234"
+        col_name_pretty,
+        " ",
+        per_text,
+        ": ",
+        y_tt,
+        "</b><br>",
+        col_name_pretty, #Actual Value - e.g., "Visits: 12345"
+        ": ",
+        var_tt,
+        "<br>",
+        per_total_text, # Per category total - e.g., 'Total FTE: 1234'
+        ": ",
+        per_val_tt,
+        "<br>",
+        "{point.x}"
+      ),
+      headerFormat = ""
+    ) %>%
+    hc_yAxis(
+      # title = list(
+      #   text = paste0(col_name_pretty, " ", per_text),
+      #   style = list(fontSize = "15px")
+      # ),
+      labels = list(
+        style = list(fontSize = "15px")
+      )
+    ) %>%
+    hc_xAxis(
+      allowDecimals = FALSE,
+      labels = list(
+        style = list(fontSize = "15px")
+      )
+    ) %>%
+    hc_title(
+      text = paste0(col_name_pretty, " ", per_text),
+      align = "left"
+    ) %>%
+    hc_caption(text = "Tip: click on the legend to show/hide specific groups")
+})
+
+#### Utah DT ####
+
+output$utah_table_header <- renderUI({
+  paste0(
+    input$utah_dt_year,
+    " ",
+    input$utah_var,
+    " ",
+    unique(pls_utah_reactive()$per_text)
+  )
+})
+
 output$utah_dt <- renderReactable({
   req(input$utah_var)
   var_name <- input$utah_var
-  percap_text <- unique(pls_utah_reactive()$percap_text)
+  per_text <- unique(pls_utah_reactive()$per_text)
 
   df <- pls_utah_reactive() %>%
     filter(FISCAL_YEAR == input$utah_dt_year) %>%
@@ -186,23 +309,10 @@ output$utah_dt <- renderReactable({
       Library = CURRENT_LIBNAME,
       Population_Service_Area = POPU_LSA,
       value,
-      percap,
+      per_calc,
       rank,
       n
     )
-
-  output$utah_dt_title <- renderUI({
-    x <- HTML(paste0(
-      "<b style='font-size:16px;'>",
-      input$utah_var,
-      " ",
-      unique(pls_utah_reactive()$percap_text),
-      " (",
-      input$utah_dt_year,
-      ")</b>"
-    ))
-    x
-  })
 
   # Render reactable
   df %>%
@@ -210,9 +320,7 @@ output$utah_dt <- renderReactable({
       resizable = TRUE,
       pagination = FALSE,
       sortable = FALSE,
-      #groupBy = "Year",
-      #defaultExpanded = FALSE,
-      defaultSorted = list(rank = "asc"), #Year = "desc",
+      defaultSorted = list(rank = "asc"),
       highlight = TRUE,
       height = "auto",
       defaultExpanded = TRUE,
@@ -240,21 +348,14 @@ output$utah_dt <- renderReactable({
             }
           }
         ),
-        #   Year = colDef(
-        #     grouped = JS(
-        #       "function(cellInfo) {
-        #   return cellInfo.value
-        # }"
-        #     )
-        #   ),
         Population_Service_Area = colDef(
           name = "Legal Service Area Population",
           cell = function(value) {
             format(value, big.mark = ",")
           }
         ),
-        percap = colDef(
-          name = paste0(var_name, " ", percap_text),
+        per_calc = colDef(
+          name = paste0(var_name, " ", per_text),
           cell = function(value) {
             if (isTRUE(selected_var_utah() %in% currency_cols)) {
               paste0("$", format(value, big.mark = ","))

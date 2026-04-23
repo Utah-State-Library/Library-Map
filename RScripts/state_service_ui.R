@@ -9,7 +9,7 @@ nav_panel(
     fill = TRUE,
     sidebar = sidebar(
       title = "Filters",
-      width = "25%",
+      width = "20%",
 
       pickerInput(
         "st_county",
