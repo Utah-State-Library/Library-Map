@@ -409,17 +409,17 @@ output$peer_hc_bar <- renderHighchart({
   if (selected_var_singlib() %in% currency_cols) {
     y_tt <- "${point.y:,.2f}"
     var_tt <- "${point.value:,.0f}"
-    per_val_tt <- "${point.per_value:,.0f}"
   } else {
     y_tt <- "{point.y:,.2f}"
     var_tt <- "{point.value:,f}"
-    per_val_tt <- "{point.per_value:,.f}"
   }
+
+  per_val_tt <- "{point.per_value:,.f}"
 
   if (input$singlib_per == "Per Capita") {
     per_total_text <- "Population of Legal Service Area"
   } else {
-    per_total_text <- "Total FTE"
+    per_total_text <- "FTE"
   }
 
   col_name_pretty <- input$singlib_var
@@ -441,7 +441,11 @@ output$peer_hc_bar <- renderHighchart({
     filter(
       CURRENT_LIBNAME_DISAMB == lib
     ) %>%
-    mutate(level = CURRENT_LIBNAME_DISAMB, per_text_prefix = "")
+    mutate(
+      level = CURRENT_LIBNAME_DISAMB,
+      per_text_prefix = "",
+      per_value_prefix = ""
+    )
 
   df_peers <- df %>%
     filter(
@@ -455,7 +459,8 @@ output$peer_hc_bar <- renderHighchart({
       per_calc = sum(per_calc, na.rm = T),
       per_value = sum(per_value, na.rm = T),
       per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average "
+      per_text_prefix = "Average ",
+      per_value_prefix = "Total "
     )
 
   df_nat <- pls_national_peers %>%
@@ -477,7 +482,8 @@ output$peer_hc_bar <- renderHighchart({
       per_calc = sum(per_calc, na.rm = T),
       per_value = sum(per_value, na.rm = T),
       per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average "
+      per_text_prefix = "Average ",
+      per_value_prefix = "Total "
     )
 
   df_state <- pls_national_peers %>%
@@ -499,7 +505,8 @@ output$peer_hc_bar <- renderHighchart({
       per_calc = sum(per_calc, na.rm = T),
       per_value = sum(per_value, na.rm = T),
       per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average "
+      per_text_prefix = "Average ",
+      per_value_prefix = "Total "
     ) %>%
     distinct()
 
@@ -542,10 +549,12 @@ output$peer_hc_bar <- renderHighchart({
         ": ",
         y_tt,
         "</b><br>",
+        "{point.per_value_prefix}",
         col_name_pretty, #Actual Value - e.g., "Visits: 12345"
         ": ",
         var_tt,
         "<br>",
+        "{point.per_value_prefix}",
         per_total_text, # Per category total - e.g., 'Total FTE: 1234'
         ": ",
         per_val_tt,

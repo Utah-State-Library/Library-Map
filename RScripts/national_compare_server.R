@@ -186,19 +186,19 @@ output$national_hc_bar <- renderHighchart({
   if (selected_var() %in% currency_cols) {
     y_tt <- "${point.y:,.2f}"
     var_tt <- "${point.value:,.0f}"
-    per_val_tt <- "${point.per_value:,.0f}"
     # Y axis $ prefix
   } else {
     # TODO remove decimals from non-decimal vars
     y_tt <- "{point.y:,.2f}" #
     var_tt <- "{point.value:,f}" #:,.2f
-    per_val_tt <- "{point.per_value:,.f}"
   }
+
+  per_val_tt <- "{point.per_value:,.f}"
 
   if (input$national_per == "Per Capita") {
     per_total_text <- "Population of Legal Service Area"
   } else {
-    per_total_text <- "Total FTE"
+    per_total_text <- "FTE"
   }
 
   col_name_pretty <- input$national_var
@@ -213,7 +213,7 @@ output$national_hc_bar <- renderHighchart({
 
   df_ut <- df %>%
     filter(state == input$national_states) %>%
-    mutate(level = state, per_text_prefix = "")
+    mutate(level = state, per_text_prefix = "", per_value_prefix = "")
 
   df_natavg <- df %>%
     filter(
@@ -226,7 +226,8 @@ output$national_hc_bar <- renderHighchart({
       per_calc = sum(per_calc, na.rm = T),
       per_value = sum(per_value, na.rm = T),
       per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average "
+      per_text_prefix = "Average ",
+      per_value_prefix = "Total "
     )
 
   per_text <- unique(df$per_text)
@@ -258,10 +259,12 @@ output$national_hc_bar <- renderHighchart({
         ": ",
         y_tt,
         "</b><br>",
+        "{point.per_value_prefix}",
         col_name_pretty, #Actual Value - e.g., "Visits: 12345"
         ": ",
         var_tt,
         "<br>",
+        "{point.per_value_prefix}",
         per_total_text, # Per category total - e.g., 'Total FTE: 1234'
         ": ",
         per_val_tt,
