@@ -24,6 +24,11 @@ library(sf)
 # sub1_color <- "#0086BF"
 # sub2_color <- "#4EC3E0"
 
+#new
+# #093692
+# #81D0F0
+# #FFB81D
+
 #### Set Options ####
 hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
@@ -115,7 +120,7 @@ ui <- fluidPage(
     source("RScripts/utah_compare_ui.R", local = TRUE)$value,
     source("RScripts/peer_ui.R", local = TRUE)$value,
     nav_spacer(),
-    #source("RScripts/about_ui.R", local = TRUE)$value
+    source("RScripts/methodology.R", local = TRUE)$value
   )
 )
 

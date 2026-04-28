@@ -45,8 +45,10 @@ output$national_line_header <- renderUI({
     p(
       HTML(
         paste0(
-          "Per capita comparisons are a way to make meaningful comparisons between libraries that serve populations of different sizes. Instead of looking at raw totals — which can be misleading — you divide a library’s data by the size of the population it serves. This shows how much service or usage occurs per person, making it easier to compare libraries on equal footing.<br>",
-          "For certain comparisons, it’s useful to express data per 100, 1,000, or more people to make differences easier to interpret. In some cases — especially with smaller libraries — the standardized rate may exceed the total population served, resulting in a comparison value that is higher than the actual number."
+          "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
+          "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
+          "<br><br>",
+          "Use the gear icon at the top right to change the year."
         )
       )
     ),
@@ -164,16 +166,17 @@ output$national_bar_header <- renderUI({
     span(
       paste0(
         input$national_states,
-        " Compared to the National Average"
+        " Compared to the National Median"
       ),
       bs_icon("info-circle")
     ),
     p(
       HTML(
         paste0(
-          "<b>National Average</b> is the average of totals across all states and territories that submitted data to IMLS, including ",
+          "<b>All States</b> shows the median value across all states and territories that submitted data to IMLS, including ",
           input$national_states,
-          "."
+          ".",
+          " This graph treats each state as a single system, with values from each library contributing to their respective statewide total."
         )
       )
     ),
@@ -213,40 +216,33 @@ output$national_hc_bar <- renderHighchart({
 
   df_ut <- df %>%
     filter(state == input$national_states) %>%
-    mutate(level = state, per_text_prefix = "", per_value_prefix = "")
+    mutate(level = state, per_median = per_calc, per_text_prefix = "")
 
-  df_natavg <- df %>%
+  df_nat <- df %>%
     filter(
       FISCAL_YEAR <= imls_year
     ) %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
-      level = "National Average",
-      value = sum(value, na.rm = T),
-      per_calc = sum(per_calc, na.rm = T),
-      per_value = sum(per_value, na.rm = T),
-      per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average ",
-      per_value_prefix = "Total "
+      level = "All States",
+      per_median = round(median(per_calc, na.rm = T), 2),
+      per_text_prefix = "Median "
     )
 
   per_text <- unique(df$per_text)
-
-  df_ut %<>%
-    rename("per_avg" = "per_calc")
 
   highchart() %>%
     hc_add_series(
       df_ut,
       type = "column",
       color = "#FFB81D",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
-      df_natavg,
+      df_nat,
       type = "column",
       color = "#093692",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_tooltip(
       pointFormat = paste0(
@@ -259,25 +255,11 @@ output$national_hc_bar <- renderHighchart({
         ": ",
         y_tt,
         "</b><br>",
-        "{point.per_value_prefix}",
-        col_name_pretty, #Actual Value - e.g., "Visits: 12345"
-        ": ",
-        var_tt,
-        "<br>",
-        "{point.per_value_prefix}",
-        per_total_text, # Per category total - e.g., 'Total FTE: 1234'
-        ": ",
-        per_val_tt,
-        "<br>",
         "{point.x}"
       ),
       headerFormat = ""
     ) %>%
     hc_yAxis(
-      # title = list(
-      #   text = paste0(col_name_pretty, " ", per_text),
-      #   style = list(fontSize = "15px")
-      # ),
       labels = list(
         style = list(fontSize = "15px")
       )
@@ -289,7 +271,7 @@ output$national_hc_bar <- renderHighchart({
       )
     ) %>%
     hc_title(
-      text = paste0(col_name_pretty, " ", per_text, " by State"),
+      text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
     hc_caption(text = "Tip: click on the legend to show/hide specific groups")
@@ -313,8 +295,10 @@ output$national_table_header <- renderUI({
     p(
       HTML(
         paste0(
-          "Per capita comparisons are a way to make meaningful comparisons between libraries that serve populations of different sizes. Instead of looking at raw totals — which can be misleading — you divide a library’s data by the size of the population it serves. This shows how much service or usage occurs per person, making it easier to compare libraries on equal footing.<br>",
-          "For certain comparisons, it’s useful to express data per 100, 1,000, or more people to make differences easier to interpret. In some cases — especially with smaller libraries — the standardized rate may exceed the total population served, resulting in a comparison value that is higher than the actual number."
+          "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
+          "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
+          "<br><br>",
+          "Use the gear icon at the top right to change the year."
         )
       )
     ),
@@ -362,7 +346,8 @@ output$national_dt <- renderReactable({
       columns = list(
         State = colDef(
           name = "State/Territory",
-          filterable = TRUE
+          filterable = TRUE,
+          style = list(backgroundColor = "#f7f7f7")
         ),
         value = colDef(
           name = var_name,
@@ -491,8 +476,10 @@ output$national_map_header <- renderUI({
     p(
       HTML(
         paste0(
-          "Per capita comparisons are a way to make meaningful comparisons between libraries that serve populations of different sizes. Instead of looking at raw totals — which can be misleading — you divide a library’s data by the size of the population it serves. This shows how much service or usage occurs per person, making it easier to compare libraries on equal footing.<br>",
-          "For certain comparisons, it’s useful to express data per 100, 1,000, or more people to make differences easier to interpret. In some cases — especially with smaller libraries — the standardized rate may exceed the total population served, resulting in a comparison value that is higher than the actual number."
+          "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
+          "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
+          "<br><br>",
+          "Use the gear icon at the top right to change the year."
         )
       )
     ),

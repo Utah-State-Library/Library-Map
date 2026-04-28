@@ -387,16 +387,16 @@ output$peers_bar_header <- renderUI({
     span(
       paste0(
         input$singlib_library,
-        " Compared to Peer, State, and National Averages"
+        " Compared to Peer, State, and National Library Medians"
       ),
       bs_icon("info-circle")
     ),
     p(
       HTML(
         paste0(
-          "<b>Peer Libraries</b> are the 10 most similar libraries to the selected library. The table below lists each of these peers.<br>",
-          "<b>State Libraries</b> are all libraries in the same state as the selected library. The state average includes data for the selected library.<br>",
-          "<b>National Libraries</b> are all libraries in the country that contribute data to IMLS. Libraries span all 50 states, Washington DC, and several territories.<br>"
+          "<b>Peer Libraries</b> are the 10 most similar libraries to the selected library. The table below lists each of these peers. The peer median is the median value across all peer libraries.<br>",
+          "<b>State Libraries</b> are all libraries in the same state as the selected library. The state library median is the median value across all libraries in the state, including the selected library.<br>",
+          "<b>National Libraries</b> are all libraries in the country that contribute data to IMLS. Libraries span all 50 states, Washington DC, and several territories. The national median is the median value across all libraries in the nation, including the selected library."
         )
       )
     ),
@@ -413,8 +413,6 @@ output$peer_hc_bar <- renderHighchart({
     y_tt <- "{point.y:,.2f}"
     var_tt <- "{point.value:,f}"
   }
-
-  per_val_tt <- "{point.per_value:,.f}"
 
   if (input$singlib_per == "Per Capita") {
     per_total_text <- "Population of Legal Service Area"
@@ -443,8 +441,7 @@ output$peer_hc_bar <- renderHighchart({
     ) %>%
     mutate(
       level = CURRENT_LIBNAME_DISAMB,
-      per_text_prefix = "",
-      per_value_prefix = ""
+      per_text_prefix = ""
     )
 
   df_peers <- df %>%
@@ -455,12 +452,8 @@ output$peer_hc_bar <- renderHighchart({
     group_by(FISCAL_YEAR) %>%
     summarise(
       level = "Peer Libraries",
-      value = sum(value, na.rm = T),
-      per_calc = sum(per_calc, na.rm = T),
-      per_value = sum(per_value, na.rm = T),
-      per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average ",
-      per_value_prefix = "Total "
+      per_median = round(median(per_calc, na.rm = T), 2),
+      per_text_prefix = "Median "
     )
 
   df_nat <- pls_national_peers %>%
@@ -477,13 +470,9 @@ output$peer_hc_bar <- renderHighchart({
     ) %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
-      level = "National Average",
-      value = sum(value, na.rm = T),
-      per_calc = sum(per_calc, na.rm = T),
-      per_value = sum(per_value, na.rm = T),
-      per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average ",
-      per_value_prefix = "Total "
+      level = "National Libraries",
+      per_median = round(median(per_calc, na.rm = T), 2),
+      per_text_prefix = "Median "
     )
 
   df_state <- pls_national_peers %>%
@@ -501,42 +490,38 @@ output$peer_hc_bar <- renderHighchart({
     group_by(FISCAL_YEAR) %>%
     summarise(
       level = paste0(state, " Libraries"),
-      value = sum(value, na.rm = T),
-      per_calc = sum(per_calc, na.rm = T),
-      per_value = sum(per_value, na.rm = T),
-      per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average ",
-      per_value_prefix = "Total "
+      per_median = round(median(per_calc, na.rm = T), 2),
+      per_text_prefix = "Median "
     ) %>%
     distinct()
 
   df_target %<>%
-    rename("per_avg" = "per_calc")
+    rename("per_median" = "per_calc")
 
   highchart() %>%
     hc_add_series(
       df_target,
       type = "column",
       color = "#FFB81D",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
       df_peers,
       type = "column",
       color = "#81D0F0",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
       df_state,
       type = "column",
       color = "#0086BF",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
       df_nat,
       type = "column",
       color = "#093692",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_tooltip(
       pointFormat = paste0(
@@ -549,25 +534,11 @@ output$peer_hc_bar <- renderHighchart({
         ": ",
         y_tt,
         "</b><br>",
-        "{point.per_value_prefix}",
-        col_name_pretty, #Actual Value - e.g., "Visits: 12345"
-        ": ",
-        var_tt,
-        "<br>",
-        "{point.per_value_prefix}",
-        per_total_text, # Per category total - e.g., 'Total FTE: 1234'
-        ": ",
-        per_val_tt,
-        "<br>",
         "{point.x}"
       ),
       headerFormat = ""
     ) %>%
     hc_yAxis(
-      title = list(
-        text = paste0(col_name_pretty, " ", per_text),
-        style = list(fontSize = "15px")
-      ),
       labels = list(
         style = list(fontSize = "15px")
       )
@@ -577,6 +548,10 @@ output$peer_hc_bar <- renderHighchart({
       labels = list(
         style = list(fontSize = "15px")
       )
+    ) %>%
+    hc_title(
+      text = paste0(col_name_pretty, " ", per_text),
+      align = "left"
     ) %>%
     hc_caption(text = "Tip: click on the legend to show/hide specific groups")
 })
@@ -721,10 +696,10 @@ output$peer_hc_bar_multidrop <- renderHighchart({
       headerFormat = ""
     ) %>%
     hc_yAxis(
-      title = list(
-        #text = paste0(col_name_pretty, " ", percap_text),
-        style = list(fontSize = "15px")
-      ),
+      # title = list(
+      #   #text = paste0(col_name_pretty, " ", percap_text),
+      #   style = list(fontSize = "15px")
+      # ),
       labels = list(
         style = list(fontSize = "15px")
       )
@@ -734,6 +709,10 @@ output$peer_hc_bar_multidrop <- renderHighchart({
       labels = list(
         style = list(fontSize = "15px")
       )
+    ) %>%
+    hc_title(
+      text = paste0(col_name_pretty, " ", per_text),
+      align = "left"
     ) %>%
     hc_caption(
       text = "Tip: click on the legend to show/hide specific groups"

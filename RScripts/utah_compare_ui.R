@@ -31,7 +31,7 @@ nav_panel(
           trigger = list("Compare...", bs_icon("info-circle")),
           p(HTML(paste0(
             "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
-            "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a 40 hour work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time."
+            "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time."
           ))),
           options = list(customClass = "wide-tooltip")
         ),
@@ -111,7 +111,7 @@ nav_panel(
                 label = "Select a Year",
                 min = min(pls_national$FISCAL_YEAR),
                 max = max(pls_national$FISCAL_YEAR),
-                value = c(current_year - 1),
+                value = c(current_year),
                 round = TRUE,
                 step = 0,
                 sep = ""

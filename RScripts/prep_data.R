@@ -164,7 +164,11 @@ national_vars <- setdiff(
 #### PLS Utah ####
 
 pls_utah %<>%
-  mutate(FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF), POP_col = POPU_LSA) %>%
+  mutate(
+    FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF),
+    POP_col = POPU_LSA,
+    FTE = TOTSTAFF
+  ) %>%
   pivot_longer(cols = national_vars, names_to = "var", values_to = "value") %>%
   pivot_longer(
     cols = c(POP_col, FTE_col),
@@ -537,7 +541,7 @@ distances <- as.matrix(dist(
     "REGBOR_scl",
     "VISITS_scl"
   )],
-  method = 'manhattan' #'euclidean'
+  method = 'euclidean' #'manhattan'
 ))
 dimnames(distances) <- list(df$name, df$name)
 
@@ -585,7 +589,7 @@ distances_ut <- as.matrix(dist(
     "REGBOR_scl",
     "VISITS_scl"
   )],
-  method = 'manhattan' #'euclidean'
+  method = 'euclidean'
 ))
 dimnames(distances_ut) <- list(df_ut$name, df_ut$name)
 

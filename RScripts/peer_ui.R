@@ -15,7 +15,7 @@ nav_panel(
       width = "20%",
       pickerInput(
         "singlib_library",
-        label = "Select a Library System",
+        label = "Select a Library",
         choices = aes_national,
         selected = NULL,
         multiple = FALSE,
@@ -34,29 +34,19 @@ nav_panel(
       ),
       pickerInput(
         "singlib_per",
-        label = "Compare...",
+        label = tooltip(
+          trigger = list("Compare...", bs_icon("info-circle")),
+          p(HTML(paste0(
+            "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
+            "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a 4full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time."
+          ))),
+          options = list(customClass = "wide-tooltip")
+        ),
         choices = c("Per Capita", "Per FTE"),
         selected = "Per Capita",
         multiple = FALSE
         #)
       ),
-      # conditionalPanel(
-      #   condition = "input.singlib_tabs === 'Scatter'",
-      #   pickerInput(
-      #     "peer_varY",
-      #     label = "Variable 1",
-      #     choices = national_vars_pretty$INDICATOR,
-      #     selected = "Library Visits",
-      #     multiple = FALSE
-      #   ),
-      #   pickerInput(
-      #     "peer_varX",
-      #     label = "Variable 2",
-      #     choices = national_vars_pretty$INDICATOR,
-      #     selected = "Total Operating Revenue",
-      #     multiple = FALSE
-      #   )
-      # )
     ),
     ## Main Body ##
     # navset_card_underline(
@@ -79,16 +69,6 @@ nav_panel(
         class = "my-header-grey"
       ),
       reactableOutput("peer_dt")
-    ) #,
-
-    #   height = 600
-    # ) #,
-    # nav_panel(
-    #   "Scatter",
-    #   icon = bs_icon("graph-up"),
-    #   highchartOutput("peer_scatter_hc"), #height = "600px", height = "60vh"
-    #   height = 600
-    # )
-    #)
+    )
   )
 )

@@ -152,7 +152,7 @@
 #     )
 #   )
 
-##### Sync Inputa #####
+##### Sync Inputs #####
 observe({
   aes <- outlets %>%
     filter(

@@ -158,14 +158,14 @@ output$utah_bar_header <- renderUI({
     span(
       paste0(
         input$utah_highlight,
-        " Compared to the Utah Average"
+        " Compared to the Utah Library Median"
       ),
       bs_icon("info-circle")
     ),
     p(
       HTML(
         paste0(
-          "<b>Utah Average</b> is the average of totals across all Utah libraries that submitted data, including ",
+          "<b>Utah Libraries</b> shows the median value across all libraries in the state, including ",
           input$utah_highlight,
           "."
         )
@@ -210,36 +210,31 @@ output$utah_hc_bar <- renderHighchart({
     filter(CURRENT_LIBNAME == input$utah_highlight) %>%
     mutate(level = CURRENT_LIBNAME, per_text_prefix = "", per_value_prefix = "")
 
-  df_stavg <- df %>% ### TODO, avg of state or avg of library per_calcs?
+  df_stavg <- df %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
-      level = "Utah Average",
-      value = sum(value, na.rm = T),
-      #per_avg = round(mean(per_calc, na.rm = T), 2),
-      per_calc = sum(per_calc, na.rm = T),
-      per_value = sum(per_value, na.rm = T),
-      per_avg = round(value / per_value, 2),
-      per_text_prefix = "Average ",
-      per_value_prefix = "Total "
+      level = "Utah Libraries",
+      per_median = round(median(per_calc, na.rm = T), 2),
+      per_text_prefix = "Median "
     )
 
   per_text <- unique(df$per_text)
 
   df_ut %<>%
-    rename("per_avg" = "per_calc")
+    rename("per_median" = "per_calc")
 
   highchart() %>%
     hc_add_series(
       df_ut,
       type = "column",
       color = "#FFB81D",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
       df_stavg,
       type = "column",
       color = "#093692",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+      hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_tooltip(
       pointFormat = paste0(
@@ -252,25 +247,11 @@ output$utah_hc_bar <- renderHighchart({
         ": ",
         y_tt,
         "</b><br>",
-        "{point.per_value_prefix}",
-        col_name_pretty, #Actual Value - e.g., "Visits: 12345"
-        ": ",
-        var_tt,
-        "<br>",
-        "{point.per_value_prefix}",
-        per_total_text, # Per category total - e.g., 'Total FTE: 1234'
-        ": ",
-        per_val_tt,
-        "<br>",
         "{point.x}"
       ),
       headerFormat = ""
     ) %>%
     hc_yAxis(
-      # title = list(
-      #   text = paste0(col_name_pretty, " ", per_text),
-      #   style = list(fontSize = "15px")
-      # ),
       labels = list(
         style = list(fontSize = "15px")
       )
@@ -311,6 +292,7 @@ output$utah_dt <- renderReactable({
       #Year = FISCAL_YEAR,
       Library = CURRENT_LIBNAME,
       Population_Service_Area = POPU_LSA,
+      FTE,
       value,
       per_calc,
       rank,
@@ -337,7 +319,9 @@ output$utah_dt <- renderReactable({
       defaultColDef = colDef(align = "left"),
       columns = list(
         Library = colDef(
-          filterable = TRUE
+          filterable = TRUE,
+          minWidth = 150,
+          style = list(backgroundColor = "#f7f7f7")
         ),
         value = colDef(
           name = var_name,
@@ -353,6 +337,12 @@ output$utah_dt <- renderReactable({
         ),
         Population_Service_Area = colDef(
           name = "Legal Service Area Population",
+          cell = function(value) {
+            format(value, big.mark = ",")
+          }
+        ),
+        FTE = colDef(
+          name = "FTE",
           cell = function(value) {
             format(value, big.mark = ",")
           }
