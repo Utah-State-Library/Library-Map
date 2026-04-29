@@ -47,6 +47,20 @@ nav_panel(
         multiple = FALSE
         #)
       ),
+      pickerInput(
+        "peerlevel_per",
+        label = tooltip(
+          trigger = list("Peer Level", bs_icon("info-circle")),
+          p(HTML(paste0(
+            "<b>Nationwide Peers</b> are the 10 libraries across all states and territories that are most similar to the selected library. <br><br>",
+            "<b>Statewide Peers</b> are the 10 libraries across the state that are most similar to the selected library."
+          ))),
+          options = list(customClass = "wide-tooltip")
+        ),
+        choices = c("Nationwide Peers", "Statewide Peers"),
+        selected = "Nationwide Peers",
+        multiple = FALSE
+      )
     ),
     ## Main Body ##
     # navset_card_underline(

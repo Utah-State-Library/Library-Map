@@ -27,8 +27,12 @@ pls_peers <- reactive({
 
   peers <- pls_national_simlibs %>% filter(CURRENT_LIBNAME_DISAMB == lib)
 
-  y <- peers %>% filter(CURRENT_LIBNAME_DISAMB == lib)
-  y$peers <- gsub("[0-9]", "", y$peers)
+  if(input$peerlevel_per == "Nationwide Peers"){
+    y <- peers %>% select(CURRENT_LIBNAME_DISAMB, peers)
+  } else if(input$peerlevel_per == "Statewide Peers"){
+    y <- peers %>% select(CURRENT_LIBNAME_DISAMB, peers = state_peers)
+  }
+
   closest <- eval(parse(text = y$peers))
 
   pls_national_peers %>%
@@ -44,7 +48,7 @@ pls_peers <- reactive({
 output$peers_dt_header <- renderUI({
   tooltip(
     span(
-      paste0("National Peer Libraries for ", input$singlib_library),
+      paste0(input$peerlevel_per," for ", input$singlib_library),
       bs_icon("info-circle") #, title = "About Peer Libraries"
     ),
     p(
@@ -58,9 +62,7 @@ output$peers_dt_header <- renderUI({
       - Total FTE of Staff<br>
       - Total Revenue<br>
       - Number of Cardholders<br>
-      - Number of Visits" #,
-
-          # "Similarity is based on 2023 data (the most recent year available), and libraries that are similar to each other in this year may not be as similar if calculating using a different year. Data points were first standardized, and similarity scores were calculated using Manhattan Distance.",
+      - Number of Visits"
         )
       )
     ),
@@ -451,7 +453,7 @@ output$peer_hc_bar <- renderHighchart({
     ) %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
-      level = "Peer Libraries",
+      level = input$peerlevel_per,
       per_median = round(median(per_calc, na.rm = T), 2),
       per_text_prefix = "Median "
     )
