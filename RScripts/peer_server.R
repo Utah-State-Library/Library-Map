@@ -422,6 +422,13 @@ output$peer_hc_bar <- renderHighchart({
     per_total_text <- "FTE"
   }
 
+  
+  if (input$peerlevel_per == "Statewide Peers"){
+    peer_year <- max(pls_peers()$FISCAL_YEAR)
+  } else {
+    peer_year <- imls_year
+  }
+
   col_name_pretty <- input$singlib_var
   lib <- input$singlib_library
 
@@ -449,7 +456,7 @@ output$peer_hc_bar <- renderHighchart({
   df_peers <- df %>%
     filter(
       CURRENT_LIBNAME_DISAMB != lib,
-      FISCAL_YEAR <= imls_year
+      FISCAL_YEAR <= peer_year #imls_year
     ) %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
