@@ -53,23 +53,23 @@ nav_panel(
         card(
           card_header(
             uiOutput("libcompare_bar_header"),
-            popover(
-              span("Settings", bs_icon("gear")),
-              sliderInput(
-                "libcompare_years_bar",
-                label = "Range of Years to Graph",
-                min = min(pls_national$FISCAL_YEAR),
-                max = max(pls_national$FISCAL_YEAR),
-                value = c(
-                  max(pls_national$FISCAL_YEAR) - 5,
-                  max(pls_national$FISCAL_YEAR)
-                ),
-                round = TRUE,
-                step = 0,
-                sep = ""
-              ),
-              title = "Graph Controls"
-            ),
+            # popover(
+            #   span("Settings", bs_icon("gear")),
+            #   sliderInput(
+            #     "libcompare_years_bar",
+            #     label = "Range of Years to Graph",
+            #     min = min(pls_national_peers$FISCAL_YEAR),
+            #     max = max(pls_national_peers$FISCAL_YEAR),
+            #     value = c(
+            #       (max(pls_national_peers$FISCAL_YEAR) - 5),
+            #       max(pls_national_peers$FISCAL_YEAR)
+            #     ),
+            #     round = TRUE,
+            #     step = 0,
+            #     sep = ""
+            #   ),
+            #   title = "Graph Controls"
+            # ),
             class = "my-header-grey d-flex justify-content-between",
           ),
           highchartOutput("libcompare_hc_bar")
@@ -103,23 +103,23 @@ nav_panel(
         card(
           card_header(
             uiOutput("libcompare_bar_peers_header"),
-            popover(
-              span("Settings", bs_icon("gear")),
-              sliderInput(
-                "libcompare_peer_years_bar",
-                label = "Range of Years to Graph",
-                min = min(pls_national$FISCAL_YEAR),
-                max = max(pls_national$FISCAL_YEAR),
-                value = c(
-                  max(pls_national$FISCAL_YEAR) - 5,
-                  max(pls_national$FISCAL_YEAR)
-                ),
-                round = TRUE,
-                step = 0,
-                sep = ""
-              ),
-              title = "Graph Controls"
-            ),
+            # popover(
+            #   span("Settings", bs_icon("gear")),
+            #   sliderInput(
+            #     "libcompare_peer_years_bar",
+            #     label = "Range of Years to Graph",
+            #     min = min(pls_national_peers$FISCAL_YEAR),
+            #     max = max(pls_national_peers$FISCAL_YEAR),
+            #     value = c(
+            #       (max(pls_national_peers$FISCAL_YEAR) - 5),
+            #       max(pls_national_peers$FISCAL_YEAR)
+            #     ),
+            #     round = TRUE,
+            #     step = 0,
+            #     sep = ""
+            #   ),
+            #   title = "Graph Controls"
+            # ),
             class = "my-header-grey d-flex justify-content-between",
           ),
           highchartOutput("libcompare_hc_peers_bar")
@@ -132,8 +132,8 @@ nav_panel(
               sliderInput(
                 "libcompare_statepeers_dt_year",
                 label = "Select a Year",
-                min = min(pls_national$FISCAL_YEAR),
-                max = max(pls_national$FISCAL_YEAR),
+                min = min(pls_national_peers$FISCAL_YEAR),
+                max = max(pls_national_peers$FISCAL_YEAR),
                 value = c(current_year),
                 round = TRUE,
                 step = 0,
@@ -154,8 +154,8 @@ nav_panel(
               sliderInput(
                 "libcompare_nationalpeers_dt_year",
                 label = "Select a Year",
-                min = min(pls_national$FISCAL_YEAR),
-                max = max(pls_national$FISCAL_YEAR),
+                min = min(pls_national_peers$FISCAL_YEAR),
+                max = max(pls_national_peers$FISCAL_YEAR),
                 value = c(imls_year),
                 round = TRUE,
                 step = 0,
@@ -181,8 +181,8 @@ nav_panel(
               sliderInput(
                 "libcompare_national_dt_year",
                 label = "Select a Year",
-                min = min(pls_national$FISCAL_YEAR),
-                max = max(pls_national$FISCAL_YEAR),
+                min = min(pls_national_peers$FISCAL_YEAR),
+                max = max(pls_national_peers$FISCAL_YEAR),
                 value = c(current_year),
                 round = TRUE,
                 step = 0,

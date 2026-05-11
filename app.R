@@ -1,4 +1,5 @@
-# Load necessary packages
+# Load necessary packages - IF THERE ARE ANY CHANGES, run: 
+# rsconnect::writeManifest()
 library(highcharter)
 library(tidyverse)
 library(magrittr)
@@ -34,8 +35,6 @@ hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 options(scipen = 999)
-
-#rsconnect::writeManifest()
 
 #### Load Data ####
 

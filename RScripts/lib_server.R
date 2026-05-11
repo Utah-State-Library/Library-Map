@@ -155,13 +155,6 @@ output$libcompare_hc_bar <- renderHighchart({
     per_total_text <- "FTE"
   }
 
-
-  # if (input$peerlevel_libcompare == "Statewide Peers"){
-  #   peer_year <- max(libcompare_peers()$FISCAL_YEAR)
-  # } else {
-  #   peer_year <- imls_year
-  # }
-
   col_name_pretty <- input$var_libcompare
   lib <- input$library_libcompare
 
@@ -169,32 +162,7 @@ output$libcompare_hc_bar <- renderHighchart({
     mutate(state_name = state) ### do not remove, "state" is also an hc call and things get weird
 
   per_text <- unique(df$per_text)
-
   
-  # df_peers_state <- df_state %>%
-  #   filter(
-  #     CURRENT_LIBNAME_DISAMB != lib,
-  #     FISCAL_YEAR <= peer_year #imls_year
-  #   ) %>%
-  #   group_by(FISCAL_YEAR) %>%
-  #   summarise(
-  #     level = "State Peers",
-  #     per_median = round(median(per_calc, na.rm = T), 2),
-  #     per_text_prefix = "Median "
-  #   )
-  
-  #   df_peers_national <- df_national %>%
-  #   filter(
-  #     CURRENT_LIBNAME_DISAMB != lib,
-  #     FISCAL_YEAR <= peer_year #imls_year
-  #   ) %>%
-  #   group_by(FISCAL_YEAR) %>%
-  #   summarise(
-  #     level = "National Peers",
-  #     per_median = round(median(per_calc, na.rm = T), 2),
-  #     per_text_prefix = "Median "
-  #   )
-
   df_target <- df %>%
     filter(
       CURRENT_LIBNAME_DISAMB == lib
@@ -253,18 +221,6 @@ output$libcompare_hc_bar <- renderHighchart({
       color = "#FFB81D",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
-    # hc_add_series(
-    #   df_peers_state,
-    #   type = "column",
-    #   color = "#81D0F0",
-    #   hcaes(x = FISCAL_YEAR, y = per_median, group = level)
-    # ) %>%
-    # hc_add_series(
-    #   df_peers_national,
-    #   type = "column",
-    #   color = "#2eb1e5",
-    #   hcaes(x = FISCAL_YEAR, y = per_median, group = level)
-    #     ) %>%
     hc_add_series(
       df_state,
       type = "column",
@@ -608,7 +564,7 @@ output$libcompare_hc_peers_bar <- renderHighchart({
 
   col_name_pretty <- input$var_libcompare
   lib <- input$library_libcompare
-
+  
   df <- libcompare_reactive() %>%
     mutate(state_name = state) ### do not remove, "state" is also an hc call and things get weird
 
