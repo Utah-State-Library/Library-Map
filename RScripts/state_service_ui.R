@@ -1,5 +1,5 @@
 nav_panel(
-  title = tags$h5(class = "fw-bold", "Library Map"),
+  title = tags$h5(class = "fw-bold", "Utah Library Map"),
   class = " bg-body-secondary align-self-center m-1 p-0 border rounded-3",
   style = "width: 95vw; padding: 0; margin: 1;",
   height = "82vh",

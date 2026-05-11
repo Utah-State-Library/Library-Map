@@ -147,7 +147,11 @@ output$utah_hc <- renderHighchart({
         marker = list(enabled = FALSE),
         states = list(inactive = list(enabled = FALSE)) # prevents greyout
       )
-    )
+    ) %>%
+      hc_exporting(
+        enabled = TRUE,
+        filename = paste0(col_name_pretty, "_", per_text, "_state_compare_line_graph")
+      )
 })
 
 
@@ -266,7 +270,11 @@ output$utah_hc_bar <- renderHighchart({
       text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
-    hc_caption(text = "Tip: click on the legend to show/hide specific groups")
+    hc_caption(text = "Tip: click on the legend to show/hide specific groups") %>%
+      hc_exporting(
+        enabled = TRUE,
+        filename = paste0(col_name_pretty, "_", per_text, "_state_compare_chart")
+      )
 })
 
 #### Utah DT ####

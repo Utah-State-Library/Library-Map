@@ -10,16 +10,17 @@ selected_var_singlib <- reactive({
   variable_key %>% filter(INDICATOR == input$singlib_var) %>% pull(SHORTNAME)
 })
 
-# selected_var_scatterX <- reactive({
-#   variable_key %>% filter(INDICATOR == input$peer_varX) %>% pull(SHORTNAME)
-# })
-
-# selected_var_scatterY <- reactive({
-#   variable_key %>% filter(INDICATOR == input$peer_varY) %>% pull(SHORTNAME)
-# })
-
 selected_year_singlib <- reactive({
   input$singlib_year
+})
+
+library_name_pretty <- reactive({
+  lib <- input$singlib_library
+
+  pls_national_peers %>%
+    filter(
+      CURRENT_LIBNAME_DISAMB == lib
+    ) %>% select(CURRENT_LIBNAME) %>% unique() %>% pull()
 })
 
 pls_peers <- reactive({
@@ -46,9 +47,10 @@ pls_peers <- reactive({
 #### Table header ####
 
 output$peers_dt_header <- renderUI({
+
   tooltip(
     span(
-      paste0(input$peerlevel_per," for ", input$singlib_library),
+      paste0(input$peerlevel_per," for ", library_name_pretty()),
       bs_icon("info-circle") #, title = "About Peer Libraries"
     ),
     p(
@@ -187,129 +189,12 @@ output$peers_hc <- renderHighchart({
   hc
 })
 
-#### Peer Scatter Plot ####
-
-# output$peer_scatter_hc <- renderHighchart({
-#   if (selected_var_scatterY() %in% currency_cols) {
-#     y_tt <- "${point.y:,.2f}"
-#     yvar_tt <- "${point.value_y:,.0f}"
-#   } else {
-#     y_tt <- "{point.y:,.2f}"
-#     yvar_tt <- "{point.value_y:,f}"
-#   }
-
-#   if (selected_var_scatterX() %in% currency_cols) {
-#     x_tt <- "${point.x:,.2f}"
-#     xvar_tt <- "${point.value_x:,.0f}"
-#   } else {
-#     x_tt <- "{point.x:,.2f}"
-#     xvar_tt <- "{point.value_x:,f}"
-#   }
-
-#   col_name_pretty_x <- input$peer_varX
-#   col_name_pretty_y <- input$peer_varY
-#   lib <- input$singlib_library
-
-#   df <- pls_peers() %>%
-#     filter(
-#       var %in% c(selected_var_scatterX(), selected_var_scatterY()),
-#       FISCAL_YEAR == (current_year - 1)
-#     ) %>%
-#     mutate(
-#       var = case_when(
-#         var == selected_var_scatterX() ~ "x",
-#         var == selected_var_scatterY() ~ "y",
-#       )
-#     )
-
-#   df %<>%
-#     select(-percap_multiplier) %>%
-#     pivot_wider(
-#       names_from = "var",
-#       values_from = c("percap", "value", "percap_text")
-#     )
-
-#   df_target <- df %>%
-#     filter(
-#       CURRENT_LIBNAME_DISAMB == lib
-#     )
-#   df_peers <- df %>%
-#     filter(
-#       CURRENT_LIBNAME_DISAMB != lib
-#     )
-
-#   percap_text_x <- unique(df_target$percap_text_x)
-#   percap_text_y <- unique(df_target$percap_text_y)
-
-#   hc <- highchart() %>%
-#     hc_chart(zoomType = "y") %>%
-#     hc_add_series(
-#       df_target,
-#       type = "scatter",
-#       color = "#81D0F0",
-#       hcaes(x = percap_x, y = percap_y, group = CURRENT_LIBNAME_DISAMB)
-#     ) %>%
-#     hc_add_series(
-#       df_peers,
-#       type = "scatter",
-#       color = "rgb(0, 0, 0)",
-#       hcaes(x = percap_x, y = percap_y, group = CURRENT_LIBNAME_DISAMB)
-#     ) %>%
-#     hc_legend(enabled = FALSE) %>%
-#     hc_tooltip(
-#       pointFormat = paste0(
-#         "<b>{series.name}</b><br>",
-#         "<b>",
-#         col_name_pretty_x,
-#         " {point.percap_text_x}",
-#         ": ",
-#         x_tt,
-#         "<br>",
-#         col_name_pretty_y,
-#         " {point.percap_text_y}",
-#         ": ",
-#         y_tt,
-#         "</b><br>",
-#         col_name_pretty_x,
-#         ": ",
-#         xvar_tt,
-#         "<br>",
-#         col_name_pretty_y,
-#         ": ",
-#         yvar_tt,
-#         "<br>",
-#         "Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
-#         "{point.FISCAL_YEAR}"
-#       ),
-#       headerFormat = ""
-#     ) %>%
-#     hc_yAxis(
-#       title = list(
-#         text = paste0(col_name_pretty_y, " ", percap_text_y),
-#         style = list(fontSize = "15px")
-#       ),
-#       labels = list(
-#         style = list(fontSize = "15px")
-#       )
-#     ) %>%
-#     hc_xAxis(
-#       title = list(
-#         text = paste0(col_name_pretty_x, " ", percap_text_x),
-#         style = list(fontSize = "15px")
-#       ),
-#       labels = list(
-#         style = list(fontSize = "15px")
-#       )
-#     )
-
-#   hc
-# })
-
 #### Peer DT ####
 
 output$peer_dt <- renderReactable({
   col_name_pretty <- input$singlib_var
   lib <- input$singlib_library
+  lib_pretty <- library_name_pretty()
 
   df <- pls_national %>%
     filter(
@@ -317,7 +202,9 @@ output$peer_dt <- renderReactable({
       FISCAL_YEAR == imls_year
     ) %>%
     select(
-      Library = CURRENT_LIBNAME_DISAMB,
+      Library = CURRENT_LIBNAME,
+      CURRENT_LIBNAME_DISAMB,
+      FSCS = FSCSKEY,
       State = state,
       Year = FISCAL_YEAR,
       `Population of Legal Service Area` = POPU_LSA,
@@ -327,9 +214,9 @@ output$peer_dt <- renderReactable({
       `Total Revenue` = TOTINCM
     )
 
-  df1 <- df %>% filter(Library == lib)
+  df1 <- df %>% filter(CURRENT_LIBNAME_DISAMB == lib)
   df2 <- df %>%
-    filter(Library != lib) %>%
+    filter(CURRENT_LIBNAME_DISAMB != lib) %>%
     arrange(Library)
 
   df_r <- rbind(df1, df2)
@@ -353,13 +240,15 @@ output$peer_dt <- renderReactable({
       defaultColDef = colDef(align = "left"),
       columns = list(
         Library = colDef(minWidth = 150, style = function(value) {
-          if (value == lib) {
+          if (value == lib_pretty) {
             fontweight = "bold"
           } else {
             fontweight = 300
           }
           list(fontWeight = fontweight, backgroundColor = "#f7f7f7")
         }),
+        CURRENT_LIBNAME_DISAMB = colDef(show = FALSE),
+        FSCS = colDef(),
         State = colDef(),
         Year = colDef(show = FALSE),
         `Population of Legal Service Area` = colDef(cell = function(value) {
@@ -388,7 +277,7 @@ output$peers_bar_header <- renderUI({
   tooltip(
     span(
       paste0(
-        input$singlib_library,
+        library_name_pretty(),
         " Compared to Peer, State, and National Library Medians"
       ),
       bs_icon("info-circle")
@@ -422,7 +311,7 @@ output$peer_hc_bar <- renderHighchart({
     per_total_text <- "FTE"
   }
 
-  
+
   if (input$peerlevel_per == "Statewide Peers"){
     peer_year <- max(pls_peers()$FISCAL_YEAR)
   } else {
@@ -449,7 +338,7 @@ output$peer_hc_bar <- renderHighchart({
       CURRENT_LIBNAME_DISAMB == lib
     ) %>%
     mutate(
-      level = CURRENT_LIBNAME_DISAMB,
+      level = CURRENT_LIBNAME,
       per_text_prefix = ""
     )
 
@@ -568,163 +457,163 @@ output$peer_hc_bar <- renderHighchart({
 
 #### testing multi drop
 
-output$peer_hc_bar_multidrop <- renderHighchart({
-  # if (selected_var_singlib() %in% currency_cols) {
-  #   y_tt <- "${point.y:,.2f}"
-  #   var_tt <- "${point.value:,.0f}"
-  # } else {
-  #   y_tt <- "{point.y:,.2f}"
-  #   var_tt <- "{point.value:,f}"
-  # }
+# output$peer_hc_bar_multidrop <- renderHighchart({
+#   # if (selected_var_singlib() %in% currency_cols) {
+#   #   y_tt <- "${point.y:,.2f}"
+#   #   var_tt <- "${point.value:,.0f}"
+#   # } else {
+#   #   y_tt <- "{point.y:,.2f}"
+#   #   var_tt <- "{point.value:,f}"
+#   # }
 
-  #col_name_pretty <- input$singlib_var
-  lib <- "American Fork City Library" #input$singlib_library
+#   #col_name_pretty <- input$singlib_var
+#   lib <- "American Fork City Library" #input$singlib_library
 
-  df <- pls_peers %>% #() %>%
-    #filter(var == selected_var_singlib()) %>%
-    mutate(
-      state_name = state,
-      per_name_pretty = case_when(
-        per_name == "POPU_LSA" ~ "Per Capita",
-        per_name == "FTE_col" ~ "Per FTE"
-      )
-    ) %>%
-    left_join(variable_key, by = c("var" = "SHORTNAME"))
+#   df <- pls_peers %>% #() %>%
+#     #filter(var == selected_var_singlib()) %>%
+#     mutate(
+#       state_name = state,
+#       per_name_pretty = case_when(
+#         per_name == "POPU_LSA" ~ "Per Capita",
+#         per_name == "FTE_col" ~ "Per FTE"
+#       )
+#     ) %>%
+#     left_join(variable_key, by = c("var" = "SHORTNAME"))
 
-  #percap_text <- unique(df$percap_text)
+#   #percap_text <- unique(df$percap_text)
 
-  df_target <- df %>%
-    filter(
-      CURRENT_LIBNAME_DISAMB == lib
-    ) %>%
-    mutate(level = CURRENT_LIBNAME_DISAMB, percap_text_prefix = "")
+#   df_target <- df %>%
+#     filter(
+#       CURRENT_LIBNAME_DISAMB == lib
+#     ) %>%
+#     mutate(level = CURRENT_LIBNAME_DISAMB, percap_text_prefix = "")
 
-  df_peers <- df %>%
-    filter(
-      CURRENT_LIBNAME_DISAMB != lib,
-      FISCAL_YEAR <= imls_year
-    ) %>%
-    group_by(FISCAL_YEAR, var, per_name) %>%
-    summarise(
-      level = "Peer Libraries",
-      INDICATOR = unique(INDICATOR),
-      per_avg = round(mean(per_calc, na.rm = T), 2),
-      percap_text_prefix = "Average ",
-      per_name = unique(per_name),
-      per_name_pretty = unique(per_name_pretty),
-      per_text = unique(per_text)
-    )
+#   df_peers <- df %>%
+#     filter(
+#       CURRENT_LIBNAME_DISAMB != lib,
+#       FISCAL_YEAR <= imls_year
+#     ) %>%
+#     group_by(FISCAL_YEAR, var, per_name) %>%
+#     summarise(
+#       level = "Peer Libraries",
+#       INDICATOR = unique(INDICATOR),
+#       per_avg = round(mean(per_calc, na.rm = T), 2),
+#       percap_text_prefix = "Average ",
+#       per_name = unique(per_name),
+#       per_name_pretty = unique(per_name_pretty),
+#       per_text = unique(per_text)
+#     )
 
-  df_nat <- pls_national_peers %>%
-    left_join(variable_key, by = c("var" = "SHORTNAME")) %>%
-    mutate(
-      per_name_pretty = case_when(
-        per_name == "POPU_LSA" ~ "Per Capita",
-        per_name == "FTE_col" ~ "Per FTE"
-      )
-    ) %>%
-    filter(FISCAL_YEAR <= imls_year) %>%
-    group_by(FISCAL_YEAR, var, per_name) %>%
-    summarise(
-      level = "National Libraries",
-      INDICATOR = unique(INDICATOR),
-      per_avg = round(mean(per_calc, na.rm = T), 2),
-      percap_text_prefix = "Average ",
-      per_name = unique(per_name),
-      per_name_pretty = unique(per_name_pretty),
-      per_text = unique(per_text)
-    ) %>%
-    distinct()
+#   df_nat <- pls_national_peers %>%
+#     left_join(variable_key, by = c("var" = "SHORTNAME")) %>%
+#     mutate(
+#       per_name_pretty = case_when(
+#         per_name == "POPU_LSA" ~ "Per Capita",
+#         per_name == "FTE_col" ~ "Per FTE"
+#       )
+#     ) %>%
+#     filter(FISCAL_YEAR <= imls_year) %>%
+#     group_by(FISCAL_YEAR, var, per_name) %>%
+#     summarise(
+#       level = "National Libraries",
+#       INDICATOR = unique(INDICATOR),
+#       per_avg = round(mean(per_calc, na.rm = T), 2),
+#       percap_text_prefix = "Average ",
+#       per_name = unique(per_name),
+#       per_name_pretty = unique(per_name_pretty),
+#       per_text = unique(per_text)
+#     ) %>%
+#     distinct()
 
-  df_state <- pls_national_peers %>%
-    left_join(variable_key, by = c("var" = "SHORTNAME")) %>%
-    mutate(
-      per_name_pretty = case_when(
-        per_name == "POPU_LSA" ~ "Per Capita",
-        per_name == "FTE_col" ~ "Per FTE"
-      )
-    ) %>%
-    filter(
-      state == unique(df_target$state_name)
-    ) %>%
-    group_by(FISCAL_YEAR, var, per_name) %>%
-    summarise(
-      level = paste0(state, " Libraries"),
-      INDICATOR = unique(INDICATOR),
-      per_avg = round(mean(per_calc, na.rm = T), 2),
-      percap_text_prefix = "Average ",
-      per_name = unique(per_name),
-      per_name_pretty = unique(per_name_pretty),
-      per_text = unique(per_text)
-    ) %>%
-    distinct()
+#   df_state <- pls_national_peers %>%
+#     left_join(variable_key, by = c("var" = "SHORTNAME")) %>%
+#     mutate(
+#       per_name_pretty = case_when(
+#         per_name == "POPU_LSA" ~ "Per Capita",
+#         per_name == "FTE_col" ~ "Per FTE"
+#       )
+#     ) %>%
+#     filter(
+#       state == unique(df_target$state_name)
+#     ) %>%
+#     group_by(FISCAL_YEAR, var, per_name) %>%
+#     summarise(
+#       level = paste0(state, " Libraries"),
+#       INDICATOR = unique(INDICATOR),
+#       per_avg = round(mean(per_calc, na.rm = T), 2),
+#       percap_text_prefix = "Average ",
+#       per_name = unique(per_name),
+#       per_name_pretty = unique(per_name_pretty),
+#       per_text = unique(per_text)
+#     ) %>%
+#     distinct()
 
-  df_target %<>%
-    rename("per_avg" = "per_calc")
-  #select(level, FISCAL_YEAR, percap_avg = percap, percap_text_prefix)
+#   df_target %<>%
+#     rename("per_avg" = "per_calc")
+#   #select(level, FISCAL_YEAR, percap_avg = percap, percap_text_prefix)
 
-  highchart() %>%
-    hc_add_series(
-      df_target,
-      type = "column",
-      color = "#FFB81D",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
-    ) %>%
-    hc_add_series(
-      df_peers,
-      type = "column",
-      color = "#81D0F0",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
-    ) %>%
-    hc_add_series(
-      df_state,
-      type = "column",
-      color = "#0086BF",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
-    ) %>%
-    hc_add_series(
-      df_nat,
-      type = "column",
-      color = "#093692",
-      hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
-    ) %>%
-    hc_tooltip(
-      pointFormat = paste0(
-        "<b>{series.name}</b><br>",
-        "<b>",
-        "{point.percap_text_prefix}",
-        "{point.INDICATOR}",
-        " ",
-        "{point.per_text}",
-        ": ",
-        "{point.y}",
-        #y_tt,
-        "</b><br>",
-        "{point.x}"
-      ),
-      headerFormat = ""
-    ) %>%
-    hc_yAxis(
-      # title = list(
-      #   #text = paste0(col_name_pretty, " ", percap_text),
-      #   style = list(fontSize = "15px")
-      # ),
-      labels = list(
-        style = list(fontSize = "15px")
-      )
-    ) %>%
-    hc_xAxis(
-      allowDecimals = FALSE,
-      labels = list(
-        style = list(fontSize = "15px")
-      )
-    ) %>%
-    hc_title(
-      text = paste0(col_name_pretty, " ", per_text),
-      align = "left"
-    ) %>%
-    hc_caption(
-      text = "Tip: click on the legend to show/hide specific groups"
-    ) %>%
-    add_multi_drop(c("INDICATOR", "per_name_pretty"))
-})
+#   highchart() %>%
+#     hc_add_series(
+#       df_target,
+#       type = "column",
+#       color = "#FFB81D",
+#       hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+#     ) %>%
+#     hc_add_series(
+#       df_peers,
+#       type = "column",
+#       color = "#81D0F0",
+#       hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+#     ) %>%
+#     hc_add_series(
+#       df_state,
+#       type = "column",
+#       color = "#0086BF",
+#       hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+#     ) %>%
+#     hc_add_series(
+#       df_nat,
+#       type = "column",
+#       color = "#093692",
+#       hcaes(x = FISCAL_YEAR, y = per_avg, group = level)
+#     ) %>%
+#     hc_tooltip(
+#       pointFormat = paste0(
+#         "<b>{series.name}</b><br>",
+#         "<b>",
+#         "{point.percap_text_prefix}",
+#         "{point.INDICATOR}",
+#         " ",
+#         "{point.per_text}",
+#         ": ",
+#         "{point.y}",
+#         #y_tt,
+#         "</b><br>",
+#         "{point.x}"
+#       ),
+#       headerFormat = ""
+#     ) %>%
+#     hc_yAxis(
+#       # title = list(
+#       #   #text = paste0(col_name_pretty, " ", percap_text),
+#       #   style = list(fontSize = "15px")
+#       # ),
+#       labels = list(
+#         style = list(fontSize = "15px")
+#       )
+#     ) %>%
+#     hc_xAxis(
+#       allowDecimals = FALSE,
+#       labels = list(
+#         style = list(fontSize = "15px")
+#       )
+#     ) %>%
+#     hc_title(
+#       text = paste0(col_name_pretty, " ", per_text),
+#       align = "left"
+#     ) %>%
+#     hc_caption(
+#       text = "Tip: click on the legend to show/hide specific groups"
+#     ) %>%
+#     add_multi_drop(c("INDICATOR", "per_name_pretty"))
+# })

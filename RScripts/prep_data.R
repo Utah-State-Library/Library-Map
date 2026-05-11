@@ -61,6 +61,7 @@ pls_national <- readRDS("data/pls_national_updated.rds") %>%
     STABR,
     CURRENT_LIBNAME,
     CURRENT_LIBNAME_DISAMB,
+    FSCSKEY,
     POPU_LSA,
     REGBOR,
     VISITS,
@@ -151,13 +152,13 @@ st_crosswalk <- data.frame(
 pls_national %<>% left_join(st_crosswalk, by = c("STABR" = "abb"))
 pls_utah <- pls_national %>% filter(state == "Utah")
 
-pls_national %<>% select(-CURRENT_LIBNAME)
+#pls_national %<>% select(-CURRENT_LIBNAME)
 
 saveRDS(pls_national, "data/processed/pls_national_app.RDS")
 
 national_vars <- setdiff(
   names(pls_national),
-  c("FISCAL_YEAR", "CURRENT_LIBNAME_DISAMB", "STABR", "state", "POPU_LSA")
+  c("FISCAL_YEAR", "CURRENT_LIBNAME", "CURRENT_LIBNAME_DISAMB", "FSCSKEY", "STABR", "state", "POPU_LSA")
 )
 
 
@@ -403,6 +404,29 @@ pls_national_peers %<>%
   mutate(per_calc = round((value * per_multiplier) / per_value, 2)) %>%
   ungroup()
 
+
+pls_national_peers %<>%
+  group_by(FISCAL_YEAR, state, var, per_name) %>%
+  mutate(
+    rank_state = if (all(is.na(per_calc))) {
+      NA_real_
+    } else {
+      rank(-per_calc, na.last = "keep", ties.method = "average")
+    },
+    n_state = ifelse(!is.na(rank_state), sum(!is.na(per_calc)), NA)
+  ) %>%
+  ungroup() %>%
+    group_by(FISCAL_YEAR, var, per_name) %>%
+  mutate(
+    rank_national = if (all(is.na(per_calc))) {
+      NA_real_
+    } else {
+      rank(-per_calc, na.last = "keep", ties.method = "average")
+    },
+    n_national = ifelse(!is.na(rank_national), sum(!is.na(per_calc)), NA)
+  ) %>%
+  ungroup()
+
 saveRDS(pls_national_peers, "data/processed/pls_national_peers_appv2.RDS")
 
 
@@ -413,7 +437,7 @@ pls_national_state <- pls_national %>%
   mutate(
     n_systems = n_distinct(CURRENT_LIBNAME_DISAMB)
   ) %>%
-  select(-CURRENT_LIBNAME_DISAMB) %>%
+  select(-c(FSCSKEY, CURRENT_LIBNAME_DISAMB, CURRENT_LIBNAME)) %>%
   mutate(across(
     c(POPU_LSA, all_of(national_vars)),
     ~ ifelse(all(is.na(.)), NA, sum(., na.rm = TRUE))
@@ -421,7 +445,7 @@ pls_national_state <- pls_national %>%
   distinct()
 
 pls_national_state %<>%
-  mutate(FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF), POP_col = POPU_LSA) %>%
+  mutate(FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF), POP_col = POPU_LSA, FTE = FTE_col) %>%
   pivot_longer(cols = national_vars, names_to = "var", values_to = "value") %>%
   pivot_longer(
     cols = c("POP_col", "FTE_col"),

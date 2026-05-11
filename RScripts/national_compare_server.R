@@ -33,130 +33,130 @@ pls_national_reactive <- reactive({
 
 ##### HC Graph #####
 
-output$national_line_header <- renderUI({
-  tooltip(
-    span(
-      paste0(
-        input$national_states,
-        " Compared to All Other States and Territories"
-      ),
-      bs_icon("info-circle")
-    ),
-    p(
-      HTML(
-        paste0(
-          "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
-          "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
-          "<br><br>",
-          "Use the gear icon at the top right to change the year."
-        )
-      )
-    ),
-    options = list(customClass = "wide-tooltip")
-  )
-})
+# output$national_line_header <- renderUI({
+#   tooltip(
+#     span(
+#       paste0(
+#         input$national_states,
+#         " Compared to All Other States and Territories"
+#       ),
+#       bs_icon("info-circle")
+#     ),
+#     p(
+#       HTML(
+#         paste0(
+#           "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
+#           "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
+#           "<br><br>",
+#           "Use the gear icon at the top right to change the year."
+#         )
+#       )
+#     ),
+#     options = list(customClass = "wide-tooltip")
+#   )
+# })
 
 
-output$national_hc <- renderHighchart({
-  if (selected_var() %in% currency_cols) {
-    y_tt <- "${point.y:,.2f}"
-    var_tt <- "${point.value:,.0f}"
-    # Y axis $ prefix
-  } else {
-    # TODO remove decimals from non-decimal vars
-    y_tt <- "{point.y:,.2f}" #
-    var_tt <- "{point.value:,f}" #:,.2f
-  }
+# output$national_hc <- renderHighchart({
+#   if (selected_var() %in% currency_cols) {
+#     y_tt <- "${point.y:,.2f}"
+#     var_tt <- "${point.value:,.0f}"
+#     # Y axis $ prefix
+#   } else {
+#     # TODO remove decimals from non-decimal vars
+#     y_tt <- "{point.y:,.2f}" #
+#     var_tt <- "{point.value:,f}" #:,.2f
+#   }
 
-  col_name_pretty <- input$national_var
+#   col_name_pretty <- input$national_var
 
-  df <- pls_national_reactive() %>%
-    filter(
-      FISCAL_YEAR >= input$national_years[1],
-      FISCAL_YEAR <= input$national_years[2]
-    )
+#   df <- pls_national_reactive() %>%
+#     filter(
+#       FISCAL_YEAR >= input$national_years[1],
+#       FISCAL_YEAR <= input$national_years[2]
+#     )
 
-  per_text <- unique(df$per_text)
+#   per_text <- unique(df$per_text)
 
-  df_ut <- df %>% filter(state == input$national_states)
-  df_nut <- df %>% filter(state != input$national_states)
-  # df_natavg <- df %>%
-  #   group_by(FISCAL_YEAR) %>%
-  #   mutate(
-  #     per_calc = round(mean(per_calc, na.rm = T), 2),
-  #     n_states = n_distinct(state)
-  #   ) %>%
-  #   ungroup() %>%
-  #   filter(n_states > 1)
+#   df_ut <- df %>% filter(state == input$national_states)
+#   df_nut <- df %>% filter(state != input$national_states)
+#   # df_natavg <- df %>%
+#   #   group_by(FISCAL_YEAR) %>%
+#   #   mutate(
+#   #     per_calc = round(mean(per_calc, na.rm = T), 2),
+#   #     n_states = n_distinct(state)
+#   #   ) %>%
+#   #   ungroup() %>%
+#   #   filter(n_states > 1)
 
-  highchart() %>%
-    hc_chart(zoomType = "y") %>%
-    hc_add_series(
-      df_ut,
-      type = "line",
-      color = "#81D0F0",
-      index = 2,
-      lineWidth = 4,
-      hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
-    ) %>%
-    hc_add_series(
-      df_nut,
-      type = "line",
-      color = "#d6d3d3ff",
-      fillOpacity = .6,
-      index = 1,
-      lineWidth = 1,
-      hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
-    ) %>%
-    hc_legend(enabled = FALSE) %>%
-    hc_tooltip(
-      pointFormat = paste0(
-        "<b>{series.name}</b><br>",
-        "<b>Rank: {point.rank} out of {point.n}</b><br>",
-        "<b>",
-        col_name_pretty,
-        " {point.per_text}",
-        ": ",
-        y_tt,
-        "</b><br>",
-        col_name_pretty,
-        ": ",
-        var_tt,
-        "<br>",
-        "Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
-        "{point.x}"
-      ),
-      headerFormat = ""
-    ) %>%
-    hc_yAxis(
-      #   title = list(
-      #     text = paste0(col_name_pretty, " ", per_text),
-      #     style = list(fontSize = "15px")
-      #   ),
-      labels = list(
-        style = list(fontSize = "15px")
-      )
-    ) %>%
-    hc_xAxis(
-      allowDecimals = FALSE,
-      labels = list(
-        style = list(fontSize = "15px")
-      )
-    ) %>%
-    hc_title(
-      text = paste0(col_name_pretty, " ", per_text, " by State"),
-      align = "left"
-    ) %>%
-    hc_caption(
-      text = "Some states/territories may have no data for certain years. Rankings reflect those that did submit data for a given year."
-    ) %>%
-    hc_plotOptions(
-      series = list(
-        marker = list(enabled = FALSE),
-        states = list(inactive = list(enabled = FALSE)) # prevents greyout
-      )
-    )
-})
+#   highchart() %>%
+#     hc_chart(zoomType = "y") %>%
+#     hc_add_series(
+#       df_ut,
+#       type = "line",
+#       color = "#81D0F0",
+#       index = 2,
+#       lineWidth = 4,
+#       hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
+#     ) %>%
+#     hc_add_series(
+#       df_nut,
+#       type = "line",
+#       color = "#d6d3d3ff",
+#       fillOpacity = .6,
+#       index = 1,
+#       lineWidth = 1,
+#       hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
+#     ) %>%
+#     hc_legend(enabled = FALSE) %>%
+#     hc_tooltip(
+#       pointFormat = paste0(
+#         "<b>{series.name}</b><br>",
+#         "<b>Rank: {point.rank} out of {point.n}</b><br>",
+#         "<b>",
+#         col_name_pretty,
+#         " {point.per_text}",
+#         ": ",
+#         y_tt,
+#         "</b><br>",
+#         col_name_pretty,
+#         ": ",
+#         var_tt,
+#         "<br>",
+#         "Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
+#         "{point.x}"
+#       ),
+#       headerFormat = ""
+#     ) %>%
+#     hc_yAxis(
+#       #   title = list(
+#       #     text = paste0(col_name_pretty, " ", per_text),
+#       #     style = list(fontSize = "15px")
+#       #   ),
+#       labels = list(
+#         style = list(fontSize = "15px")
+#       )
+#     ) %>%
+#     hc_xAxis(
+#       allowDecimals = FALSE,
+#       labels = list(
+#         style = list(fontSize = "15px")
+#       )
+#     ) %>%
+#     hc_title(
+#       text = paste0(col_name_pretty, " ", per_text, " by State"),
+#       align = "left"
+#     ) %>%
+#     hc_caption(
+#       text = "Some states/territories may have no data for certain years. Rankings reflect those that did submit data for a given year."
+#     ) %>%
+#     hc_plotOptions(
+#       series = list(
+#         marker = list(enabled = FALSE),
+#         states = list(inactive = list(enabled = FALSE)) # prevents greyout
+#       )
+#     )
+# })
 
 
 #### HC Bar Graph ####
@@ -274,7 +274,11 @@ output$national_hc_bar <- renderHighchart({
       text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
-    hc_caption(text = "Tip: click on the legend to show/hide specific groups")
+    hc_caption(text = "Tip: click on the legend to show/hide specific groups") %>%
+      hc_exporting(
+        enabled = TRUE,
+        filename = paste0(col_name_pretty, "_", per_text, "_state_compare_chart")
+      )
 })
 
 
@@ -314,14 +318,17 @@ output$national_dt <- renderReactable({
   df <- pls_national_reactive() %>%
     filter(FISCAL_YEAR == input$national_dt_year) %>%
     select(
-      # Year = FISCAL_YEAR,
-      State = state,
-      Population_Service_Area = POPU_LSA,
-      value,
-      per_calc,
+      year = FISCAL_YEAR,
+      state,
+      population_service_area = POPU_LSA,
+      variable = var, # hide col in reactable, include for download
+      comparison_method = per_name_pretty, # hide col in reactable, include for download
+      actual_variable_value = value,
+      comparison_value = per_calc,
       rank,
       n
-    )
+    ) %>%
+    mutate(variable = var_name)
 
   # Render reactable
   df %>%
@@ -329,11 +336,10 @@ output$national_dt <- renderReactable({
       resizable = TRUE,
       pagination = FALSE,
       sortable = FALSE,
-      #groupBy = "Year",
-      #defaultExpanded = FALSE,
-      defaultSorted = list(rank = "asc"), #Year = "desc",
+      defaultSorted = list(rank = "asc"),
       highlight = TRUE,
-      height = "auto",
+      virtual = TRUE,
+      height = 500,
       defaultExpanded = TRUE,
       compact = TRUE,
       theme = reactableTheme(
@@ -344,12 +350,15 @@ output$national_dt <- renderReactable({
       ),
       defaultColDef = colDef(align = "left"),
       columns = list(
-        State = colDef(
+        year = colDef(show = FALSE),
+        state = colDef(
           name = "State/Territory",
           filterable = TRUE,
           style = list(backgroundColor = "#f7f7f7")
         ),
-        value = colDef(
+        variable = colDef(show = FALSE),
+        comparison_method = colDef(show = FALSE),
+        actual_variable_value = colDef(
           name = var_name,
           cell = function(value) {
             if (isTRUE(selected_var() %in% currency_cols)) {
@@ -361,13 +370,13 @@ output$national_dt <- renderReactable({
             }
           }
         ),
-        Population_Service_Area = colDef(
+        population_service_area = colDef(
           name = "Legal Service Area Population",
           cell = function(value) {
             format(value, big.mark = ",")
           }
         ),
-        per_calc = colDef(
+        comparison_value = colDef(
           name = paste0(var_name, " ", per_text),
           cell = function(value) {
             if (isTRUE(selected_var() %in% currency_cols)) {
