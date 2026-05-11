@@ -2821,31 +2821,40 @@
       }
     },
     "reactable": {
-      "Source": "CRAN",
-      "Repository": "https://cran.rstudio.com",
+      "Source": "github",
+      "Repository": null,
       "description": {
         "Package": "reactable",
         "Type": "Package",
         "Title": "Interactive Data Tables for R",
-        "Version": "0.4.4",
+        "Version": "0.4.5.9000",
         "Authors@R": "c(\n    person(\"Greg\", \"Lin\", email = \"glin@glin.io\", role = c(\"aut\", \"cre\")),\n    person(\"Tanner\", \"Linsley\", role = c(\"ctb\", \"cph\"), comment = \"React Table library\"),\n    person(family = \"Emotion team and other contributors\", role = c(\"ctb\", \"cph\"),\n           comment = \"Emotion library\"),\n    person(\"Kent\", \"Russell\", role = c(\"ctb\", \"cph\"), comment = \"reactR package\"),\n    person(\"Ramnath\", \"Vaidyanathan\", role = c(\"ctb\", \"cph\"), comment = \"htmlwidgets package\"),\n    person(\"Joe\", \"Cheng\", role = c(\"ctb\", \"cph\"), comment = \"htmlwidgets package\"),\n    person(\"JJ\", \"Allaire\", role = c(\"ctb\", \"cph\"), comment = \"htmlwidgets package\"),\n    person(\"Yihui\", \"Xie\", role = c(\"ctb\", \"cph\"), comment = \"htmlwidgets package\"),\n    person(\"Kenton\", \"Russell\", role = c(\"ctb\", \"cph\"), comment = \"htmlwidgets package\"),\n    person(family = \"Facebook, Inc. and its affiliates\", role = c(\"ctb\", \"cph\"), comment = \"React library\"),\n    person(family = \"FormatJS\", role = c(\"ctb\", \"cph\"), comment = \"FormatJS libraries\"),\n    person(family = \"Feross Aboukhadijeh, and other contributors\", role = c(\"ctb\", \"cph\"),\n           comment = \"buffer library\"),\n    person(\"Roman\", \"Shtylman\", role = c(\"ctb\", \"cph\"), comment = \"process library\"),\n    person(\"James\", \"Halliday\", role = c(\"ctb\", \"cph\"), comment = \"stream-browserify library\"),\n    person(family = \"Posit Software, PBC\", role = c(\"fnd\", \"cph\"))\n    )",
         "Description": "Interactive data tables for R, based on the 'React Table'\n    JavaScript library. Provides an HTML widget that can be used in 'R Markdown'\n    or 'Quarto' documents, 'Shiny' applications, or viewed from an R console.",
         "License": "MIT + file LICENSE",
         "URL": "https://glin.github.io/reactable/,\nhttps://github.com/glin/reactable",
         "BugReports": "https://github.com/glin/reactable/issues",
         "Depends": "R (>= 3.1)",
-        "Imports": "digest, htmltools (>= 0.5.2), htmlwidgets (>= 1.5.3),\njsonlite, reactR",
-        "Suggests": "covr, crosstalk, dplyr, fontawesome, knitr, leaflet, MASS,\nrmarkdown, shiny, sparkline, testthat, tippy, V8",
+        "Imports": "digest, htmltools (>= 0.5.2), htmlwidgets (>= 1.5.3),\njsonlite, reactR (>= 0.6.1)",
+        "Suggests": "covr, crosstalk, data.table, dplyr, fontawesome, knitr,\nleaflet, MASS, rmarkdown, shiny, sparkline, testthat, tippy, V8",
         "Encoding": "UTF-8",
-        "RoxygenNote": "7.2.1",
+        "Roxygen": "list(markdown = TRUE)",
+        "RoxygenNote": "7.3.3",
         "Config/testthat/edition": "3",
+        "RemoteType": "github",
+        "RemoteHost": "api.github.com",
+        "RemoteRepo": "reactable",
+        "RemoteUsername": "glin",
+        "RemoteRef": "HEAD",
+        "RemoteSha": "17ed43e98dd6dba9264901398c15b922579775b9",
+        "GithubRepo": "reactable",
+        "GithubUsername": "glin",
+        "GithubRef": "HEAD",
+        "GithubSHA1": "17ed43e98dd6dba9264901398c15b922579775b9",
         "NeedsCompilation": "no",
-        "Packaged": "2023-03-12 00:59:18 UTC; greg",
+        "Packaged": "2026-04-30 19:17:09 UTC; samdutton",
         "Author": "Greg Lin [aut, cre],\n  Tanner Linsley [ctb, cph] (React Table library),\n  Emotion team and other contributors [ctb, cph] (Emotion library),\n  Kent Russell [ctb, cph] (reactR package),\n  Ramnath Vaidyanathan [ctb, cph] (htmlwidgets package),\n  Joe Cheng [ctb, cph] (htmlwidgets package),\n  JJ Allaire [ctb, cph] (htmlwidgets package),\n  Yihui Xie [ctb, cph] (htmlwidgets package),\n  Kenton Russell [ctb, cph] (htmlwidgets package),\n  Facebook, Inc. and its affiliates [ctb, cph] (React library),\n  FormatJS [ctb, cph] (FormatJS libraries),\n  Feross Aboukhadijeh, and other contributors [ctb, cph] (buffer library),\n  Roman Shtylman [ctb, cph] (process library),\n  James Halliday [ctb, cph] (stream-browserify library),\n  Posit Software, PBC [fnd, cph]",
         "Maintainer": "Greg Lin <glin@glin.io>",
-        "Repository": "CRAN",
-        "Date/Publication": "2023-03-12 10:00:10 UTC",
-        "Built": "R 4.4.3; ; 2025-06-04 03:08:52 UTC; windows"
+        "Built": "R 4.4.3; ; 2026-04-30 19:17:10 UTC; windows"
       }
     },
     "readr": {
@@ -4392,7 +4401,7 @@
       "checksum": "8799f3582b7bab5f4fd39bc454c02787"
     },
     "app.R": {
-      "checksum": "18eb09fb9bd7144c5caf2abe10f7ba4d"
+      "checksum": "3c8d5d91f05dfc44672b8a2e4929697f"
     },
     "data/counties/Counties.cpg": {
       "checksum": "ae3b3df9970b49b6523e608759bc957d"
@@ -4439,6 +4448,9 @@
     "data/pls_national_state.RDS": {
       "checksum": "8a8245d34a08f5bc470b99d0a53091c5"
     },
+    "data/pls_national_updated.RDS": {
+      "checksum": "b5f03a57bf502edf8d188235ca194ed6"
+    },
     "data/pls_outlet_national.rds": {
       "checksum": "58cc4b1965e8731c1ef898b220690211"
     },
@@ -4452,58 +4464,46 @@
       "checksum": "746a25f0fb455daeea890ce7444a0262"
     },
     "data/processed/pls_national_app.RDS": {
-      "checksum": "a79918ca5f19abeea2bffefebf94d406"
+      "checksum": "8ce1aa56f0d0aa21d694de6e82b956ba"
     },
     "data/processed/pls_national_peers_app.RDS": {
       "checksum": "4bbff441290fb3b4f4a36c263f30bf09"
     },
     "data/processed/pls_national_peers_appv2.RDS": {
-      "checksum": "a2c75f5e7125127bfaf3f397847dc5e8"
+      "checksum": "7b6747f05153b8572fe1c317504891d3"
     },
     "data/processed/pls_national_simlibs.RDS": {
-      "checksum": "499f89a962b14966489ef4ea2872d04a"
+      "checksum": "74e416ec88328dba4931b5c22cef6015"
     },
     "data/processed/pls_national_state_app.RDS": {
       "checksum": "55e18571a83c200fd247e9960cbec2f3"
     },
     "data/processed/pls_national_state_appv2.RDS": {
-      "checksum": "effd7767a67c5c8fa2d9b53deb84fff7"
-    },
-    "data/processed/pls_national_state_map_app.dbf": {
-      "checksum": "bd94d43b7704bd49079f6c5400f08443"
-    },
-    "data/processed/pls_national_state_map_app.prj": {
-      "checksum": "c742bee3d4edfc2948a2ad08de1790a5"
-    },
-    "data/processed/pls_national_state_map_app.shp": {
-      "checksum": "91acf5cd516e5ad4483415926e216c85"
-    },
-    "data/processed/pls_national_state_map_app.shx": {
-      "checksum": "8610bcd81d495adea2bdddcc9e8d8c2c"
+      "checksum": "7645b1fff9c86740fe646de9c49f7d9e"
     },
     "data/processed/pls_national_state_map_appv2.dbf": {
-      "checksum": "11beafa7cf55c711e0b730f7af2e174c"
+      "checksum": "f13e1a130913b5de60afbab6187834f3"
     },
     "data/processed/pls_national_state_map_appv2.prj": {
       "checksum": "c742bee3d4edfc2948a2ad08de1790a5"
     },
     "data/processed/pls_national_state_map_appv2.shp": {
-      "checksum": "7bf163b923c030cc3e84f2a35721a0ed"
+      "checksum": "9b8edb84101339ac9c3c427c0d8b0159"
     },
     "data/processed/pls_national_state_map_appv2.shx": {
-      "checksum": "8eab2de4b29fb70879c6153dbd26527d"
+      "checksum": "b9b78fd6631a87789f90489db5f17e0b"
     },
     "data/processed/pls_ut_app.RDS": {
       "checksum": "5a3c0bfedc447e0b4e74ec8b794765db"
     },
     "data/processed/pls_ut_simlibs.RDS": {
-      "checksum": "c46d81a500fa7adbaeeffba96e0bc399"
+      "checksum": "efe95a8bd968a4a14cd97d12c7fc3495"
     },
     "data/processed/pls_utah_app.RDS": {
       "checksum": "b06760e01ba3a7b29bb9d860b865a48c"
     },
     "data/processed/pls_utah_appv2.RDS": {
-      "checksum": "743f2a1e5f6b57e9826570cf1a8d29dd"
+      "checksum": "a109048f2dc693bd902ba7c95419f642"
     },
     "data/states_terrs_natwservice/s_16ap26.dbf": {
       "checksum": "f3f4c1256c37f25ed68ce254b7be7a06"
@@ -4520,38 +4520,47 @@
     "RScripts/functions": {
       "checksum": "a893d15ed44e92d1590f501a84928cf5"
     },
+    "RScripts/lib_server.R": {
+      "checksum": "2503413b807d90cb3283740923726906"
+    },
+    "RScripts/lib_ui.R": {
+      "checksum": "e3cd7987eb59b231a26d5b468c4e1cf6"
+    },
     "RScripts/lists.R": {
       "checksum": "9874364b77d4bf4b5d34d56005c6c7a0"
     },
+    "RScripts/methodology.R": {
+      "checksum": "03ef23c0b68b61d2fa0bfe7972098e36"
+    },
     "RScripts/national_compare_server.R": {
-      "checksum": "89d16b50471d793cf04a8ed3aac95ca6"
+      "checksum": "b974d29fd4ff938d1dcb0a327c22ecbf"
     },
     "RScripts/national_compare_ui.R": {
-      "checksum": "6fa01770a3f0acfe38e6e8a78e5baafa"
+      "checksum": "4b9e776df05479cad2a38b9d105b69ee"
     },
     "RScripts/peer_server.R": {
-      "checksum": "867b17f0b69cabb652c851cb5f918219"
+      "checksum": "73ff2da14a3a67fe4f4e99d5ffd14a3f"
     },
     "RScripts/peer_ui.R": {
-      "checksum": "46f50b0f2a0647e20891abd8529a1792"
+      "checksum": "a81b2f5558b22ce60520e360a7208622"
     },
     "RScripts/prep_data.R": {
-      "checksum": "da0148de7331038dd8de1e391fc824e2"
+      "checksum": "37a2c80920bc0a6f97938348aad154fc"
     },
     "RScripts/state_service_server.R": {
-      "checksum": "9c1aaa937a22235c4ee483b1626d939e"
+      "checksum": "3aab852751176a5a51ad25891bf284e2"
     },
     "RScripts/state_service_ui.R": {
-      "checksum": "9bd6ed3e8ddd55b2b56f1ac1bcf13325"
+      "checksum": "b2840e0b02a5be2d27101d7a83156297"
     },
     "RScripts/theme.R": {
       "checksum": "381e132b070eafd17bfcd288ebb27d52"
     },
     "RScripts/utah_compare_server.R": {
-      "checksum": "adb4d19b3a6f4b76832932efda9f7ac2"
+      "checksum": "787cd94eb69c18b8a26f372a3fbae32b"
     },
     "RScripts/utah_compare_ui.R": {
-      "checksum": "bd99fec4e22d56ed104c1f89c53aac98"
+      "checksum": "f8983c574266cfe70488f2e1f55c2fd9"
     },
     "www/styles.css": {
       "checksum": "f19c38baff2a8daa0f86e5e8f190f650"
