@@ -143,7 +143,7 @@ nav_panel(
                 step = 0,
                 sep = ""
               ),
-              csvDownloadButton("national_dt", filename = "state_rankings.csv"),
+              uiOutput("nationalcomp_dt_csv_button"),
               title = "Table Controls"
             ),
             class = "my-header-grey d-flex justify-content-between",

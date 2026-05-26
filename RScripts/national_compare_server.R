@@ -56,7 +56,6 @@ pls_national_reactive <- reactive({
 #   )
 # })
 
-
 # output$national_hc <- renderHighchart({
 #   if (selected_var() %in% currency_cols) {
 #     y_tt <- "${point.y:,.2f}"
@@ -157,7 +156,6 @@ pls_national_reactive <- reactive({
 #       )
 #     )
 # })
-
 
 #### HC Bar Graph ####
 
@@ -274,11 +272,13 @@ output$national_hc_bar <- renderHighchart({
       text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
-    hc_caption(text = "Tip: click on the legend to show/hide specific groups") %>%
-      hc_exporting(
-        enabled = TRUE,
-        filename = paste0(col_name_pretty, "_", per_text, "_state_compare_chart")
-      )
+    hc_caption(
+      text = "Tip: click on the legend to show/hide specific groups"
+    ) %>%
+    hc_exporting(
+      enabled = TRUE,
+      filename = paste0(col_name_pretty, "_", per_text, "_state_compare_chart")
+    )
 })
 
 
@@ -308,6 +308,17 @@ output$national_table_header <- renderUI({
     ),
     options = list(customClass = "wide-tooltip")
   )
+})
+
+output$nationalcomp_dt_csv_button <- renderUI({
+  filename <- paste0(
+    input$national_var,
+    " ",
+    unique(pls_national_reactive()$per_text),
+    " State Rankings.csv"
+  )
+
+  csvDownloadButton("libcompare_dt_state", filename = filename)
 })
 
 output$national_dt <- renderReactable({

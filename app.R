@@ -1,4 +1,4 @@
-# Load necessary packages - IF THERE ARE ANY CHANGES, run: 
+# Load necessary packages - IF THERE ARE ANY CHANGES, run:
 # rsconnect::writeManifest()
 library(highcharter)
 library(tidyverse)
@@ -73,7 +73,15 @@ imls_year <- pls_national_state %>%
 
 national_vars <- setdiff(
   names(pls_national),
-  c("FISCAL_YEAR", "CURRENT_LIBNAME", "CURRENT_LIBNAME_DISAMB", "FSCSKEY", "STABR", "state", "POPU_LSA")
+  c(
+    "FISCAL_YEAR",
+    "CURRENT_LIBNAME",
+    "CURRENT_LIBNAME_DISAMB",
+    "FSCSKEY",
+    "STABR",
+    "state",
+    "POPU_LSA"
+  )
 )
 
 national_vars_pretty <- variable_key %>%
@@ -100,7 +108,11 @@ aes_national <- pls_national_simlibs %>%
 source("RScripts/lists.R", local = TRUE)$value
 source("RScripts/theme.R", local = TRUE)$value
 
-csvDownloadButton <- function(id, filename = "data.csv", label = "Download as CSV") {
+csvDownloadButton <- function(
+  id,
+  filename = "data.csv",
+  label = "Download as CSV"
+) {
   tags$button(
     tagList(icon("download"), label),
     onclick = sprintf("Reactable.downloadDataCSV('%s', '%s')", id, filename)
@@ -124,8 +136,6 @@ ui <- fluidPage(
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     source("RScripts/national_compare_ui.R", local = TRUE)$value,
     source("RScripts/lib_ui.R", local = TRUE)$value,
-    #source("RScripts/utah_compare_ui.R", local = TRUE)$value,
-    #source("RScripts/peer_ui.R", local = TRUE)$value,
     nav_spacer(),
     source("RScripts/methodology.R", local = TRUE)$value
   )
@@ -137,8 +147,6 @@ server <- function(input, output, session) {
   source("RScripts/state_service_server.R", local = TRUE)$value
   source("RScripts/national_compare_server.R", local = TRUE)$value
   source("RScripts/lib_server.R", local = TRUE)$value
-  #source("RScripts/utah_compare_server.R", local = TRUE)$value
-  #source("RScripts/peer_server.R", local = TRUE)$value
 }
 
 

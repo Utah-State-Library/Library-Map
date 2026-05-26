@@ -89,7 +89,7 @@ nav_panel(
                 step = 0,
                 sep = ""
               ),
-              csvDownloadButton("libcompare_dt_state", filename = "within_state_library_rankings.csv"),
+              uiOutput("staterankings_csv_button"),
               title = "Table Controls"
             ),
             class = "my-header-grey d-flex justify-content-between",
@@ -103,23 +103,6 @@ nav_panel(
         card(
           card_header(
             uiOutput("libcompare_bar_peers_header"),
-            # popover(
-            #   span("Settings", bs_icon("gear")),
-            #   sliderInput(
-            #     "libcompare_peer_years_bar",
-            #     label = "Range of Years to Graph",
-            #     min = min(pls_national_peers$FISCAL_YEAR),
-            #     max = max(pls_national_peers$FISCAL_YEAR),
-            #     value = c(
-            #       (max(pls_national_peers$FISCAL_YEAR) - 5),
-            #       max(pls_national_peers$FISCAL_YEAR)
-            #     ),
-            #     round = TRUE,
-            #     step = 0,
-            #     sep = ""
-            #   ),
-            #   title = "Graph Controls"
-            # ),
             class = "my-header-grey d-flex justify-content-between",
           ),
           highchartOutput("libcompare_hc_peers_bar")
@@ -139,7 +122,7 @@ nav_panel(
                 step = 0,
                 sep = ""
               ),
-              csvDownloadButton("libcompare_dt_statepeers", filename = "state_peers.csv"),
+              uiOutput("statepeer_csv_button"),
               title = "Table Controls"
             ),
             class = "my-header-grey d-flex justify-content-between",
@@ -161,7 +144,7 @@ nav_panel(
                 step = 0,
                 sep = ""
               ),
-              csvDownloadButton("libcompare_dt_nationalpeers", filename = "national_peers.csv"),
+              uiOutput("nationalpeer_csv_button"),
               title = "Table Controls"
             ),
             class = "my-header-grey d-flex justify-content-between",
@@ -188,7 +171,7 @@ nav_panel(
                 step = 0,
                 sep = ""
               ),
-              csvDownloadButton("libcompare_dt_national", filename = "national_rankings.csv"),
+              uiOutput("nationalrankings_csv_button"),
               title = "Table Controls"
             ),
             class = "my-header-grey d-flex justify-content-between",

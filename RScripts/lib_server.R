@@ -5,10 +5,10 @@ selected_var_libcompare <- reactive({
 })
 
 library_state_libcompare <- reactive({
-  pls_national_peers %>% 
-    filter(CURRENT_LIBNAME_DISAMB == input$library_libcompare) %>% 
-    select(state) %>% 
-    unique() %>% 
+  pls_national_peers %>%
+    filter(CURRENT_LIBNAME_DISAMB == input$library_libcompare) %>%
+    select(state) %>%
+    unique() %>%
     pull()
 })
 
@@ -18,10 +18,14 @@ library_name_pretty_libcompare <- reactive({
   pls_national_peers %>%
     filter(
       CURRENT_LIBNAME_DISAMB == lib
-    ) %>% select(CURRENT_LIBNAME) %>% unique() %>% pull()
+    ) %>%
+    select(CURRENT_LIBNAME) %>%
+    unique() %>%
+    pull()
 })
 
-observe({ #if Utah, National table year is current year
+observe({
+  #if Utah, National table year is current year
 
   year <- if (library_state_libcompare() == "Utah") {
     current_year
@@ -37,7 +41,8 @@ observe({ #if Utah, National table year is current year
   )
 })
 
-observe({ #if Utah, State Peer table year is current year
+observe({
+  #if Utah, State Peer table year is current year
 
   year <- if (library_state_libcompare() == "Utah") {
     current_year
@@ -53,7 +58,8 @@ observe({ #if Utah, State Peer table year is current year
   )
 })
 
-observe({ #if Utah, State Lib table year is current year
+observe({
+  #if Utah, State Lib table year is current year
 
   year <- if (library_state_libcompare() == "Utah") {
     current_year
@@ -130,7 +136,8 @@ output$libcompare_bar_header <- renderUI({
     ),
     p(
       HTML(
-        paste0("<b>State Libraries</b> are all libraries in the same state as the selected library. The state library median is the median value across all libraries in the state, including the selected library.<br>",
+        paste0(
+          "<b>State Libraries</b> are all libraries in the same state as the selected library. The state library median is the median value across all libraries in the state, including the selected library.<br>",
           "<b>National Libraries</b> are all libraries in the country that contribute data to IMLS. Libraries span all 50 states, Washington DC, and several territories. The national median is the median value across all libraries in the nation, including the selected library."
         )
       )
@@ -162,7 +169,7 @@ output$libcompare_hc_bar <- renderHighchart({
     mutate(state_name = state) ### do not remove, "state" is also an hc call and things get weird
 
   per_text <- unique(df$per_text)
-  
+
   df_target <- df %>%
     filter(
       CURRENT_LIBNAME_DISAMB == lib
@@ -263,22 +270,43 @@ output$libcompare_hc_bar <- renderHighchart({
       text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
-    hc_caption(text = "Tip: click on the legend to show/hide specific groups") %>%
-      hc_exporting(
-        enabled = TRUE,
-        filename = paste0(col_name_pretty, "_", per_text, "_state_and_national_chart")
+    hc_caption(
+      text = "Tip: click on the legend to show/hide specific groups"
+    ) %>%
+    hc_exporting(
+      enabled = TRUE,
+      filename = paste0(
+        col_name_pretty,
+        "_",
+        per_text,
+        "_state_and_national_chart"
       )
+    )
 })
 
 #### State DT ####
 
 output$libcompare_state_table_header <- renderUI({
   paste0(
-    library_state_libcompare(), " - ",
-    input$var_libcompare, " ",
-    unique(libcompare_reactive()$per_text), " - ",
+    library_state_libcompare(),
+    " - ",
+    input$var_libcompare,
+    " ",
+    unique(libcompare_reactive()$per_text),
+    " - ",
     input$libcompare_state_dt_year
   )
+})
+
+output$staterankings_csv_button <- renderUI({
+  filename <- paste0(
+    input$var_libcompare,
+    " ",
+    input$per_libcompare,
+    " Within State Rankings.csv"
+  )
+
+  csvDownloadButton("libcompare_dt_state", filename = filename)
 })
 
 output$libcompare_dt_state <- renderReactable({
@@ -287,15 +315,17 @@ output$libcompare_dt_state <- renderReactable({
   per_text <- unique(libcompare_reactive()$per_text)
 
   df <- libcompare_reactive() %>%
-    filter(FISCAL_YEAR == input$libcompare_state_dt_year,
-      state == library_state_libcompare()) %>%
+    filter(
+      FISCAL_YEAR == input$libcompare_state_dt_year,
+      state == library_state_libcompare()
+    ) %>%
     select(
       year = FISCAL_YEAR,
       library = CURRENT_LIBNAME,
       FSCS = FSCSKEY,
       population_service_area = POPU_LSA,
       FTE,
-      variable = var,# hide col in reactable, include for download
+      variable = var, # hide col in reactable, include for download
       comparison_method = per_name_pretty, # hide col in reactable, include for download
       actual_variable_value = value,
       comparison_value = per_calc,
@@ -304,7 +334,7 @@ output$libcompare_dt_state <- renderReactable({
       rank_national,
       n_national
     ) %>%
-      mutate(variable = var_name)
+    mutate(variable = var_name)
 
   # Render reactable
   df %>%
@@ -388,7 +418,7 @@ output$libcompare_dt_state <- renderReactable({
           name = "National Rank",
           sortNALast = TRUE,
           cell = function(value, index) {
-            if (df$year[index] > imls_year){
+            if (df$year[index] > imls_year) {
               "Not Yet Available"
             } else if (!is.na(value)) {
               paste0(value, "/", df$n_national[index])
@@ -407,10 +437,23 @@ output$libcompare_dt_state <- renderReactable({
 output$libcompare_national_table_header <- renderUI({
   paste0(
     "Nationwide - ",
-    input$var_libcompare, " ",
-    unique(libcompare_reactive()$per_text), " - ",
+    input$var_libcompare,
+    " ",
+    unique(libcompare_reactive()$per_text),
+    " - ",
     input$libcompare_national_dt_year
   )
+})
+
+output$nationalrankings_csv_button <- renderUI({
+  filename <- paste0(
+    input$var_libcompare,
+    " ",
+    input$per_libcompare,
+    " National Rankings.csv"
+  )
+
+  csvDownloadButton("libcompare_dt_national", filename = filename)
 })
 
 output$libcompare_dt_national <- renderReactable({
@@ -434,7 +477,7 @@ output$libcompare_dt_national <- renderReactable({
       rank_national,
       n_national
     ) %>%
-      mutate(variable = var_name)
+    mutate(variable = var_name)
 
   # Render reactable
 
@@ -508,7 +551,7 @@ output$libcompare_dt_national <- renderReactable({
           name = "National Rank",
           sortNALast = TRUE,
           cell = function(value, index) {
-            if (df$year[index] > imls_year){
+            if (df$year[index] > imls_year) {
               "Not Yet Available"
             } else if (!is.na(value)) {
               paste0(value, "/", df$n_national[index])
@@ -519,10 +562,8 @@ output$libcompare_dt_national <- renderReactable({
         ),
         n_national = colDef(show = FALSE)
       )
-  )
+    )
 })
-
-
 
 
 #### Peer Bar Chart ####
@@ -564,14 +605,14 @@ output$libcompare_hc_peers_bar <- renderHighchart({
 
   col_name_pretty <- input$var_libcompare
   lib <- input$library_libcompare
-  
+
   df <- libcompare_reactive() %>%
     mutate(state_name = state) ### do not remove, "state" is also an hc call and things get weird
 
   per_text <- unique(df$per_text)
 
   peer_year <- max(libcompare_peers_state()$FISCAL_YEAR)
-  
+
   df_peers_state <- libcompare_peers_state() %>%
     mutate(
       per_name_pretty = case_when(
@@ -591,14 +632,14 @@ output$libcompare_hc_peers_bar <- renderHighchart({
       per_median = round(median(per_calc, na.rm = T), 2),
       per_text_prefix = "Median "
     )
-  
-    df_peers_national <- libcompare_peers_national() %>%
-      mutate(
-        per_name_pretty = case_when(
-          per_name == "POP_col" ~ "Per Capita",
-          per_name == "FTE_col" ~ "Per FTE"
-        )
-      ) %>%
+
+  df_peers_national <- libcompare_peers_national() %>%
+    mutate(
+      per_name_pretty = case_when(
+        per_name == "POP_col" ~ "Per Capita",
+        per_name == "FTE_col" ~ "Per FTE"
+      )
+    ) %>%
     filter(
       CURRENT_LIBNAME_DISAMB != lib,
       FISCAL_YEAR <= imls_year,
@@ -640,7 +681,7 @@ output$libcompare_hc_peers_bar <- renderHighchart({
       type = "column",
       color = "#0987b8",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)
-        ) %>%
+    ) %>%
     hc_tooltip(
       pointFormat = paste0(
         "<b>{series.name}</b><br>",
@@ -671,11 +712,13 @@ output$libcompare_hc_peers_bar <- renderHighchart({
       text = paste0(col_name_pretty, " ", per_text),
       align = "left"
     ) %>%
-    hc_caption(text = "Tip: click on the legend to show/hide specific groups") %>%
-      hc_exporting(
-        enabled = TRUE,
-        filename = paste0(col_name_pretty, "_", per_text, "_peer_chart")
-      )
+    hc_caption(
+      text = "Tip: click on the legend to show/hide specific groups"
+    ) %>%
+    hc_exporting(
+      enabled = TRUE,
+      filename = paste0(col_name_pretty, "_", per_text, "_peer_chart")
+    )
 })
 
 #### State Peer DT ####
@@ -683,10 +726,13 @@ output$libcompare_hc_peers_bar <- renderHighchart({
 #### Table header ####
 
 output$libcompare_statepeers_table_header <- renderUI({
-
   tooltip(
     span(
-      paste0(library_state_libcompare()," Peers for ", library_name_pretty_libcompare()),
+      paste0(
+        library_state_libcompare(),
+        " Peers for ",
+        library_name_pretty_libcompare()
+      ),
       bs_icon("info-circle") #, title = "About Peer Libraries"
     ),
     p(
@@ -709,6 +755,17 @@ output$libcompare_statepeers_table_header <- renderUI({
   )
 })
 
+output$statepeer_csv_button <- renderUI({
+  filename <- paste0(
+    input$var_libcompare,
+    " ",
+    input$per_libcompare,
+    " State Peer Table.csv"
+  )
+
+  csvDownloadButton("libcompare_dt_statepeers", filename = filename)
+})
+
 output$libcompare_dt_statepeers <- renderReactable({
   col_name_pretty <- input$var_libcompare
   lib <- input$library_libcompare
@@ -716,14 +773,38 @@ output$libcompare_dt_statepeers <- renderReactable({
 
   peer_year <- input$libcompare_statepeers_dt_year
 
+  df_peers_state <- libcompare_peers_state() %>%
+    mutate(
+      per_name_pretty = case_when(
+        per_name == "POP_col" ~ "Per Capita",
+        per_name == "FTE_col" ~ "Per FTE"
+      )
+    ) %>%
+    filter(
+      FISCAL_YEAR == peer_year,
+      var == selected_var_libcompare(),
+      per_name_pretty == input$per_libcompare
+    )
+
+  df_peers_state$var_pretty <- col_name_pretty
+
+  df_peers_state %<>%
+    select(
+      FSCSKEY,
+      `Comparison Variable` = var_pretty,
+      `Comparison Method` = per_name_pretty,
+      `Comparison Value` = per_calc,
+      `Actual Value` = value
+    )
+
   df <- pls_national %>%
     filter(
-      CURRENT_LIBNAME_DISAMB %in% libcompare_peers_state()$CURRENT_LIBNAME_DISAMB,
+      CURRENT_LIBNAME_DISAMB %in%
+        libcompare_peers_state()$CURRENT_LIBNAME_DISAMB,
       FISCAL_YEAR == peer_year
     ) %>%
     select(
       Library = CURRENT_LIBNAME,
-      CURRENT_LIBNAME_DISAMB,
       FSCS = FSCSKEY,
       Year = FISCAL_YEAR,
       `Population of Legal Service Area` = POPU_LSA,
@@ -731,19 +812,12 @@ output$libcompare_dt_statepeers <- renderReactable({
       `Registered Users` = REGBOR,
       `Total FTE of Staff` = TOTSTAFF,
       `Total Revenue` = TOTINCM
-    )
-
-  df1 <- df %>% filter(CURRENT_LIBNAME_DISAMB == lib)
-  df2 <- df %>%
-    filter(CURRENT_LIBNAME_DISAMB != lib) %>%
-    arrange(Library)
-
-  df_r <- rbind(df1, df2)
-  
-  df_r %<>% select(-CURRENT_LIBNAME_DISAMB)
+    ) %>%
+    left_join(df_peers_state, by = c("FSCS" = "FSCSKEY")) %>%
+    arrange(desc(`Comparison Value`))
 
   # Render reactable
-  df_r %>%
+  df %>%
     reactable(
       resizable = TRUE,
       pagination = FALSE,
@@ -769,7 +843,6 @@ output$libcompare_dt_statepeers <- renderReactable({
           list(fontWeight = fontweight, backgroundColor = "#f7f7f7")
         }),
         FSCS = colDef(),
-        #State = colDef(),
         Year = colDef(show = FALSE),
         `Population of Legal Service Area` = colDef(cell = function(value) {
           format(value, big.mark = ",")
@@ -785,7 +858,13 @@ output$libcompare_dt_statepeers <- renderReactable({
         }),
         `Total Revenue` = colDef(cell = function(value) {
           dollar(value)
-        })
+        }),
+        `Comparison Variable` = colDef(show = FALSE),
+        `Comparison Method` = colDef(show = FALSE),
+        `Comparison Value` = colDef(
+          name = paste0(col_name_pretty, " ", input$per_libcompare)
+        ),
+        `Actual Value` = colDef(show = FALSE)
       )
     )
 })
@@ -793,9 +872,7 @@ output$libcompare_dt_statepeers <- renderReactable({
 
 #### National Peer DT ####
 
-
 output$libcompare_nationalpeers_table_header <- renderUI({
-
   tooltip(
     span(
       paste0("National Peers for ", library_name_pretty_libcompare()),
@@ -821,6 +898,17 @@ output$libcompare_nationalpeers_table_header <- renderUI({
   )
 })
 
+output$nationalpeer_csv_button <- renderUI({
+  filename <- paste0(
+    input$var_libcompare,
+    " ",
+    input$per_libcompare,
+    " National Peer Table.csv"
+  )
+
+  csvDownloadButton("libcompare_dt_nationalpeers", filename = filename)
+})
+
 output$libcompare_dt_nationalpeers <- renderReactable({
   col_name_pretty <- input$var_libcompare
   lib <- input$library_libcompare
@@ -828,14 +916,38 @@ output$libcompare_dt_nationalpeers <- renderReactable({
 
   peer_year <- input$libcompare_nationalpeers_dt_year #imls_year
 
+  df_peers_national <- libcompare_peers_national() %>%
+    mutate(
+      per_name_pretty = case_when(
+        per_name == "POP_col" ~ "Per Capita",
+        per_name == "FTE_col" ~ "Per FTE"
+      )
+    ) %>%
+    filter(
+      FISCAL_YEAR == peer_year,
+      var == selected_var_libcompare(),
+      per_name_pretty == input$per_libcompare
+    )
+
+  df_peers_national$var_pretty <- col_name_pretty
+
+  df_peers_national %<>%
+    select(
+      FSCSKEY,
+      `Comparison Variable` = var_pretty,
+      `Comparison Method` = per_name_pretty,
+      `Comparison Value` = per_calc,
+      `Actual Value` = value
+    )
+
   df <- pls_national %>%
     filter(
-      CURRENT_LIBNAME_DISAMB %in% libcompare_peers_national()$CURRENT_LIBNAME_DISAMB,
+      CURRENT_LIBNAME_DISAMB %in%
+        libcompare_peers_national()$CURRENT_LIBNAME_DISAMB,
       FISCAL_YEAR == peer_year
     ) %>%
     select(
       Library = CURRENT_LIBNAME,
-      CURRENT_LIBNAME_DISAMB,
       FSCS = FSCSKEY,
       State = state,
       Year = FISCAL_YEAR,
@@ -844,19 +956,12 @@ output$libcompare_dt_nationalpeers <- renderReactable({
       `Registered Users` = REGBOR,
       `Total FTE of Staff` = TOTSTAFF,
       `Total Revenue` = TOTINCM
-    )
-
-  df1 <- df %>% filter(CURRENT_LIBNAME_DISAMB == lib)
-  df2 <- df %>%
-    filter(CURRENT_LIBNAME_DISAMB != lib) %>%
-    arrange(Library)
-
-  df_r <- rbind(df1, df2) 
-
-  df_r %<>% select(-CURRENT_LIBNAME_DISAMB)
+    ) %>%
+    left_join(df_peers_national, by = c("FSCS" = "FSCSKEY")) %>%
+    arrange(desc(`Comparison Value`))
 
   # Render reactable
-  df_r %>%
+  df %>%
     reactable(
       resizable = TRUE,
       pagination = FALSE,
@@ -898,7 +1003,13 @@ output$libcompare_dt_nationalpeers <- renderReactable({
         }),
         `Total Revenue` = colDef(cell = function(value) {
           dollar(value)
-        })
+        }),
+        `Comparison Variable` = colDef(show = FALSE),
+        `Comparison Method` = colDef(show = FALSE),
+        `Comparison Value` = colDef(
+          name = paste0(col_name_pretty, " ", input$per_libcompare)
+        ),
+        `Actual Value` = colDef(show = FALSE)
       )
     )
 })
