@@ -3,7 +3,7 @@
 source("RScripts/lists.R", local = TRUE)$value
 
 #### UT Outlets ####
-outlets <- readRDS("data/pls_outlet_national.rds") %>%
+outlets <- readRDS("data/pls_outlet_national_2025.rds") %>%
   filter(STABR == "UT", hide_lib == 0, FISCAL_YEAR == max(FISCAL_YEAR)) %>%
   mutate(
     CITY = case_when(
@@ -26,7 +26,7 @@ saveRDS(outlets, "data/processed/outlet_ut_app.RDS")
 current_year <- max(as.numeric(outlets$FISCAL_YEAR))
 
 #### UT PLS ####
-pls_ut <- readRDS("data/pls_national_updated.rds") %>%
+pls_ut <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
   filter(
     STABR == "UT",
     hide_lib == 0,
@@ -51,7 +51,7 @@ saveRDS(pls_ut, "data/processed/pls_ut_app.RDS")
 
 #### National PLS ####
 
-pls_national <- readRDS("data/pls_national_updated.rds") %>%
+pls_national <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
   filter(
     hide_lib == 0,
   ) %>%
@@ -89,13 +89,13 @@ pls_national <- readRDS("data/pls_national_updated.rds") %>%
     BKVOL,
     AUDIO_PH,
     VIDEO_PH,
-    # OTHMATS,
+    OTHPHYS,
     TOTPHYS,
     # EBOOK_CIR,
     # ESERIAL_CIR,
     # EAUDIO_CIR,
     # EVIDEO_CIR,
-    KIDCIRCL,
+    KIDPHYSCIR,
     PHYSCIR,
     OTHPHCIR,
     TOTCIR,
@@ -158,7 +158,15 @@ saveRDS(pls_national, "data/processed/pls_national_app.RDS")
 
 national_vars <- setdiff(
   names(pls_national),
-  c("FISCAL_YEAR", "CURRENT_LIBNAME", "CURRENT_LIBNAME_DISAMB", "FSCSKEY", "STABR", "state", "POPU_LSA")
+  c(
+    "FISCAL_YEAR",
+    "CURRENT_LIBNAME",
+    "CURRENT_LIBNAME_DISAMB",
+    "FSCSKEY",
+    "STABR",
+    "state",
+    "POPU_LSA"
+  )
 )
 
 
@@ -373,7 +381,11 @@ saveRDS(map_all, "data/processed/library_map_app.RDS")
 
 # Subset to most recent 6 years for peer stability & data size
 pls_national_peers <- pls_national %>%
-  mutate(FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF), POP_col = POPU_LSA, FTE = TOTSTAFF) %>%
+  mutate(
+    FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF),
+    POP_col = POPU_LSA,
+    FTE = TOTSTAFF
+  ) %>%
   filter(FISCAL_YEAR %in% c(current_year:(current_year - 5))) %>%
   pivot_longer(cols = national_vars, names_to = "var", values_to = "value") %>%
   pivot_longer(
@@ -416,7 +428,7 @@ pls_national_peers %<>%
     n_state = ifelse(!is.na(rank_state), sum(!is.na(per_calc)), NA)
   ) %>%
   ungroup() %>%
-    group_by(FISCAL_YEAR, var, per_name) %>%
+  group_by(FISCAL_YEAR, var, per_name) %>%
   mutate(
     rank_national = if (all(is.na(per_calc))) {
       NA_real_
@@ -445,7 +457,11 @@ pls_national_state <- pls_national %>%
   distinct()
 
 pls_national_state %<>%
-  mutate(FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF), POP_col = POPU_LSA, FTE = FTE_col) %>%
+  mutate(
+    FTE_col = ifelse(TOTSTAFF == 0, NA, TOTSTAFF),
+    POP_col = POPU_LSA,
+    FTE = FTE_col
+  ) %>%
   pivot_longer(cols = national_vars, names_to = "var", values_to = "value") %>%
   pivot_longer(
     cols = c("POP_col", "FTE_col"),
@@ -527,59 +543,65 @@ closest_neighbors <- function(dists, num_closest) {
   return(names(dists)[keep])
 }
 
-calculate_similarity <- function(df_p, year = imls_year){
+calculate_similarity <- function(df_p, year = imls_year) {
   df <- df_p %>% filter(FISCAL_YEAR == year)
-  df$name <- paste0(df$CURRENT_LIBNAME_DISAMB)#, 1:nrow(df)
+  df$name <- paste0(df$CURRENT_LIBNAME_DISAMB) #, 1:nrow(df)
   df %<>%
-  mutate(
-    POPU_LSA_scl = scale(POPU_LSA),
-    TOTSTAFF_scl = scale(TOTSTAFF),
-    TOTINCM_scl = scale(TOTINCM),
-    REGBOR_scl = scale(REGBOR),
-    VISITS_scl = scale(VISITS)
-  )
-  
+    mutate(
+      POPU_LSA_scl = scale(POPU_LSA),
+      TOTSTAFF_scl = scale(TOTSTAFF),
+      TOTINCM_scl = scale(TOTINCM),
+      REGBOR_scl = scale(REGBOR),
+      VISITS_scl = scale(VISITS)
+    )
+
   # Make a distance matrix, and name the dimensions
   distances <- as.matrix(dist(
-  df[, c(
-    "POPU_LSA_scl",
-    "TOTSTAFF_scl",
-    "TOTINCM_scl",
-    "REGBOR_scl",
-    "VISITS_scl"
-  )],
-  method = 'euclidean' #'manhattan'
-))
-  
+    df[, c(
+      "POPU_LSA_scl",
+      "TOTSTAFF_scl",
+      "TOTINCM_scl",
+      "REGBOR_scl",
+      "VISITS_scl"
+    )],
+    method = 'euclidean' #'manhattan'
+  ))
+
   dimnames(distances) <- list(df$name, df$name)
-  
+
   df$peers <- lapply(
     seq_len(nrow(distances)),
     function(i) closest_neighbors(distances[i, ], num_closest = 10)
-)
+  )
 
-# make a save df so we can still use all of the df columns for testing below
+  # make a save df so we can still use all of the df columns for testing below
   df %>% select(FISCAL_YEAR, state, CURRENT_LIBNAME_DISAMB, peers)
-
 }
 
 df_national <- calculate_similarity(pls_national, year = imls_year)
 
-states <- unique(pls_national$state[pls_national$FISCAL_YEAR == imls_year]) %>% sort()
+states <- unique(pls_national$state[pls_national$FISCAL_YEAR == imls_year]) %>%
+  sort()
 df_state <- NULL
-for(i in states){
+for (i in states) {
   df <- pls_national %>% filter(state == i)
   df_calc <- calculate_similarity(df, imls_year)
   df_state %<>% rbind(df_calc)
   rm(df)
 }
 
-utah_sim <- pls_national %>% filter(state == "Utah", FISCAL_YEAR == max(FISCAL_YEAR))
-df_utah_sim <- calculate_similarity(utah_sim, year = unique(utah_sim$FISCAL_YEAR))
+utah_sim <- pls_national %>%
+  filter(state == "Utah", FISCAL_YEAR == max(FISCAL_YEAR))
+df_utah_sim <- calculate_similarity(
+  utah_sim,
+  year = unique(utah_sim$FISCAL_YEAR)
+)
 
 df_state %<>% filter(state != "Utah") %>% rbind(df_utah_sim)
 
-df_state %<>% rename("state_peers" = "peers") %>% select(CURRENT_LIBNAME_DISAMB, state_peers)
+df_state %<>%
+  rename("state_peers" = "peers") %>%
+  select(CURRENT_LIBNAME_DISAMB, state_peers)
 df_peers_all <- left_join(df_national, df_state, by = "CURRENT_LIBNAME_DISAMB")
 saveRDS(df_peers_all, "data/processed/pls_national_simlibs.RDS")
 

@@ -57,7 +57,7 @@ Capital Expenditures,Total Capital Expenditures,Total Capital Expenditures,CAPIT
 Collections,Print Materials,Print Materials,BKVOL,1
 Collections,Audio Materials - Physical Units,Audio Materials - Physical Units,AUDIO_PH,1
 Collections,Video Materials - Physical Units,Video Materials - Physical Units,VIDEO_PH,1
-Collections,Other Materials,Other Materials,OTHMATS,1
+Collections,Other Circulating Physical Items,Other Circulating Physical Items,OTHPHYS,1
 Collections,Total Library Collection,Total Library Collection,TOTHOLD,1
 Collections,Total Library Collection - Physical Items,Total Library Collection - Physical Items,TOTPHYS,1
 Services,Weekly Scheduled Public Service Hours (all branches),Weekly Scheduled Public Service Hours (all outlets),WK_HRS,
@@ -66,7 +66,7 @@ Services,Library Visits Reporting Method,Library Visits Reporting Method,VISITRP
 Services,Reference Transactions,Reference Transactions,REFERENC,1
 Services,Reference Transactions Reporting Method,Reference Transactions Reporting Method,REFERRPT,1
 Services,Number of Registered Users,Number of registered users,REGBOR,1
-Services,Current Overdue Fine Policy,Current Overdue Fine Policy,FINEPOL,1
+Services,Current Overdue Fine Policy,Current Overdue Fine Policy,FINEPOL,
 Services,Current Overdue Fine Policy,Current Overdue Fine Policy,ODFINE,1
 Services,Automatic Renewal of Physical Materials,Automatic Renewal of Physical Materials,AUTORENEW,1
 Electronic Books,E-Books via AE,E-Books via AE,EBOOK_AE,
@@ -91,7 +91,7 @@ Circulation,E-book Circulation,E-book Circulation,EBOOK_CIR,1
 Circulation,E-serial Circulation,E-serial Circulation,ESERIAL_CIR,1
 Circulation,E-audio Circulation,E-audio Circulation,EAUDIO_CIR,1
 Circulation,E-video Circulation,E-video Circulation,EVIDEO_CIR,1
-Circulation,Circulation of Children's Physical Material,Circulation of Children's Physical Materials,KIDCIRCL,1
+Circulation,Circulation of Children's Physical Material,Circulation of Children's Physical Materials,KIDPHYSCIR,1
 Circulation,Circulation of Physical Items,Physical Item Circulation,PHYSCIR,1
 Circulation,Circulation of Other Physical Items,Circulation of Other Physical Items,OTHPHCIR,1
 Circulation,Total Circulation of Material,Total Circulation of Materials,TOTCIR,1
@@ -239,7 +239,7 @@ Retired 2024,Electronic Books (e-Books),Electronic Books (e-Books),EBOOK,
 Retired 2024,Audio Materials - Downloadable Titles,Audio Materials - Downloadable Titles,AUDIO_DL,
 Retired 2024,Video Materials - Downloadable Titles,Video Materials - Downloadable Titles,VIDEO_DL,
 Electronic Collections,State (state government or state library),State (state government or state library),EC_ST,
-Electronic Collections,Total Electronic Collections,Total Electronic Collections,ELECCOLL,1
+Electronic Collections,Total Electronic Collections,Total Electronic Collections,ELECCOLL,
 Current Serial Subscriptions,Number of Current Print Serial Subscriptions,Number of Current Print Serial Subscriptions,SUBSCRIP,
 Webplus,Maintenance of Effort,Maintenance of Effort,MNT_EFRT,
 Webplus,Tax Rate,Tax Rate,TAX_RATE,
@@ -262,5 +262,25 @@ Identification,Current Name of Administrative Entity,Current Library Name of Adm
 Identification,Current Name of Administrative Entity,Current Library Name of Administrative Entity Disambiguated,CURRENT_LIBNAME_DISAMB_AE,
 Identification,Current Name of Library,Current Library Name of Outlet,CURRENT_LIBNAME_OUTLET,
 Identification,Current Name of Library,Current Library Name of Outlet Disambiguated,CURRENT_LIBNAME_OUTLET_DISAMB,
-Identification,Longitude,Longitude,LONG,
-Identification,Latitude,Latitude,LAT,
+Geometry,Longitude,Longitude,LONG,
+Geometry,Latitude,Latitude,LAT,
+Geometry,Longitude AE,Longitude AE,LONGITUD,
+Geometry,Latitude AE,Latitude AE,LATITUDE,
+IMLS,Census Block Code,Census Block Code,CENBLOCK,
+IMLS,Congressional District Code,Congressional District Code,CDCODE,
+IMLS,Census Tract Code,Census Tract Code,CENTRACT,
+IMLS,County Population,County Population,CNTYPOP,
+IMLS,Geocoded Address Type,Geocoded Address Type,GEOMTYPE,
+IMLS,Geocod Match Score,Geogcode Match Score,GEOSCORE,
+IMLS,Geocode Match Status,Geocode Match Status,GEOSTATUS,
+IMLS,Core Based Statistical Area,Core Based Statistical Area,CBSA,
+IMLS,Locale Code (Based on AE Address),Locale Code (Based on AE Address),LOCALE_ADD,
+IMLS,Locale Code (Based on Outlet Mode),Locale Code (Based on Outlet Mode),LOCALE_MOD,
+IMLS,GEOID for Census Geography Aligned with Legal Service Area,GEOID for Census Geography Aligned with Legal Service Area,LSAGEOID,
+IMLS,Ratio of POPU_LSA to Population of Aligned Geography,Ratio of POPU_LSA to Population of Aligned Geography,LSAGEORATIO,
+IMLS,Type of Census Geography Aligned with Legal Service Area,Type of Census Geography Aligned with Legal Service Area,LSAGEOTYPE,
+IMLS,Metropolitan and Micropolitan Statistical Area Flag,Metropolitan and Micropolitan Statistical Area Flag,MICROF,
+IMLS,Bureau of Economic Analysis Code,Bureau of Economic Analysis Code,OBEREG,
+IMLS,Total Unduplicated Population of Legal Service Area,Total Unduplicated Population of Legal Service Area,POPU_UND,
+IMLS,Respondent Status,Respondent Status,RSTATUS,
+IMLS,FSCS Submission Year of Public Library Survey Data,FSCS Submission Year of Public Library Survey Data,YR_SUB,

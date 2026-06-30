@@ -136,7 +136,8 @@ ui <- fluidPage(
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     source("RScripts/national_compare_ui.R", local = TRUE)$value,
     source("RScripts/lib_ui.R", local = TRUE)$value,
-    nav_spacer(),
+    #source("RScripts/singlib_ui.R", local = TRUE)$value,
+    #nav_spacer(),
     source("RScripts/methodology.R", local = TRUE)$value
   )
 )
@@ -147,6 +148,7 @@ server <- function(input, output, session) {
   source("RScripts/state_service_server.R", local = TRUE)$value
   source("RScripts/national_compare_server.R", local = TRUE)$value
   source("RScripts/lib_server.R", local = TRUE)$value
+  #source("RScripts/singlib_server.R", local = TRUE)$value
 }
 
 

@@ -23,7 +23,8 @@ nav_panel(
             "<ul>",
             "<li> <a href='https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls'>Institute for Museum and Library Services</a></li>",
             "<li> <a href='https://www.air.org/project/helping-public-libraries-survey-create-reliable-methods-data-collection'>American Institute for Research</a></li>",
-            "<li> <a href='https://usdataexplorer.com/state/utah/'>Census Data Explorer</a></li>"
+            "<li> <a href='https://usdataexplorer.com/state/utah/'>Census Data Explorer</a></li>",
+            "<li> <a href='https://ut.countingopinions.com/>LibPAS Homepage</a></li>'"
           )
         )
       )
@@ -57,7 +58,9 @@ nav_panel(
             "<b>Peer Libraries</b><br>",
             "Using nationwide IMLS data from the most recent year available (",
             imls_year,
-            "), peer libraries were identified for each library in the dataset. Note that statewide peers for Utah libraries use ",current_year," data. Peer libraries are those that are most similar to a given library, with similarity being calculated using Euclidean Distance. Euclidean Distance allows us to calculate the distance between two sets of data points; the smaller the distance, the more similar the data are. Each library was represented in the calculation by five data points: number of visits, number of card holders, population of legal service area, total FTE, and total revenue. For each library the 10 most similar libraries were identified as peers.<br>",
+            "), peer libraries were identified for each library in the dataset. Note that statewide peers for Utah libraries use ",
+            current_year,
+            " data. Peer libraries are those that are most similar to a given library, with similarity being calculated using Euclidean Distance. Euclidean Distance allows us to calculate the distance between two sets of data points; the smaller the distance, the more similar the data are. Each library was represented in the calculation by five data points: number of visits, number of card holders, population of legal service area, total FTE, and total revenue. For each library the 10 most similar libraries were identified as peers.<br>",
             "Data points were centered to mitigate scale sensitivity. Distance was calculated in R using stats::dist().<br><br>",
             "<b>Per Capita and Per FTE</b><br>",
             "In order to compare libraries and states on even footing, it is useful to represent library statistics in terms of per capita or per FTE values. <br><br>",

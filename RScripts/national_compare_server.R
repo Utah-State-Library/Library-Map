@@ -318,7 +318,7 @@ output$nationalcomp_dt_csv_button <- renderUI({
     " State Rankings.csv"
   )
 
-  csvDownloadButton("libcompare_dt_state", filename = filename)
+  csvDownloadButton("national_dt", filename = filename)
 })
 
 output$national_dt <- renderReactable({
