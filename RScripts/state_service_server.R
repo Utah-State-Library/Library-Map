@@ -241,7 +241,7 @@ output$state_map <- renderLeaflet({
       lat = ~LAT,
       radius = 4,
       fillOpacity = .75,
-      color = "#002f6c", #~ marker_color(C_OUT_TY)
+      color = "#093692", #~ marker_color(C_OUT_TY)
       label = ~ lapply(library_label, HTML),
       popup = ~ lapply(library_popup, HTML),
       popupOptions = popupOptions(keepInView = TRUE),
@@ -256,27 +256,31 @@ output$map_year <- renderUI({
 
 output$n_aes <- renderUI({
   map_libs_filtered() %>%
-    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    reframe(n = paste0(n_distinct(CURRENT_LIBNAME_AE), " Libraries")) %>%
     pull(n)
 })
 
 output$n_locations <- renderUI({
   map_libs_filtered() %>%
-    reframe(n = n_distinct(CURRENT_LIBNAME_OUTLET)) %>%
+    reframe(
+      n = paste0(n_distinct(CURRENT_LIBNAME_OUTLET), " Locations")
+    ) %>%
     pull(n)
 })
 
 output$n_citylibs <- renderUI({
   map_libs_filtered() %>%
     filter(SERVICE_AREA == "city") %>%
-    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    reframe(n = paste0("City Libraries: ", n_distinct(CURRENT_LIBNAME_AE))) %>%
     pull(n)
 })
 
 output$n_countylibs <- renderUI({
   map_libs_filtered() %>%
     filter(SERVICE_AREA == "county") %>%
-    reframe(n = n_distinct(CURRENT_LIBNAME_AE)) %>%
+    reframe(
+      n = paste0("County Libraries: ", n_distinct(CURRENT_LIBNAME_AE))
+    ) %>%
     pull(n)
 })
 
@@ -284,7 +288,123 @@ output$n_visits <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, VISITS) %>%
     distinct() %>%
-    reframe(n = format(sum(VISITS, na.rm = T), big.mark = ",")) %>%
+    reframe(
+      n = paste0(format(sum(VISITS, na.rm = T), big.mark = ","))
+    ) %>%
+    pull(n)
+})
+
+output$n_pro <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, TOTPRO) %>%
+    distinct() %>%
+    reframe(
+      n = paste0("Programs: ", format(sum(TOTPRO, na.rm = T), big.mark = ","))
+    ) %>%
+    pull(n)
+})
+
+output$n_atten <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, TOTATTEN) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Program Attendance: ",
+        format(sum(TOTATTEN, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_circ <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, TOTCIR) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Total Circulation: ",
+        format(sum(TOTCIR, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_kidcirc <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, KIDPHYSCIR) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Children's Circulation: ",
+        format(sum(KIDPHYSCIR, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_totincm <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, TOTINCM) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "$",
+        format(sum(TOTINCM, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_locgvt <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, LOCGVT) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Local: $",
+        format(sum(LOCGVT, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_stgvt <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, STGVT) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "State: $",
+        format(sum(STGVT, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_fedgvt <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, FEDGVT) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Federal: $",
+        format(sum(FEDGVT, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_othincm <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, OTHINCM) %>%
+    distinct() %>%
+    reframe(
+      n = paste0(
+        "Other: $",
+        format(sum(OTHINCM, na.rm = T), big.mark = ",")
+      )
+    ) %>%
     pull(n)
 })
 
@@ -292,7 +412,12 @@ output$n_popu_lsa <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, POPU_LSA) %>%
     distinct() %>%
-    reframe(n = format(sum(POPU_LSA, na.rm = T), big.mark = ",")) %>%
+    reframe(
+      n = paste0(
+        "Population Served: ",
+        format(sum(POPU_LSA, na.rm = T), big.mark = ",")
+      )
+    ) %>%
     pull(n)
 })
 
@@ -300,6 +425,26 @@ output$n_regbor <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, REGBOR) %>%
     distinct() %>%
-    reframe(n = format(sum(REGBOR, na.rm = T), big.mark = ",")) %>%
+    reframe(
+      n = paste0(
+        "Cardholders: ",
+        format(sum(REGBOR, na.rm = T), big.mark = ",")
+      )
+    ) %>%
+    pull(n)
+})
+
+output$n_pcnt_regbor <- renderUI({
+  map_libs_filtered() %>%
+    select(CURRENT_LIBNAME_AE, REGBOR, POPU_LSA) %>%
+    distinct() %>%
+    reframe(
+      sum_regbor = sum(REGBOR, na.rm = T),
+      sum_populsa = sum(POPU_LSA, na.rm = T),
+      n = paste0(
+        format(round((sum_regbor / sum_populsa) * 100, 2), big.mark = ","),
+        "%"
+      )
+    ) %>%
     pull(n)
 })

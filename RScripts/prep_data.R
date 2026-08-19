@@ -44,7 +44,13 @@ pls_ut <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
     STGVT,
     FEDGVT,
     OTHINCM,
-    TOTINCM
+    TOTINCM,
+    VLNT,
+    VLNT_HRS,
+    KIDPHYSCIR,
+    TOTCIR,
+    TOTPRO,
+    TOTATTEN
   )
 
 saveRDS(pls_ut, "data/processed/pls_ut_app.RDS")
@@ -287,27 +293,41 @@ map_all %<>%
       "</td>
         </tr> <tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Cardholders: ",
+      "</td>
+              <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      format(REGBOR, big.mark = ","),
+      "</td>
+            </tr> <tr>
+              <td style = \"text-align:left; background-color: #ffffff;\">",
       "Visits: ",
       "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+          <td style = \"text-align: right; background-color: #ffffff;\">",
       format(VISITS, big.mark = ","),
       "</td>
         </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "Number of Library Staff: ",
       "</td>
-          <td style = \"text-align: right; background-color: #ffffff;\">",
+          <td style = \"text-align: right; background-color: #f2f2f2;\">",
       format(TOT_LIB_STAFF, big.mark = ""),
       "</td>
         </tr> <tr>
-          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+          <td style = \"text-align:left; background-color: #ffffff;\">",
       "Total FTE of Library Staff: ",
       "</td>
-          <td style = \"text-align: right; background-color: #f2f2f2;\">",
+          <td style = \"text-align: right; background-color: #ffffff;\">",
       format(TOTSTAFF, big.mark = ","),
       "</td>
         </tr> <tr>
-          <td style = \"text-align:left; background-color: #ffffff;\">",
+          <td style = \"text-align:left; background-color: #f2f2f2;\">",
+      "Total Revenue: ",
+      "</td>
+              <td style = \"text-align: right; background-color: #f2f2f2;\">",
+      dollar(TOTINCM),
+      "</td>
+            </tr> <tr>
+              <td style = \"text-align:left; background-color: #ffffff;\">",
       "Local Government Revenue: ",
       "</td>
           <td style = \"text-align: right; background-color: #ffffff;\">",

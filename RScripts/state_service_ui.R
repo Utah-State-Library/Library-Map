@@ -8,7 +8,18 @@ nav_panel(
     class = "bg-body-secondary container-fluid align-self-center",
     fill = TRUE,
     sidebar = sidebar(
-      title = "Filters",
+      title = h5(
+        HTML(
+          paste0(
+            "<br><b>",
+            current_year,
+            " Public Library Survey Data</b><br><br><hr>"
+          )
+        ),
+        class = "header-text text-center",
+        style = "color: #093692; padding: 0px; margin: 0px;"
+      ),
+      #"Filters",
       width = "20%",
 
       pickerInput(
@@ -91,58 +102,53 @@ nav_panel(
       ),
       layout_columns(
         col_widths = c(12, 12),
-        card(
-          p(
-            class = "header-text text-center",
-            HTML(paste0(
-              "<b>",
-              current_year,
-              " Public Library Survey Data</b>"
-            ))
-          )
-        ),
+        # h5(
+        #   HTML(
+        #     paste0(
+        #       "<b>",
+        #       current_year,
+        #       " Public Library Survey Data</b>"
+        #     )
+        #   ),
+        #   class = "header-text text-center",
+        #   style = "color: #093692; padding: 0px; margin: 0px;"
+        # ),
         value_box(
-          title = "Number of Library Systems",
-          value = uiOutput("n_aes"),
-          showcase = bsicons::bs_icon("bank2"),
-          theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
-        ),
-        value_box(
-          title = "Total Library Visits",
-          value = uiOutput("n_visits"),
-          showcase = bsicons::bs_icon("people-fill"), #bsicons::bs_icon("people-fill"),
-          theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
-        ),
-        value_box(
-          title = "Total Cardholders",
-          value = uiOutput("n_regbor"),
+          title = "Library Cardholders",
+          value = uiOutput("n_pcnt_regbor"),
+          hr(),
+          p(uiOutput("n_regbor")),
+          p(uiOutput("n_popu_lsa")),
+          p(uiOutput("n_citylibs")),
+          p(uiOutput("n_countylibs")),
           showcase = bsicons::bs_icon("file-person-fill"),
-          theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+          theme = value_box_theme(bg = "#ffffff", fg = "#093692"),
+          class = "p-0 nopad"
         ),
         value_box(
-          title = "Total Service Area Population",
-          value = uiOutput("n_popu_lsa"),
-          showcase = bsicons::bs_icon("houses-fill"),
-          theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
+          title = "Visits",
+          value = uiOutput("n_visits"),
+          hr(),
+          p(uiOutput("n_pro")),
+          p(uiOutput("n_atten")),
+          p(uiOutput("n_circ")),
+          p(uiOutput("n_kidcirc")),
+          showcase = bsicons::bs_icon("people-fill"), #bsicons::bs_icon("people-fill"),
+          theme = value_box_theme(bg = "#ffffff", fg = "#093692"),
+          class = "p-0 nopad"
+        ),
+        value_box(
+          title = "Total Revenue",
+          value = uiOutput("n_totincm"),
+          hr(),
+          p(uiOutput("n_locgvt")),
+          p(uiOutput("n_stgvt")),
+          p(uiOutput("n_fedgvt")),
+          p(uiOutput("n_othincm")),
+          showcase = bsicons::bs_icon("bank2"),
+          theme = value_box_theme(bg = "#ffffff", fg = "#093692"),
+          class = "p-0 nopad"
         )
-        # value_box(
-        #   title = "Number of Library Locations",
-        #   value = uiOutput("n_locations"),
-        #   showcase = bsicons::bs_icon("geo-alt-fill"), #bsicons::bs_icon("people-fill"),
-        #   theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
-        # ),
-        # value_box(
-        #   title = "Number of City Library Systems",
-        #   value = uiOutput("n_citylibs"),
-        #   showcase = bsicons::bs_icon("house-fill"),
-        #   theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
-        # ),
-        # value_box(
-        #   title = "Number of County Library Systems",
-        #   value = uiOutput("n_countylibs"),
-        #   showcase = bsicons::bs_icon("houses-fill"),
-        #   theme = value_box_theme(bg = "#ffffff", fg = "#002f6C")
-        # )
       )
     )
   )

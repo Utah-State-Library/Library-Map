@@ -96,6 +96,11 @@
     border-color: #093692;
 }
 
+div.nopad .value-box-area {
+    padding: 0;
+}
+
+
 hr {
     border-top: 1px solid #000000;
     padding: 0;
