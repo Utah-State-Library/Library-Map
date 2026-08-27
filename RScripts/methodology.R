@@ -20,16 +20,33 @@ nav_panel(
       p(
         HTML(
           paste0(
-            "<ul>",
-            "<li> <a href='https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls'>Institute for Museum and Library Services</a></li>",
-            "<li> <a href='https://www.air.org/project/helping-public-libraries-survey-create-reliable-methods-data-collection'>American Institute for Research</a></li>",
-            "<li> <a href='https://usdataexplorer.com/state/utah/'>Census Data Explorer</a></li>",
-            "<li> <a href='https://ut.countingopinions.com/>LibPAS Homepage</a></li>'"
+            #"<ul>",<li>
+            "<a href='https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls'>Institute for Museum and Library Services</a><br>", #</li>
+            "<a href='https://www.air.org/project/helping-public-libraries-survey-create-reliable-methods-data-collection'>American Institute for Research</a><br>",
+            "<a href='https://usdataexplorer.com/state/utah/'>Census Data Explorer</a><br>",
+            "<a href='https://ut.countingopinions.com/'>LibPAS Homepage</a><br>"
           )
         )
       )
     ),
     col_widths = c(8, 4),
+    card(
+      card_header(
+        "The Public Library Survey (PLS)",
+        class = "my-header-grey",
+      ),
+      p(
+        HTML(
+          paste0(
+            "<b>About</b><br>",
+            "The PLS is an annual survey of libraries across the nation in the effort to gather data on library usage, services, finances, and operations. This information supports stakeholders and policymakers in making informed decisions about library resources and management. See the <a href= 'https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls'>Institute for Museum and Library Services </a> (IMLS) website for more information.<br><br>",
+            "<b>Methods</b><br> In coordination with IMLS, State Data Coordinators manage and disperse the PLS to the libraries in their respective states. These data are then compiled by IMLS and the American Institutes for Research (AIR) into a national dataset of library statistics.<br><br>",
+            "<b>PLS Data in This Dashboard</b><br> IMLS data is used whenever possible, and unprocessed Utah data for the most recent year is used if the IMLS version is unavailable. Libraries were removed from the dataset if they were categorized as Survey Nonresponders, Permanently Closed, Removed (out of scope), or Future Library (FSCS ID Request). Data from Utah's four bookmobiles are not yet available. Puerto Rico was not included in this dashboard due to missing data and issues with the data encoding. 
+            "
+          )
+        )
+      )
+    ),
     card(
       card_header(
         "About the Data",
@@ -38,30 +55,12 @@ nav_panel(
       p(
         HTML(
           paste0(
-            "<b>Public Library Survey (PLS)</b><br>",
-            "The PLS is an annual survey conducted nationwide to gather data on public libraries. <br><br>",
-            "<u>Methods:</u> State Data Coordinators collect data from the libraries in their state and submit that data to the Institute for Museum and Library Services (IMLS). IMLS compiles all data into nationwide dataset.<br><br>",
-            "<u>PLS Data in This Dashboard:</u> IMLS data is used whenever possible, and unprocessed Utah data for the most recent year is used if the IMLS version is unavailable. Libraries were filtered out of the dataset if they were categorized as Survey Nonresponders, Permanently Closed, Removed (out of scope), or Future Library (FSCS ID Request). Puerto Rico was not included in this dashboard due to missing data and issues with the data encoding.
-            " # <br><br><br>
-          )
-        )
-      )
-    ),
-    card(
-      card_header(
-        "Calculations",
-        class = "my-header-grey",
-      ),
-      p(
-        HTML(
-          paste0(
             "<b>Peer Libraries</b><br>",
             "Using nationwide IMLS data from the most recent year available (",
             imls_year,
-            "), peer libraries were identified for each library in the dataset. Note that statewide peers for Utah libraries use ",
+            "), peer libraries were identified for each library in the dataset. Statewide peers for Utah libraries use ",
             current_year,
-            " data. Peer libraries are those that are most similar to a given library, with similarity being calculated using Euclidean Distance. Euclidean Distance allows us to calculate the distance between two sets of data points; the smaller the distance, the more similar the data are. Each library was represented in the calculation by five data points: number of visits, number of card holders, population of legal service area, total FTE, and total revenue. For each library the 10 most similar libraries were identified as peers.<br>",
-            "Data points were centered to mitigate scale sensitivity. Distance was calculated in R using stats::dist().<br><br>",
+            " data. Peers are the 10 most similar libraries to a given library based on five data points: number of visits, number of card holders, population of legal service area, total FTE, and total revenue. Similarity was calculated using Euclidean distance.<br><br>",
             "<b>Per Capita and Per FTE</b><br>",
             "In order to compare libraries and states on even footing, it is useful to represent library statistics in terms of per capita or per FTE values. <br><br>",
             "<u>Per Capita</u> shows how much service or usage occurs per person served by a given library. The number of people served by a given library is based on the most recent Census population estimates of the municipalities or counties in the library's jurisdiction. In cases where a value is small, such as FTE, it is useful to represent the value in terms of hundreds or thousands of people, rather than per person. <br>",

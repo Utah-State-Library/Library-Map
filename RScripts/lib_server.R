@@ -731,17 +731,20 @@ output$libcompare_statepeers_table_header <- renderUI({
       paste0(
         library_state_libcompare(),
         " Peers for ",
-        library_name_pretty_libcompare()
+        library_name_pretty_libcompare(),
+        " (",
+        max(libcompare_peers_state()$FISCAL_YEAR),
+        " Data)"
       ),
-      bs_icon("info-circle") #, title = "About Peer Libraries"
+      bs_icon("info-circle")
     ),
     p(
       HTML(
         paste0(
-          "Peer libraries are those that are most similar to the selected library.<br><br>",
-          "Using data from the most recent year available, five data points were used to calculate the similarity between libraries statewide. See the methodology page for more information on how peer libraries were calculated.<br><br>
-          
-          For each library, the 10 most similar libraries were identified on the basis of the following data points.<br><br>",
+          "Peers are the 10 libraries that are most similar to the selected library.<br><br>",
+          "Using data from the most recent year available (",
+          max(libcompare_peers_state()$FISCAL_YEAR),
+          "), five data points (listed below) were used to calculate the similarity between libraries statewide. See the methodology page for more information on how peer libraries were calculated.<br><br>",
           "- Population of Legal Service Area<br>
       - Total FTE of Staff<br>
       - Total Revenue<br>
@@ -836,9 +839,9 @@ output$libcompare_dt_statepeers <- renderReactable({
       columns = list(
         Library = colDef(minWidth = 150, style = function(value) {
           if (value == lib_pretty) {
-            fontweight = "bold"
+            fontweight <- "bold"
           } else {
-            fontweight = 300
+            fontweight <- 300
           }
           list(fontWeight = fontweight, backgroundColor = "#f7f7f7")
         }),
@@ -875,16 +878,22 @@ output$libcompare_dt_statepeers <- renderReactable({
 output$libcompare_nationalpeers_table_header <- renderUI({
   tooltip(
     span(
-      paste0("National Peers for ", library_name_pretty_libcompare()),
+      paste0(
+        "National Peers for ",
+        library_name_pretty_libcompare(),
+        " (",
+        imls_year,
+        " Data)"
+      ),
       bs_icon("info-circle") #, title = "About Peer Libraries"
     ),
     p(
       HTML(
         paste0(
-          "Peer libraries are those that are most similar to the selected library.<br><br>",
-          "Using data from the most recent year available (2023), five data points were used to calculate the similarity between libraries nationwide. See the methodology page for more information on how peer libraries were calculated.<br><br>
-          
-          For each library, the 10 most similar libraries were identified on the basis of the following data points.<br><br>",
+          "Peers are the 10 libraries that are most similar to the selected library.<br><br>",
+          "Using data from the most recent year available (",
+          imls_year,
+          "), five data points (listed below) were used to calculate the similarity between libraries nationwide. See the methodology page for more information on how peer libraries were calculated.<br><br>",
           "- Population of Legal Service Area<br>
       - Total FTE of Staff<br>
       - Total Revenue<br>
@@ -980,9 +989,9 @@ output$libcompare_dt_nationalpeers <- renderReactable({
       columns = list(
         Library = colDef(minWidth = 150, style = function(value) {
           if (value == lib_pretty) {
-            fontweight = "bold"
+            fontweight <- "bold"
           } else {
-            fontweight = 300
+            fontweight <- 300
           }
           list(fontWeight = fontweight, backgroundColor = "#f7f7f7")
         }),

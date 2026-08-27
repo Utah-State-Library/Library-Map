@@ -133,6 +133,24 @@ ui <- fluidPage(
     ),
     shiny::includeCSS("www/styles.css"),
 
+    tags$head(
+      tags$script(
+        HTML(
+          "$(document).ready(function () {",
+          "  $('body').on('click', function (e) {",
+          "    $('[data-bs-toggle=popover]').each(function () {",
+          "      if (!$(this).is(e.target) &&",
+          "          $(this).has(e.target).length === 0 &&",
+          "          $('.popover').has(e.target).length === 0) {",
+          "        $(this).popover('hide');",
+          "      }",
+          "    });",
+          "  });",
+          "})"
+        )
+      )
+    ),
+
     source("RScripts/state_service_ui.R", local = TRUE)$value,
     source("RScripts/national_compare_ui.R", local = TRUE)$value,
     source("RScripts/lib_ui.R", local = TRUE)$value,

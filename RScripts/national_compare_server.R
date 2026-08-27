@@ -439,45 +439,44 @@ pls_national_map_reactive <- reactive({
 #   type = "d3-maps-choropleth"
 # )
 
-output$frame <- renderUI({
-  dw_data_to_chart(
-    pls_national_map_reactive(),
-    chart_id = "MMRWV" #new_choropleth_chart
-  )
+# output$frame <- renderUI({
+#   dw_data_to_chart(
+#     pls_national_map_reactive(),
+#     chart_id = "MMRWV" #new_choropleth_chart
+#   )
 
-  dw_edit_chart(
-    "MMRWV", #new_choropleth_chart,
-    axes = list(
-      keys = "state",
-      values = "percap"
-    ),
-    visualize = list(
-      basemap = "us-states",
-      "map-key-attr" = "name",
-      tooltip = list(
-        body = "{{ state }} has value {{ percap }}.",
-        title = "{{ var }}",
-        fields = list(
-          "state" = "state",
-          "percap" = "percap",
-          "var" = "var"
-        )
-      )
-    )
-  )
+#   dw_edit_chart(
+#     "MMRWV", #new_choropleth_chart,
+#     axes = list(
+#       keys = "state",
+#       values = "percap"
+#     ),
+#     visualize = list(
+#       basemap = "us-states",
+#       "map-key-attr" = "name",
+#       tooltip = list(
+#         body = "{{ state }} has value {{ percap }}.",
+#         title = "{{ var }}",
+#         fields = list(
+#           "state" = "state",
+#           "percap" = "percap",
+#           "var" = "var"
+#         )
+#       )
+#     )
+#   )
 
-  dw_publish_chart("MMRWV") #new_choropleth_chart)
+#   dw_publish_chart("MMRWV") #new_choropleth_chart)
 
-  #input$Member
-  my_test <- tags$iframe(
-    src = "https://datawrapper.dwcdn.net/MMRWV/",
-    height = 600,
-    width = 535
-  )
-  print(my_test)
-  my_test
-})
-
+#   #input$Member
+#   my_test <- tags$iframe(
+#     src = "https://datawrapper.dwcdn.net/MMRWV/",
+#     height = 600,
+#     width = 535
+#   )
+#   print(my_test)
+#   my_test
+# })
 
 #### Leaflet Map #####
 
