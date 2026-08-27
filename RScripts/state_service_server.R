@@ -221,19 +221,22 @@ output$state_map <- renderLeaflet({
     need((nrow(map_df) != 0), "No data available based on your selection.")
   )
 
-  map <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
-    addTiles() %>%
+  map <- leaflet(
+    options = leafletOptions(zoomControl = FALSE),
+  ) %>%
+    #addTiles() %>%
     addProviderTiles(
       "CartoDB.Positron",
       group = "CartoDB.Positron"
     ) %>%
     onRender(
       "function(el, x) {
-          L.control.zoom({position:'bottomright'}).addTo(this);
+          L.control.zoom({position:'bottomright'}).addTo(this);  
+
           L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2e4a_1_b730580af8930712da7b58b8', {
-            attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>, &copy; <a href=\"https://carto.com/attributions\">CARTO</a>',
-            subdomains: 'abcd', maxZoom: 20
-          }).addTo(map);
+          attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>, &copy; <a href=\"https://carto.com/attributions\">CARTO</a>',
+          subdomains: 'abcd', maxZoom: 20
+          }).addTo(this);
         }"
     )
 
