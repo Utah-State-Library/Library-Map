@@ -1,21 +1,13 @@
 ##### National #####
 
-## Highchart
-# Per Capita / vars
-# Option to show national avg per capita, select certain states, or show all states
-
-## Table
-# Showing HC data
-
-# Input Needed
-# var
-# National avg vs state selection
-
 ##### Reactives #####
+
+## Pull shortname for selected variable
 selected_var <- reactive({
   variable_key %>% filter(INDICATOR == input$national_var) %>% pull(SHORTNAME)
 })
 
+## Filter state level dataset based on selected variable and which 'per' value they choose (per capita vs per FTE)
 pls_national_reactive <- reactive({
   pls_national_state %>%
     mutate(
@@ -31,134 +23,9 @@ pls_national_reactive <- reactive({
 })
 
 
-##### HC Graph #####
-
-# output$national_line_header <- renderUI({
-#   tooltip(
-#     span(
-#       paste0(
-#         input$national_states,
-#         " Compared to All Other States and Territories"
-#       ),
-#       bs_icon("info-circle")
-#     ),
-#     p(
-#       HTML(
-#         paste0(
-#           "<b>Per Capita</b> shows how much service or usage occurs per person served by a given library, making it easier to compare libraries on equal footing. <br><br>",
-#           "<b>Per FTE</b> shows how much service or usage occurs per Full Time Equivalent (FTE). One FTE is equal to a full work week. FTE is not necessarily equal to the number of staff working at a library because some staff may be part-time.",
-#           "<br><br>",
-#           "Use the gear icon at the top right to change the year."
-#         )
-#       )
-#     ),
-#     options = list(customClass = "wide-tooltip")
-#   )
-# })
-
-# output$national_hc <- renderHighchart({
-#   if (selected_var() %in% currency_cols) {
-#     y_tt <- "${point.y:,.2f}"
-#     var_tt <- "${point.value:,.0f}"
-#     # Y axis $ prefix
-#   } else {
-#     # TODO remove decimals from non-decimal vars
-#     y_tt <- "{point.y:,.2f}" #
-#     var_tt <- "{point.value:,f}" #:,.2f
-#   }
-
-#   col_name_pretty <- input$national_var
-
-#   df <- pls_national_reactive() %>%
-#     filter(
-#       FISCAL_YEAR >= input$national_years[1],
-#       FISCAL_YEAR <= input$national_years[2]
-#     )
-
-#   per_text <- unique(df$per_text)
-
-#   df_ut <- df %>% filter(state == input$national_states)
-#   df_nut <- df %>% filter(state != input$national_states)
-#   # df_natavg <- df %>%
-#   #   group_by(FISCAL_YEAR) %>%
-#   #   mutate(
-#   #     per_calc = round(mean(per_calc, na.rm = T), 2),
-#   #     n_states = n_distinct(state)
-#   #   ) %>%
-#   #   ungroup() %>%
-#   #   filter(n_states > 1)
-
-#   highchart() %>%
-#     hc_chart(zoomType = "y") %>%
-#     hc_add_series(
-#       df_ut,
-#       type = "line",
-#       color = "#81D0F0",
-#       index = 2,
-#       lineWidth = 4,
-#       hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
-#     ) %>%
-#     hc_add_series(
-#       df_nut,
-#       type = "line",
-#       color = "#d6d3d3ff",
-#       fillOpacity = .6,
-#       index = 1,
-#       lineWidth = 1,
-#       hcaes(x = FISCAL_YEAR, y = per_calc, group = state)
-#     ) %>%
-#     hc_legend(enabled = FALSE) %>%
-#     hc_tooltip(
-#       pointFormat = paste0(
-#         "<b>{series.name}</b><br>",
-#         "<b>Rank: {point.rank} out of {point.n}</b><br>",
-#         "<b>",
-#         col_name_pretty,
-#         " {point.per_text}",
-#         ": ",
-#         y_tt,
-#         "</b><br>",
-#         col_name_pretty,
-#         ": ",
-#         var_tt,
-#         "<br>",
-#         "Legal Service Area Population: {point.POPU_LSA:,.0f}<br>",
-#         "{point.x}"
-#       ),
-#       headerFormat = ""
-#     ) %>%
-#     hc_yAxis(
-#       #   title = list(
-#       #     text = paste0(col_name_pretty, " ", per_text),
-#       #     style = list(fontSize = "15px")
-#       #   ),
-#       labels = list(
-#         style = list(fontSize = "15px")
-#       )
-#     ) %>%
-#     hc_xAxis(
-#       allowDecimals = FALSE,
-#       labels = list(
-#         style = list(fontSize = "15px")
-#       )
-#     ) %>%
-#     hc_title(
-#       text = paste0(col_name_pretty, " ", per_text, " by State"),
-#       align = "left"
-#     ) %>%
-#     hc_caption(
-#       text = "Some states/territories may have no data for certain years. Rankings reflect those that did submit data for a given year."
-#     ) %>%
-#     hc_plotOptions(
-#       series = list(
-#         marker = list(enabled = FALSE),
-#         states = list(inactive = list(enabled = FALSE)) # prevents greyout
-#       )
-#     )
-# })
-
 #### HC Bar Graph ####
 
+## Header for the card that the graph will sit in
 output$national_bar_header <- renderUI({
   tooltip(
     span(
@@ -178,20 +45,21 @@ output$national_bar_header <- renderUI({
         )
       )
     ),
-    #placement = "right"
-    options = list(customClass = "wide-tooltip")
+    options = list(customClass = "wide-tooltip") # style defined in our css file
   )
 })
 
+## Bar graph
 output$national_hc_bar <- renderHighchart({
+  # Style the tooltip so that currency has a $ in front of it
   if (selected_var() %in% currency_cols) {
-    y_tt <- "${point.y:,.2f}"
+    y_tt <- "${point.y:,.2f}" # this is highcharter syntax, point.y refers to our y variable, and the .2f is how many decimal places we want
     var_tt <- "${point.value:,.0f}"
     # Y axis $ prefix
   } else {
     # TODO remove decimals from non-decimal vars
-    y_tt <- "{point.y:,.2f}" #
-    var_tt <- "{point.value:,f}" #:,.2f
+    y_tt <- "{point.y:,.2f}"
+    var_tt <- "{point.value:,f}"
   }
 
   per_val_tt <- "{point.per_value:,.f}"
@@ -212,6 +80,7 @@ output$national_hc_bar <- renderHighchart({
 
   per_text <- unique(df$per_text)
 
+  # add some columns in to standardize across our dfs that we're using in the chart (see df_nat below)
   df_ut <- df %>%
     filter(state == input$national_states) %>%
     mutate(level = state, per_median = per_calc, per_text_prefix = "")
@@ -229,15 +98,17 @@ output$national_hc_bar <- renderHighchart({
 
   per_text <- unique(df$per_text)
 
+  ## Create the chart
+
   highchart() %>%
     hc_add_series(
-      df_ut,
+      df_ut, # state data (really it can be any state, but I called it df_ut bc I was charting only UT data at first)
       type = "column",
       color = "#FFB81D",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
-      df_nat,
+      df_nat, # National median
       type = "column",
       color = "#093692",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)
@@ -284,6 +155,7 @@ output$national_hc_bar <- renderHighchart({
 
 ##### Data Table #####
 
+# Header for the card that the table sits in
 output$national_table_header <- renderUI({
   tooltip(
     span(
@@ -310,6 +182,7 @@ output$national_table_header <- renderUI({
   )
 })
 
+# CSV download button for the table
 output$nationalcomp_dt_csv_button <- renderUI({
   filename <- paste0(
     input$national_var,
@@ -321,6 +194,7 @@ output$nationalcomp_dt_csv_button <- renderUI({
   csvDownloadButton("national_dt", filename = filename)
 })
 
+# Create the table
 output$national_dt <- renderReactable({
   req(input$national_var)
   var_name <- input$national_var
@@ -336,6 +210,7 @@ output$national_dt <- renderReactable({
       comparison_method = per_name_pretty, # hide col in reactable, include for download
       actual_variable_value = value,
       comparison_value = per_calc,
+      per_text, # hide col in reactable, include for download
       rank,
       n
     ) %>%
@@ -399,6 +274,7 @@ output$national_dt <- renderReactable({
             }
           }
         ),
+        per_text = colDef(show = FALSE),
         rank = colDef(
           name = "Rank",
           sortNALast = TRUE,
@@ -418,6 +294,7 @@ output$national_dt <- renderReactable({
 
 ##### National Map #####
 
+# This isn't currently used on the UI side, but it's here if you want to revive it! I wasn't thrilled with the map projection and how it showed alaska and hawaii, which is why I have it hidden for now
 pls_national_map_reactive <- reactive({
   pls_national_state_map %>%
     mutate(
@@ -434,6 +311,8 @@ pls_national_map_reactive <- reactive({
 })
 
 #### Datawrapper Map Testing ####
+# This is a very satisfying map projection, but it's not built for reactivity, so I'm leaving this here just for reference
+
 # new_choropleth_chart <- dw_create_chart(
 #   title = "This is a automated choropleth map",
 #   type = "d3-maps-choropleth"
@@ -479,6 +358,8 @@ pls_national_map_reactive <- reactive({
 # })
 
 #### Leaflet Map #####
+# This is that leaflet map that isn't in the UI because I didn't like the projection
+# If you want to revive this and if you want to use Leaflet with the CARTO basemap you will need to add the API key in (see state_service_server.R)
 
 output$national_map_header <- renderUI({
   tooltip(
@@ -540,7 +421,6 @@ output$national_map <- renderLeaflet({
   pal <- colorBin("Blues", domain = df$per_calc, 9)
 
   map <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
-    #addTiles() %>%
     setView(-98.483330, 38.712046, zoom = 4) %>%
     # addProviderTiles(
     #   "CartoDB.Positron",
@@ -566,6 +446,7 @@ output$national_map <- renderLeaflet({
 
 
 ##### Map Tab Data Table #####
+# This is a neat little table that looks good next to a map because it shows all of the states and their ranks so people don't have to hover over every state
 
 output$national_map_dt <- renderReactable({
   req(input$national_var)

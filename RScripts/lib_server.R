@@ -1,5 +1,6 @@
 ##### Library Compare #####
 
+### Reactive Variables ###
 selected_var_libcompare <- reactive({
   variable_key %>% filter(INDICATOR == input$var_libcompare) %>% pull(SHORTNAME)
 })
@@ -24,8 +25,10 @@ library_name_pretty_libcompare <- reactive({
     pull()
 })
 
+### Sync Inputs ###
+#Account for more recent Utah data
 observe({
-  #if Utah, National table year is current year
+  #if a Utah library is selected, the National table year should show the current year
 
   year <- if (library_state_libcompare() == "Utah") {
     current_year
@@ -75,6 +78,7 @@ observe({
   )
 })
 
+### Peer Reactive Variables ###
 libcompare_reactive <- reactive({
   pls_national_peers %>%
     mutate(
@@ -97,7 +101,7 @@ libcompare_peers_state <- reactive({
 
   y <- peers %>% select(CURRENT_LIBNAME_DISAMB, peers = state_peers)
 
-  closest <- eval(parse(text = y$peers))
+  closest <- eval(parse(text = y$peers)) # pop the libnames out of the concatenated string
 
   pls_national_peers %>%
     filter(
@@ -113,7 +117,7 @@ libcompare_peers_national <- reactive({
 
   y <- peers %>% select(CURRENT_LIBNAME_DISAMB, peers)
 
-  closest <- eval(parse(text = y$peers))
+  closest <- eval(parse(text = y$peers)) # pop the libnames out of the concatenated string
 
   pls_national_peers %>%
     filter(
@@ -148,6 +152,7 @@ output$libcompare_bar_header <- renderUI({
 
 
 output$libcompare_hc_bar <- renderHighchart({
+  # Format tooltips for currency
   if (selected_var_libcompare() %in% currency_cols) {
     y_tt <- "${point.y:,.2f}"
     var_tt <- "${point.value:,.0f}"
@@ -166,10 +171,11 @@ output$libcompare_hc_bar <- renderHighchart({
   lib <- input$library_libcompare
 
   df <- libcompare_reactive() %>%
-    mutate(state_name = state) ### do not remove, "state" is also an hc call and things get weird
+    mutate(state_name = state) ### DO NOT REMOVE, "state" is also an hc call and things get weird if you don't rename the state column
 
   per_text <- unique(df$per_text)
 
+  # Our selected library
   df_target <- df %>%
     filter(
       CURRENT_LIBNAME_DISAMB == lib
@@ -179,6 +185,7 @@ output$libcompare_hc_bar <- renderHighchart({
       per_text_prefix = ""
     )
 
+  # All national libraries
   df_nat <- pls_national_peers %>%
     mutate(
       per_name_pretty = case_when(
@@ -198,6 +205,7 @@ output$libcompare_hc_bar <- renderHighchart({
       per_text_prefix = "Median "
     )
 
+  # All state libraries for the selected library's state of residence
   df_state <- pls_national_peers %>%
     mutate(
       per_name_pretty = case_when(
@@ -208,7 +216,7 @@ output$libcompare_hc_bar <- renderHighchart({
     filter(
       var == selected_var_libcompare(),
       per_name_pretty == input$per_libcompare,
-      state == unique(df_target$state_name)
+      state == unique(df_target$state_name) # selected library's state
     ) %>%
     group_by(FISCAL_YEAR) %>%
     summarise(
@@ -218,18 +226,19 @@ output$libcompare_hc_bar <- renderHighchart({
     ) %>%
     distinct()
 
+  # Rename a column so the three dfs play nicely in the highcharter call
   df_target %<>%
     rename("per_median" = "per_calc")
 
   highchart() %>%
     hc_add_series(
-      df_target,
+      df_target, # selected library
       type = "column",
       color = "#FFB81D",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)
     ) %>%
     hc_add_series(
-      df_state,
+      df_state, # all libraries in the selected library's state
       type = "column",
       color = "#0086BF",
       hcaes(x = FISCAL_YEAR, y = per_median, group = level)

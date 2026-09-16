@@ -1,17 +1,25 @@
 ##### Prep Data #####
+# The data here comes from the Combine PLS Data.R and Combine PLS Outlet Data.R scripts which live in
+# CCSL-Library > Public Libraries > Data Coordinator > R Scripts > Combine PLS Data.R & Combine PLS Outlet Data.R
+# In those files you should update the filepaths to save the app files to your locally saved project. See the filepaths I have in those files for an example
 
+# You shouldn't need to do anything major here, just run it bit by bit and make sure no errors are popping up
+
+# source our lists.R file which defines different ways that variables should be handled (e.g., which columns should be per 100 people vs per capita, which columns are currency, etc.)
 source("RScripts/lists.R", local = TRUE)$value
 
 #### UT Outlets ####
-outlets <- readRDS("data/pls_outlet_national_2025.rds") %>%
+outlets <- readRDS("data/pls_outlet_national_2025.rds") %>% # UPDATE ME - file name
   filter(STABR == "UT", hide_lib == 0, FISCAL_YEAR == max(FISCAL_YEAR)) %>%
   mutate(
+    # Make a few little tweaks
     CITY = case_when(
       CITY == "South Salt Lake City" ~ "South Salt Lake",
       CITY == "Mt. Pleasant" ~ "Mount Pleasant",
       .default = CITY
     ),
     LAT = case_when(
+      # The Teen Center didn't have a lat or long in LibPAS, so check that in the future because you could remove these lines if the data files do start having them
       CURRENT_LIBNAME_OUTLET == "Teen Center" ~ 38.57367327593949,
       .default = LAT
     ),
@@ -23,10 +31,11 @@ outlets <- readRDS("data/pls_outlet_national_2025.rds") %>%
 
 saveRDS(outlets, "data/processed/outlet_ut_app.RDS")
 
+# Define the current year
 current_year <- max(as.numeric(outlets$FISCAL_YEAR))
 
 #### UT PLS ####
-pls_ut <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
+pls_ut <- readRDS("data/pls_national_2025.rds") %>% # UPDATE ME - file name
   filter(
     STABR == "UT",
     hide_lib == 0,
@@ -56,8 +65,8 @@ pls_ut <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
 saveRDS(pls_ut, "data/processed/pls_ut_app.RDS")
 
 #### National PLS ####
-
-pls_national <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.rds
+# If you want to add additional variables for users to select from, this is where you'll do it
+pls_national <- readRDS("data/pls_national_2025.rds") %>% # UPDATE ME - file name
   filter(
     hide_lib == 0,
   ) %>%
@@ -82,7 +91,7 @@ pls_national <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.
     FEDGVT,
     OTHINCM,
     TOTINCM,
-    # LOCEXP, #UT specific
+    # LOCEXP, #UT specific, not in IMLS data
     # STEXP,
     # FEDEXP,
     # OTHEXP,
@@ -97,7 +106,7 @@ pls_national <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.
     VIDEO_PH,
     OTHPHYS,
     TOTPHYS,
-    # EBOOK_CIR,
+    # EBOOK_CIR, #UT specific, not in IMLS data
     # ESERIAL_CIR,
     # EAUDIO_CIR,
     # EVIDEO_CIR,
@@ -110,7 +119,7 @@ pls_national <- readRDS("data/pls_national_2025.rds") %>% #pls_national_updated.
     LOANFM,
     TOTPRO,
     TOTATTEN,
-    # KIDPRO,
+    # KIDPRO, #UT specific, not in IMLS data
     # KIDATTEN,
     K0_5PRO,
     K0_5ATTEN,
@@ -131,7 +140,7 @@ pls_national %<>%
   mutate(
     drop = ifelse(
       STABR == "UT" &
-        str_detect(CURRENT_LIBNAME_DISAMB, "Bookmobile|Garden City"),
+        str_detect(CURRENT_LIBNAME_DISAMB, "Bookmobile|Garden City"), # drop bookmobiles and a non-certified that snuck into the data
       1,
       0
     )
@@ -139,10 +148,13 @@ pls_national %<>%
   filter(drop != 1) %>%
   select(-drop)
 
+# Change missing data to NA
 pls_national[pls_national == -1] <- NA
 pls_national[pls_national == -3] <- NA
 pls_national[pls_national == -9] <- NA
 
+# Make a state name-abbreviation crosswalk; e.g., Utah - UT
+# We need to define a few manually because the state.name and state.abb datasets that come with R don't include territories
 st_crosswalk <- data.frame(
   state = c(
     state.name,
@@ -158,10 +170,9 @@ st_crosswalk <- data.frame(
 pls_national %<>% left_join(st_crosswalk, by = c("STABR" = "abb"))
 pls_utah <- pls_national %>% filter(state == "Utah")
 
-#pls_national %<>% select(-CURRENT_LIBNAME)
-
 saveRDS(pls_national, "data/processed/pls_national_app.RDS")
 
+# Make a value that has the shortnames for all of the variables we want users to be able to select from
 national_vars <- setdiff(
   names(pls_national),
   c(
@@ -177,6 +188,7 @@ national_vars <- setdiff(
 
 
 #### PLS Utah ####
+# In this section we're going to calculate all of the per capita and per FTE values
 
 pls_utah %<>%
   mutate(
@@ -195,11 +207,12 @@ pls_utah %<>%
   group_by(var) %>%
   mutate(
     per_multiplier = case_when(
-      var %in% per100cols & per_name == "POP_col" ~ 100,
-      var %in% per1000cols & per_name == "POP_col" ~ 1000,
+      var %in% per100cols & per_name == "POP_col" ~ 100, # if the variable is one of the per 100 people variables, multiply by 100
+      var %in% per1000cols & per_name == "POP_col" ~ 1000, # if the variable is one of the per 1000 people variables, multiply by 1000
       .default = 1
     ),
     per_text = case_when(
+      # Define a text column that says what per value we're using for any given variable
       per_name == "FTE_col" ~ "Per FTE",
       per_multiplier == 100 ~ "Per 100 People",
       per_multiplier == 1000 ~ "Per 1,000 People",
@@ -208,6 +221,7 @@ pls_utah %<>%
   ) %>%
   ungroup()
 
+# Perform the per capita calculation and also rank libraries
 pls_utah %<>%
   rowwise() %>%
   mutate(per_calc = round((value * per_multiplier) / per_value, 2)) %>%
@@ -229,21 +243,22 @@ saveRDS(pls_utah, "data/processed/pls_utah_appv2.RDS")
 # uses outlets & pls dfs from above
 
 map_all <- outlets %>%
-  left_join(pls_ut, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>%
+  left_join(pls_ut, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>% # add in system level numbers for popup table
   group_by(CURRENT_LIBNAME_AE) %>%
   mutate(
-    n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"),
+    n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"), # number of library locations (e.g., branch count)
     OUTLET_NAME = gsub(
       paste0(CURRENT_LIBNAME_AE, " "),
       "",
       CURRENT_LIBNAME_OUTLET
     ),
     OUTLET_NAME = gsub(
+      # a few outlets have the library name in front of their branch name, so lets remove those strings
       "Salt Lake City Public Library |Washington County Library |Weber County Library",
       "",
       OUTLET_NAME
     ),
-    OUTLET_NAME = trimws(OUTLET_NAME)
+    OUTLET_NAME = trimws(OUTLET_NAME) # trim whitespace
   ) %>%
   ungroup()
 
@@ -252,6 +267,7 @@ map_all %<>%
     LAT = as.numeric(LAT),
     LONG = as.numeric(LONG),
     library_data_header = case_when(
+      # define map labels for single library
       n_locs == 1 ~ paste0(
         "
       <table style='width: 100%'>
@@ -263,6 +279,7 @@ map_all %<>%
         "<br></div><br>"
       ),
       n_locs > 1 ~ paste0(
+        # define map labels for multi-branch library
         "
       <table style='width: 100%'>
         <div style='font-size: 14px;'><b>",
@@ -277,6 +294,7 @@ map_all %<>%
       )
     ),
     library_data_table = paste0(
+      # define data table on the popup (the striped bg color is manual right now, so make sure you update those if you update what's on the table. You could also make the coloration programmatic, I just never got to it)
       "<tr>
           <td style = \"text-align:left; background-color: #f2f2f2;\">",
       "Number of Library Locations: ",
@@ -357,6 +375,7 @@ map_all %<>%
         </tr> </table>"
     ),
     library_header = case_when(
+      # If it's a multi-branch library, include both the AE name and the outlet name
       CURRENT_LIBNAME_OUTLET != CURRENT_LIBNAME_AE ~
         paste0(
           "<table style='width: 100%'>
@@ -367,6 +386,7 @@ map_all %<>%
           OUTLET_NAME,
           "</b> </div>"
         ),
+      # if it's a single library, just include the AE name since it's also the location name
       CURRENT_LIBNAME_OUTLET == CURRENT_LIBNAME_AE ~
         paste0(
           "<table>
@@ -377,6 +397,7 @@ map_all %<>%
         )
     ),
     library_label = paste0(
+      # Location information for location label
       library_header,
       "<div style='font-size: 12px;'>",
       str_to_title(ADDRESS),
@@ -389,6 +410,7 @@ map_all %<>%
       "</div> </table>"
     ),
     library_popup = paste0(
+      # paste these together because the header is different between single and multi location libraries
       library_data_header,
       library_data_table
     )
@@ -414,6 +436,7 @@ pls_national_peers <- pls_national %>%
     values_to = "per_value"
   )
 
+# Set the multiplier and text values based on what the column is
 pls_national_peers %<>%
   mutate(
     per_multiplier = case_when(
@@ -430,13 +453,13 @@ pls_national_peers %<>%
   ) %>%
   ungroup()
 
-
+# Perform the per capita calculation
 pls_national_peers %<>%
   rowwise() %>%
   mutate(per_calc = round((value * per_multiplier) / per_value, 2)) %>%
   ungroup()
 
-
+# Calculate state and national ranks
 pls_national_peers %<>%
   group_by(FISCAL_YEAR, state, var, per_name) %>%
   mutate(
@@ -489,7 +512,7 @@ pls_national_state %<>%
     values_to = "per_value"
   )
 
-
+# Set the multiplier and text values based on what the column is
 pls_national_state %<>%
   mutate(
     per_multiplier = case_when(
@@ -506,12 +529,13 @@ pls_national_state %<>%
   ) %>%
   ungroup()
 
-
+# Perform the per capita calculation
 pls_national_state %<>%
   rowwise() %>%
   mutate(per_calc = round((value * per_multiplier) / per_value, 2)) %>%
   ungroup()
 
+# Rank the states
 pls_national_state %<>%
   group_by(FISCAL_YEAR, var, per_name) %>%
   mutate(
@@ -525,6 +549,7 @@ pls_national_state %<>%
   ungroup()
 
 saveRDS(pls_national_state, "data/processed/pls_national_state_appv2.RDS")
+
 
 #### National State Map ####
 
@@ -553,6 +578,7 @@ write_sf(
 
 
 #### National Similarity Data  ####
+# This is where we're calculating library peers
 
 # This function assumes "dists" is a NAMED vector of distances for one observation
 # It also may return more neighbors than requested if there are ties
@@ -564,10 +590,12 @@ closest_neighbors <- function(dists, num_closest) {
 }
 
 calculate_similarity <- function(df_p, year = imls_year) {
+  # imls_year is the default, but you can specify other years when using the function
   df <- df_p %>% filter(FISCAL_YEAR == year)
-  df$name <- paste0(df$CURRENT_LIBNAME_DISAMB) #, 1:nrow(df)
+  df$name <- paste0(df$CURRENT_LIBNAME_DISAMB)
   df %<>%
     mutate(
+      # scale the variables
       POPU_LSA_scl = scale(POPU_LSA),
       TOTSTAFF_scl = scale(TOTSTAFF),
       TOTINCM_scl = scale(TOTINCM),
@@ -584,7 +612,7 @@ calculate_similarity <- function(df_p, year = imls_year) {
       "REGBOR_scl",
       "VISITS_scl"
     )],
-    method = 'euclidean' #'manhattan'
+    method = 'euclidean' #'manhattan' is another option
   ))
 
   dimnames(distances) <- list(df$name, df$name)
@@ -594,12 +622,13 @@ calculate_similarity <- function(df_p, year = imls_year) {
     function(i) closest_neighbors(distances[i, ], num_closest = 10)
   )
 
-  # make a save df so we can still use all of the df columns for testing below
   df %>% select(FISCAL_YEAR, state, CURRENT_LIBNAME_DISAMB, peers)
 }
 
+# calculate similarity for libraries nationwide; use data from the imls_year
 df_national <- calculate_similarity(pls_national, year = imls_year)
 
+# calculate similarity state-by state
 states <- unique(pls_national$state[pls_national$FISCAL_YEAR == imls_year]) %>%
   sort()
 df_state <- NULL
@@ -609,7 +638,7 @@ for (i in states) {
   df_state %<>% rbind(df_calc)
   rm(df)
 }
-
+# calculate utah peers using the most recent fiscal year's data
 utah_sim <- pls_national %>%
   filter(state == "Utah", FISCAL_YEAR == max(FISCAL_YEAR))
 df_utah_sim <- calculate_similarity(
@@ -617,6 +646,7 @@ df_utah_sim <- calculate_similarity(
   year = unique(utah_sim$FISCAL_YEAR)
 )
 
+# append df_utah_sim to df_state because df_utah_sim has more recent data
 df_state %<>% filter(state != "Utah") %>% rbind(df_utah_sim)
 
 df_state %<>%
@@ -625,7 +655,7 @@ df_state %<>%
 df_peers_all <- left_join(df_national, df_state, by = "CURRENT_LIBNAME_DISAMB")
 saveRDS(df_peers_all, "data/processed/pls_national_simlibs.RDS")
 
-# ### Testing
+# ### Testing Similarity Calculation
 # head(df[, c('name', 'peers')], 5)
 
 # x <- df %>%

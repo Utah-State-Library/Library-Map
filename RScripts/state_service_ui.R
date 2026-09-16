@@ -1,14 +1,15 @@
 nav_panel(
-  title = tags$h5(class = "fw-bold", "Utah Library Map"),
+  title = tags$h5(class = "fw-bold", "Utah Library Map"), # Page name
   class = " bg-body-secondary align-self-center m-1 p-0 border rounded-3",
   style = "width: 95vw; padding: 0; margin: 1;",
-  height = "82vh",
+  height = "82vh", # Keep this unless you have a good reason to change it; this has looked good on different screen sizes
 
   layout_sidebar(
     class = "bg-body-secondary container-fluid align-self-center",
     fill = TRUE,
     sidebar = sidebar(
       title = h5(
+        # sidebar title, but it's more like a header for the page and specifies that the data are from the current year
         HTML(
           paste0(
             "<br><b>",
@@ -19,9 +20,11 @@ nav_panel(
         class = "header-text text-center",
         style = "color: #093692; padding: 0px; margin: 0px;"
       ),
-      #"Filters",
+
+      ### Filters ###
       width = "20%",
 
+      ## Filter counties
       pickerInput(
         "st_county",
         label = NULL,
@@ -38,6 +41,8 @@ nav_panel(
           `count-selected-text` = "All Counties"
         )
       ),
+
+      ## Filter libraries
       pickerInput(
         "ae",
         label = NULL,
@@ -53,6 +58,8 @@ nav_panel(
           `count-selected-text` = "All Library Systems"
         )
       ),
+
+      ## Filter system types
       pickerInput(
         "system_type",
         label = NULL,
@@ -68,6 +75,8 @@ nav_panel(
           `count-selected-text` = "All Library Types"
         )
       ),
+
+      ## Filter outlet types
       pickerInput(
         "outlet_type",
         label = NULL,
@@ -83,15 +92,23 @@ nav_panel(
           `count-selected-text` = "All Location Types"
         )
       ),
+
+      ## Submit button
       actionButton(
         "submitButton",
         "Submit",
         width = "100%"
       ),
+
+      ## Context text (for systems with no central library)
       uiOutput("ce_text")
     ),
+
+    ### Main Body ###
     layout_columns(
-      col_widths = c(8, 4),
+      col_widths = c(8, 4), # horizontally, map takes 8 cols & valueboxes take 4
+
+      ## Map card
       card(
         title = NULL,
         min_height = "85vh",
@@ -100,19 +117,12 @@ nav_panel(
           withSpinner() |>
           as_fill_carrier()
       ),
+
+      ## Value box column
       layout_columns(
-        col_widths = c(12, 12),
-        # h5(
-        #   HTML(
-        #     paste0(
-        #       "<b>",
-        #       current_year,
-        #       " Public Library Survey Data</b>"
-        #     )
-        #   ),
-        #   class = "header-text text-center",
-        #   style = "color: #093692; padding: 0px; margin: 0px;"
-        # ),
+        col_widths = c(12, 12), # make 12,12 so that valueboxes stack vertically
+
+        ## Community oriented valuebox
         value_box(
           title = "Library Cardholders",
           value = uiOutput("n_pcnt_regbor"),
@@ -125,6 +135,8 @@ nav_panel(
           theme = value_box_theme(bg = "#ffffff", fg = "#093692"),
           class = "p-0 nopad"
         ),
+
+        ## Service stats oriented valuebox
         value_box(
           title = "Visits",
           value = uiOutput("n_visits"),
@@ -137,6 +149,8 @@ nav_panel(
           theme = value_box_theme(bg = "#ffffff", fg = "#093692"),
           class = "p-0 nopad"
         ),
+
+        ## Financial oriented valuebox
         value_box(
           title = "Total Revenue",
           value = uiOutput("n_totincm"),

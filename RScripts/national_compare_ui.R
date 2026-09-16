@@ -1,7 +1,7 @@
 ##### National #####
 
 nav_panel(
-  title = tags$h5(class = "fw-bold", "Compare States"),
+  title = tags$h5(class = "fw-bold", "Compare States"), # Page title
   class = " bg-body-secondary align-self-center m-1 p-0 border rounded-3",
   style = "width: 95vw; padding: 0; margin: 1;",
 
@@ -11,6 +11,8 @@ nav_panel(
     sidebar = sidebar(
       title = NULL,
       width = "20%",
+
+      # Select a target state
       pickerInput(
         "national_states",
         label = "Select a State",
@@ -18,6 +20,8 @@ nav_panel(
         selected = "Utah",
         multiple = FALSE
       ),
+
+      # Select a variable
       pickerInput(
         "national_var",
         label = "Select a Variable",
@@ -25,6 +29,8 @@ nav_panel(
         selected = "Library Visits",
         multiple = FALSE
       ),
+
+      # Select a per comparison
       pickerInput(
         "national_per",
         label = tooltip(
@@ -46,6 +52,7 @@ nav_panel(
       id = "national_tabs",
       #height = '84vh',
       nav_panel(
+        # if you want additional tabs, add more nav_panels after this one
         "Compare State to National",
         icon = bs_icon("graph-up"),
         card(
@@ -70,8 +77,11 @@ nav_panel(
             ),
             class = "my-header-grey d-flex justify-content-between",
           ),
+          # The actual bar graph
           highchartOutput("national_hc_bar")
         ),
+
+        ## These are some old sections that could be revived; the first is a line graph that I eventually replaced with the current bar chart and the second is the national map that would be awesome to bring back (just try to find a better map projection if you can, the leaflet one makes alaska, hawaii, and the territories look awful)
         # card(
         #   card_header(
         #     uiOutput("national_line_header"),
@@ -128,6 +138,7 @@ nav_panel(
         #     )
         #   )
         # ),
+        ## This is the table that shows state numbers and rankings
         card(
           card_header(
             uiOutput("national_table_header"),

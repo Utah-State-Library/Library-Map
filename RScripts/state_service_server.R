@@ -1,158 +1,6 @@
-# ## Create the library locations df
-
-# map_all <- outlets %>%
-#   left_join(pls, by = c("CURRENT_LIBNAME_AE" = "CURRENT_LIBNAME")) %>%
-#   group_by(CURRENT_LIBNAME_AE) %>%
-#   mutate(
-#     n_locs = sum(C_OUT_TY == "CE") + sum(C_OUT_TY == "BR"),
-#     OUTLET_NAME = gsub(
-#       paste0(CURRENT_LIBNAME_AE, " "),
-#       "",
-#       CURRENT_LIBNAME_OUTLET
-#     ),
-#     OUTLET_NAME = gsub(
-#       "Salt Lake City Public Library |Washington County Library |Weber County Library",
-#       "",
-#       OUTLET_NAME
-#     ),
-#     OUTLET_NAME = trimws(OUTLET_NAME)
-#   ) %>%
-#   ungroup()
-
-# map_all %<>%
-#   mutate(
-#     LAT = as.numeric(LAT),
-#     LONG = as.numeric(LONG),
-#     library_data_header = case_when(
-#       n_locs == 1 ~ paste0(
-#         "
-#       <table style='width: 100%'>
-#         <div style='font-size: 14px;'><b>",
-#         CURRENT_LIBNAME_AE,
-#         "</b><br>",
-#         FISCAL_YEAR,
-#         " Public Library Survey",
-#         "<br></div><br>"
-#       ),
-#       n_locs > 1 ~ paste0(
-#         "
-#       <table style='width: 100%'>
-#         <div style='font-size: 14px;'><b>",
-#         CURRENT_LIBNAME_AE,
-#         "</b><br>",
-#         FISCAL_YEAR,
-#         " Public Library Survey",
-#         "<br>",
-#         "</div> <div style='font-size: 12px;'><em>",
-#         "This table shows data for the entire library system, and is not branch specific.</em>",
-#         "<br></div>"
-#       )
-#     ),
-#     library_data_table = paste0(
-#       "<tr>
-#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
-#       "Number of Library Locations: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-#       n_locs,
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #ffffff;\">",
-#       "Population of Legal Service Area: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #ffffff;\">",
-#       format(POPU_LSA, big.mark = ","),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
-#       "Visits: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-#       format(VISITS, big.mark = ","),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #ffffff;\">",
-#       "Number of Library Staff: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #ffffff;\">",
-#       format(TOT_LIB_STAFF, big.mark = ""),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
-#       "Total FTE of Library Staff: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-#       format(TOTSTAFF, big.mark = ","),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #ffffff;\">",
-#       "Local Government Revenue: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #ffffff;\">",
-#       dollar(LOCGVT),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
-#       "State Government Revenue: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-#       dollar(STGVT),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #ffffff;\">",
-#       "Federal Government Revenue: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #ffffff;\">",
-#       dollar(FEDGVT),
-#       "</td>
-#         </tr> <tr>
-#           <td style = \"text-align:left; background-color: #f2f2f2;\">",
-#       "Other Revenue: ",
-#       "</td>
-#           <td style = \"text-align: right; background-color: #f2f2f2;\">",
-#       dollar(OTHINCM),
-#       "</td>
-#         </tr> </table>"
-#     ),
-#     library_header = case_when(
-#       CURRENT_LIBNAME_OUTLET != CURRENT_LIBNAME_AE ~
-#         paste0(
-#           "<table style='width: 100%'>
-#            <div style='font-size: 16px;'><b>",
-#           CURRENT_LIBNAME_AE,
-#           "</b> </div> <hr>
-#            <div style='font-size: 14px;'><b>",
-#           OUTLET_NAME,
-#           "</b> </div>"
-#         ),
-#       CURRENT_LIBNAME_OUTLET == CURRENT_LIBNAME_AE ~
-#         paste0(
-#           "<table>
-#            <div style='font-size: 16px;'><b>",
-#           CURRENT_LIBNAME_OUTLET,
-#           "</b>",
-#           "</div>"
-#         )
-#     ),
-#     library_label = paste0(
-#       library_header,
-#       "<div style='font-size: 12px;'>",
-#       str_to_title(ADDRESS),
-#       ", ",
-#       str_to_title(CITY),
-#       ", ",
-#       ZIP,
-#       "<hr><div style='font-size: 12px;'>",
-#       "Click to see system-wide information",
-#       "</div> </table>"
-#     ),
-#     library_popup = paste0(
-#       library_data_header,
-#       library_data_table
-#     )
-#   )
-
 ##### Sync Inputs #####
+
+# Filter AE list based on what counties are selected
 observe({
   aes <- outlets %>%
     filter(
@@ -181,6 +29,10 @@ observe({
   )
 })
 
+##### Context text #####
+
+# if an AE is selected that does not have a central library, make context text appear
+
 ce_selected <- eventReactive(input$submitButton, {
   input$outlet_type
 })
@@ -202,10 +54,10 @@ map_libs_filtered <- eventReactive(
   {
     map_all %>%
       filter(
-        CNTY %in% input$st_county,
-        CURRENT_LIBNAME_AE %in% input$ae,
-        C_OUT_TY %in% input$outlet_type,
-        SERVICE_AREA %in% input$system_type
+        CNTY %in% input$st_county, # filter to selected counties
+        CURRENT_LIBNAME_AE %in% input$ae, # filter to selected libraries
+        C_OUT_TY %in% input$outlet_type, # filter to selected outlet type
+        SERVICE_AREA %in% input$system_type # filter to selected system type
       )
   },
   ignoreNULL = FALSE
@@ -221,16 +73,19 @@ output$state_map <- renderLeaflet({
     need((nrow(map_df) != 0), "No data available based on your selection.")
   )
 
+  # Note: We're using the Carto basemap, and they've added the need for an API key as of 8/26ish. I've added the key below, but it may need to be updated since it has my email attached. If it does need updating you can do that by visiting https://carto.com/basemaps/apikey/ and filling out the request. It's free for the first 5,000,000 requests per month, so we're good :)
+  # For the future: implement a secret file and store the api key there so that when we push to github it's not public facing
+
   map <- leaflet(
     options = leafletOptions(zoomControl = FALSE),
   ) %>%
-    #addTiles() %>%
     addProviderTiles(
       "CartoDB.Positron",
       group = "CartoDB.Positron"
     ) %>%
     onRender(
-      "function(el, x) {
+      paste0(
+        "function(el, x) {
           L.control.zoom({position:'bottomright'}).addTo(this);  
 
           L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2e4a_1_b730580af8930712da7b58b8', {
@@ -238,6 +93,7 @@ output$state_map <- renderLeaflet({
           subdomains: 'abcd', maxZoom: 20
           }).addTo(this);
         }"
+      )
     )
 
   ## Show Library Locations
@@ -257,16 +113,22 @@ output$state_map <- renderLeaflet({
   map
 })
 
+# Map data year
 output$map_year <- renderUI({
   paste0("Utah Public Libraries - ", current_year)
 })
 
+
+#### Value Box Values ####
+
+# Number of libraries
 output$n_aes <- renderUI({
   map_libs_filtered() %>%
     reframe(n = paste0(n_distinct(CURRENT_LIBNAME_AE), " Libraries")) %>%
     pull(n)
 })
 
+# Number of locations
 output$n_locations <- renderUI({
   map_libs_filtered() %>%
     reframe(
@@ -275,6 +137,7 @@ output$n_locations <- renderUI({
     pull(n)
 })
 
+# Number of City libraries
 output$n_citylibs <- renderUI({
   map_libs_filtered() %>%
     filter(SERVICE_AREA == "city") %>%
@@ -282,6 +145,7 @@ output$n_citylibs <- renderUI({
     pull(n)
 })
 
+# Number of County Libraries
 output$n_countylibs <- renderUI({
   map_libs_filtered() %>%
     filter(SERVICE_AREA == "county") %>%
@@ -291,6 +155,7 @@ output$n_countylibs <- renderUI({
     pull(n)
 })
 
+# Number of Visits
 output$n_visits <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, VISITS) %>%
@@ -301,6 +166,7 @@ output$n_visits <- renderUI({
     pull(n)
 })
 
+# Number of Programs
 output$n_pro <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, TOTPRO) %>%
@@ -311,6 +177,7 @@ output$n_pro <- renderUI({
     pull(n)
 })
 
+# Program Attendance
 output$n_atten <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, TOTATTEN) %>%
@@ -324,6 +191,7 @@ output$n_atten <- renderUI({
     pull(n)
 })
 
+# Total Circulation
 output$n_circ <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, TOTCIR) %>%
@@ -337,6 +205,7 @@ output$n_circ <- renderUI({
     pull(n)
 })
 
+# Total Kids Circulation
 output$n_kidcirc <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, KIDPHYSCIR) %>%
@@ -350,6 +219,7 @@ output$n_kidcirc <- renderUI({
     pull(n)
 })
 
+# Total Operating Revenue
 output$n_totincm <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, TOTINCM) %>%
@@ -363,6 +233,7 @@ output$n_totincm <- renderUI({
     pull(n)
 })
 
+# Local Operating Revenue
 output$n_locgvt <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, LOCGVT) %>%
@@ -376,6 +247,7 @@ output$n_locgvt <- renderUI({
     pull(n)
 })
 
+# State Operating Revenue
 output$n_stgvt <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, STGVT) %>%
@@ -389,6 +261,7 @@ output$n_stgvt <- renderUI({
     pull(n)
 })
 
+# Federal Operating Revenue
 output$n_fedgvt <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, FEDGVT) %>%
@@ -402,6 +275,7 @@ output$n_fedgvt <- renderUI({
     pull(n)
 })
 
+# Other Operating Revenue
 output$n_othincm <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, OTHINCM) %>%
@@ -415,6 +289,7 @@ output$n_othincm <- renderUI({
     pull(n)
 })
 
+# Population of legal service area
 output$n_popu_lsa <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, POPU_LSA) %>%
@@ -428,6 +303,7 @@ output$n_popu_lsa <- renderUI({
     pull(n)
 })
 
+# Number of Cardholders (registered borrowers)
 output$n_regbor <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, REGBOR) %>%
@@ -441,6 +317,7 @@ output$n_regbor <- renderUI({
     pull(n)
 })
 
+# Percent of Utahns that are cardholders (knowing that some people do have multiple cards; not a perfect measure but it's what we have)
 output$n_pcnt_regbor <- renderUI({
   map_libs_filtered() %>%
     select(CURRENT_LIBNAME_AE, REGBOR, POPU_LSA) %>%
