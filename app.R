@@ -21,11 +21,6 @@ library(sf)
 
 
 #### Color Palette ####
-# head_color <- "#002F6C"
-# sub1_color <- "#0086BF"
-# sub2_color <- "#4EC3E0"
-
-#new
 # #093692
 # #81D0F0
 # #FFB81D
